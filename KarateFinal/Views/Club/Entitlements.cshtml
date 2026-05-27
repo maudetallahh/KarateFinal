@@ -1,0 +1,1027 @@
+﻿@{
+    Layout = null;
+    var memberships = ViewBag.Memberships as IEnumerable<KarateFinal.Models.PlayerMembership>;
+    var year = ViewBag.Year;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/image/www.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استحقاقات اللاعبين</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI',Tahoma,sans-serif;
+        }
+
+        body {
+            background: #eef3f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            background-color: #1e2a38;
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 4px solid #4a90e2;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-header {
+            text-align: center;
+        }
+
+            .nav-header h1 {
+                font-size: 26px;
+                color: #ffffff;
+                letter-spacing: 1px;
+            }
+
+            .nav-header h2 {
+                font-size: 14px;
+                color: #d1d5db;
+                font-weight: normal;
+                margin-top: 5px;
+            }
+
+        nav ul {
+            position: absolute;
+            left: 50px;
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+            nav ul li {
+                margin-left: 25px;
+            }
+
+                nav ul li a {
+                    text-decoration: none;
+                    color: white;
+                    font-weight: bold;
+                    transition: 0.3s;
+                    font-size: 15px;
+                }
+
+                    nav ul li a:hover {
+                        color: #81b3f7;
+                    }
+
+        .login-btn {
+            background-color: #2c3e50;
+            padding: 8px 25px;
+            border-radius: 5px;
+            border: 2px solid transparent;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+        }
+
+            .hamburger span {
+                width: 25px;
+                height: 2px;
+                background: white;
+                border-radius: 2px;
+                transition: 0.3s;
+            }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            background: #1e2a38;
+            padding: 10px 20px;
+            gap: 10px;
+        }
+
+            .mobile-menu a {
+                color: white;
+                text-decoration: none;
+                font-size: 15px;
+                padding: 8px 0;
+                border-bottom: 1px solid #2c3e50;
+            }
+
+            .mobile-menu.show {
+                display: flex;
+            }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 40px auto;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            flex-grow: 1;
+        }
+
+        .header {
+            text-align: center;
+            padding: 0.5rem 0 1rem;
+        }
+
+            .header h2 {
+                color: #2c3e50;
+                font-size: 22px;
+                font-weight: 700;
+            }
+
+            .header p {
+                color: #888;
+                font-size: 13px;
+                margin-top: 4px;
+            }
+
+        .stats-row {
+            display: flex;
+            gap: 10px;
+            margin: 14px 0;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-n {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .stat-l {
+            font-size: 11px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .stat-paid .stat-n {
+            color: #27ae60;
+        }
+
+        .stat-unpaid .stat-n {
+            color: #e74c3c;
+        }
+
+        .actions-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 16px 0;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .search-wrap {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+            .search-wrap input, .search-wrap select {
+                padding: 8px 12px;
+                border-radius: 6px;
+                border: 1px solid #ccc;
+                font-family: inherit;
+                font-size: 13px;
+            }
+
+        .btn-new-year {
+            padding: 9px 20px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+            .btn-new-year:hover {
+                background: #1e6fc4;
+            }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+            gap: 14px;
+        }
+
+        .player-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+        }
+
+        .card-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #dbeafe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #1d4ed8;
+            flex-shrink: 0;
+        }
+
+        .player-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .belt-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 11px;
+            padding: 1px 7px;
+            border-radius: 20px;
+            margin-top: 2px;
+            background: #f0f0f0;
+            color: #555;
+        }
+
+        .fee-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 4px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .fee-label {
+            color: #888;
+        }
+
+        .fee-val {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .fee-old .fee-val {
+            color: #e74c3c;
+        }
+
+        .months-section {
+            margin: 10px 0 8px;
+        }
+
+        .months-title {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .months-grid {
+            display: grid;
+            grid-template-columns: repeat(6,1fr);
+            gap: 3px;
+        }
+
+        .month-btn {
+            padding: 4px 2px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background: #f8f8f8;
+            font-size: 10px;
+            cursor: pointer;
+            text-align: center;
+            color: #555;
+            font-family: inherit;
+            transition: 0.15s;
+            line-height: 1.4;
+        }
+
+            .month-btn.paid {
+                background: #dcfce7;
+                border-color: #86efac;
+                color: #166534;
+                font-weight: bold;
+            }
+
+            .month-btn:hover:not(.paid) {
+                background: #e0f0ff;
+                border-color: #93c5fd;
+            }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .paid-tag {
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+            .paid-tag.allpaid {
+                background: #dcfce7;
+                color: #166534;
+            }
+
+            .paid-tag.partial {
+                background: #fef9c3;
+                color: #854d0e;
+            }
+
+            .paid-tag.unpaid {
+                background: #fee2e2;
+                color: #991b1b;
+            }
+
+        .btn-edit {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background: none;
+            cursor: pointer;
+            font-family: inherit;
+            color: #555;
+        }
+
+            .btn-edit:hover {
+                background: #f5f5f5;
+            }
+
+        .btn-pay-old {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 5px;
+            border: 1px solid #e74c3c;
+            background: none;
+            cursor: pointer;
+            font-family: inherit;
+            color: #e74c3c;
+        }
+
+            .btn-pay-old:hover {
+                background: #fee2e2;
+            }
+        .empty-msg {
+            text-align: center;
+            padding: 2rem;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .modal-bg {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .modal-bg.show {
+                display: flex;
+            }
+
+        .modal {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            width: 340px;
+            direction: rtl;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+            .modal h3 {
+                margin: 0 0 14px;
+                color: #2c3e50;
+                font-size: 15px;
+            }
+
+            .modal label {
+                font-size: 12px;
+                color: #555;
+                display: block;
+                margin-bottom: 3px;
+                font-weight: bold;
+            }
+
+            .modal input {
+                width: 100%;
+                padding: 8px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                margin-bottom: 10px;
+                font-family: inherit;
+                font-size: 13px;
+            }
+
+        .modal-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+            .modal-btns button {
+                flex: 1;
+                padding: 9px;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-weight: bold;
+                font-family: inherit;
+                font-size: 13px;
+            }
+
+        .btn-save {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #eee;
+            color: #333;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            padding: 10px 22px;
+            background: #34495e;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+            .back-btn:hover {
+                background: #4a90e2;
+            }
+
+        footer {
+            background: #1e2a38;
+            color: white;
+            padding: 50px 40px 0;
+            direction: rtl;
+            margin-top: 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+            gap: 32px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-col h3 {
+            font-size: 15px;
+            font-weight: 500;
+            color: #e2e8f0;
+            margin-bottom: 14px;
+        }
+
+        .footer-col.brand h3 {
+            font-size: 16px;
+            color: #81b3f7;
+            border-right: 3px solid #4a90e2;
+            padding-right: 10px;
+        }
+
+        .footer-col p {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+            .footer-col ul li a {
+                color: #94a3b8;
+                text-decoration: none;
+                font-size: 13px;
+            }
+
+                .footer-col ul li a:hover {
+                    color: #81b3f7;
+                }
+
+        .social-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+            .social-links a {
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                background: rgba(74,144,226,0.15);
+                border: 1px solid rgba(74,144,226,0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                color: #81b3f7;
+                font-size: 14px;
+            }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .contact-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: rgba(74,144,226,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .contact-item span {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+            .footer-bottom p {
+                color: #475569;
+                font-size: 12px;
+                margin: 0;
+            }
+
+        @@media(max-width:768px) {
+            nav ul {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .stats-row {
+                flex-direction: column;
+            }
+
+            .actions-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header">
+            <h1>منصة الكاراتيه الفلسطينية</h1>
+            <h2>اصنع تاريخك ...وكن بطلاً</h2>
+        </div>
+        <a href="/Home/Index">
+            <img src="/images/test.jpg" alt="لوغو"
+                 style="position:absolute;right:260px;height:55px;">
+        </a>
+        <ul>
+            <li><a href="/Home/Index">الرئيسية</a></li>
+            <li><a href="/Tour/Index">الاندية</a></li>
+            <li><a href="/Tournament/Index">البطولات</a></li>
+            <li><a href="/Account/Logout" class="login-btn">تسجيل خروج</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+        <button onclick="toggleLang()" id="langBtn"
+                style="position:absolute;left:20px;top:50%;transform:translateY(-50%);background:rgba(74,144,226,0.2);border:1px solid rgba(74,144,226,0.4);color:#81b3f7;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:bold;font-family:inherit;">
+            EN
+        </button>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="/Home/Index">الرئيسية</a>
+        <a href="/Tour/Index">الاندية</a>
+        <a href="/Tournament/Index">البطولات</a>
+        <a href="/Account/Logout">تسجيل خروج</a>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h2>📋 استحقاقات اللاعبين — @year</h2>
+            <p>اضغط على أي شهر لتبديل حالة الدفع</p>
+        </div>
+
+        @{
+            var mList = memberships?.ToList() ?? new List<KarateFinal.Models.PlayerMembership>();
+            int total = mList.Count;
+            int allPaid = mList.Count(m => m.PaidMonths.Split(',').Where(x => x != "").Count() == 12);
+            int notPaid = total - allPaid;
+            string[] monthNames = { "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر" };
+        }
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-n">@total</div>
+                <div class="stat-l">لاعب</div>
+            </div>
+            <div class="stat-card stat-paid">
+                <div class="stat-n">@allPaid</div>
+                <div class="stat-l">مدفوع كامل</div>
+            </div>
+            <div class="stat-card stat-unpaid">
+                <div class="stat-n">@notPaid</div>
+                <div class="stat-l">غير مكتمل</div>
+            </div>
+        </div>
+
+        <!-- شريط البحث وزر السنة الجديدة -->
+        <div class="actions-row">
+            <div class="search-wrap">
+                <input type="text" id="searchInput" placeholder="🔍 ابحث باسم اللاعب...">
+                <select id="statusFilter">
+                    <option value="">كل الحالات</option>
+                    <option value="allpaid">مدفوع كامل</option>
+                    <option value="partial">مدفوع جزئي</option>
+                    <option value="unpaid">غير مدفوع</option>
+                </select>
+            </div>
+            <button class="btn-new-year" onclick="startNewYear()">
+                🗓️ بدء سنة جديدة @(DateTime.Now.Year + 1)
+            </button>
+        </div>
+
+        @if (mList.Any())
+        {
+            <div class="players-grid" id="playersGrid">
+                @foreach (var m in mList)
+                {
+                    var paidList = m.PaidMonths.Split(',').Where(x => x != "").ToList();
+                    var paidCount = paidList.Count;
+                    var status = paidCount == 12 ? "allpaid" : paidCount == 0 ? "unpaid" : "partial";
+                    var statusLabel = paidCount == 12 ? "مدفوع كامل ✓" : paidCount == 0 ? "غير مدفوع" : $"مدفوع {paidCount}/12 شهر";
+                    var initials = m.Player?.Name?.Length > 1 ? m.Player.Name.Substring(0, 1) : "؟";
+                    <div class="player-card" data-status="@status" data-name="@m.Player?.Name">
+                        <div class="card-top">
+                            <div class="player-avatar">@initials</div>
+                            <div>
+                                <div class="player-name">@m.Player?.Name</div>
+                                <span class="belt-badge">◾ @m.Player?.Belt</span>
+                            </div>
+                        </div>
+                        <div class="fee-row">
+                            <span class="fee-label">اشتراك الشهر</span>
+                            <span class="fee-val">@m.MonthlyFee ₪</span>
+                        </div>
+                        @if (m.OldDebt > 0)
+                        {
+                            <div class="fee-row fee-old">
+                                <span class="fee-label">استحقاق قديم</span>
+                                <span class="fee-val">@m.OldDebt ₪</span>
+                            </div>
+                        }
+                        <div class="months-section">
+                            <div class="months-title">الأشهر المدفوعة — انقر للتبديل</div>
+                            <div class="months-grid">
+                                @for (int i = 1; i <= 12; i++)
+                                {
+                                    var isPaid = paidList.Contains(i.ToString());
+                                    <button class="month-btn @(isPaid ? "paid" : "")"
+                                            onclick="toggleMonth(@m.Id, @i, this)"
+                                            title="@monthNames[i-1]">
+                                        @i
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <span class="paid-tag @status" id="tag-@m.Id">@statusLabel</span>
+                            <div style="display:flex;gap:6px;">
+                                @if (m.OldDebt > 0)
+                                {
+                                    <button class="btn-pay-old" onclick="openPayOldDebt(@m.Id, @m.OldDebt)">💰 دفع القديم</button>
+                                }
+                                <button class="btn-edit" onclick="openEdit(@m.Id, @m.MonthlyFee, @m.OldDebt)">✏️ تعديل</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-msg">لا يوجد لاعبون مسجّلون في النادي</div>
+        }
+
+        <a href="/Club/Dashboard" class="back-btn">🏠 العودة للوحة النادي</a>
+    </div>
+
+    <!-- Modal تعديل الرسوم -->
+    <div class="modal-bg" id="modalBg">
+        <div class="modal">
+            <h3>✏️ تعديل الرسوم</h3>
+            <input type="hidden" id="editMembershipId">
+            <label>اشتراك الشهر (₪)</label>
+            <input type="number" id="editMonthly" value="150">
+            <label>استحقاق قديم (₪)</label>
+            <input type="number" id="editOld" value="0">
+            <div class="modal-btns">
+                <button class="btn-save" onclick="saveFee()">حفظ</button>
+                <button class="btn-cancel" onclick="document.getElementById('modalBg').classList.remove('show')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal دفع القديم -->
+    <div class="modal-bg" id="payOldDebtModal">
+        <div class="modal">
+            <h3>💰 دفع الاستحقاق القديم</h3>
+            <input type="hidden" id="payMembershipId">
+            <label>المبلغ القديم المتبقي (₪)</label>
+            <input type="number" id="currentOldDebt" readonly style="background:#f5f5f5;color:#e74c3c;font-weight:bold;">
+            <label>المبلغ المدفوع الآن (₪)</label>
+            <input type="number" id="payAmount" placeholder="أدخل المبلغ" min="1">
+            <div style="color:#e74c3c;font-size:12px;display:none;" id="payError"></div>
+            <div class="modal-btns">
+                <button class="btn-save" onclick="submitPayOldDebt()">💰 دفع</button>
+                <button class="btn-cancel" onclick="document.getElementById('payOldDebtModal').classList.remove('show')">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col brand">
+                <h3>منصة الكاراتيه الفلسطينية</h3>
+                <p>بناء أبطال المستقبل وتطوير رياضة الكاراتيه في فلسطين من خلال التدريب والمنافسة.</p>
+                <div class="social-links"><a href="#">f</a><a href="#">in</a><a href="#">ig</a></div>
+            </div>
+            <div class="footer-col">
+                <h3>روابط سريعة</h3>
+                <ul>
+                    <li><a href="/Home/Index">← الرئيسية</a></li>
+                    <li><a href="/Club/Dashboard">← لوحة النادي</a></li>
+                    <li><a href="/Account/Logout">← تسجيل خروج</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>خدماتنا</h3>
+                <ul>
+                    <li><a href="/Club/AddPlayer">تسجيل اللاعبين</a></li>
+                    <li><a href="/Club/Best">أفضل اللاعبين</a></li>
+                    <li><a href="/Club/Participation">متابعة النتائج</a></li>
+                    <li><a href="/Club/Entitlements">الاستحقاقات</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>تواصل معنا</h3>
+                <div class="contact-item"><div class="contact-icon">📍</div><span>فلسطين، الضفة الغربية</span></div>
+                <div class="contact-item"><div class="contact-icon">📞</div><span style="direction:ltr;">+970 59X XXX XXXX</span></div>
+                <div class="contact-item"><div class="contact-icon">✉️</div><span>info@karate-ps.com</span></div>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة</p></div>
+    </footer>
+
+    <script>
+        document.getElementById('hamburger').addEventListener('click', function () {
+            this.classList.toggle('open');
+            document.getElementById('mobileMenu').classList.toggle('show');
+        });
+
+        function toggleMonth(membershipId, month, btn) {
+            fetch('/Club/ToggleMonth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ membershipId: membershipId, month: month })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    btn.classList.toggle('paid');
+                    updateTag(membershipId, data.paidMonths);
+                }
+            });
+        }
+
+        function updateTag(membershipId, paidMonths) {
+            const paid = paidMonths.split(',').filter(x => x !== '');
+            const count = paid.length;
+            const tag = document.getElementById('tag-' + membershipId);
+            if (!tag) return;
+            tag.className = 'paid-tag ';
+            if (count === 12) {
+                tag.className += 'allpaid';
+                tag.textContent = 'مدفوع كامل ✓';
+            } else if (count === 0) {
+                tag.className += 'unpaid';
+                tag.textContent = 'غير مدفوع';
+            } else {
+                tag.className += 'partial';
+                tag.textContent = `مدفوع ${count}/12 شهر`;
+            }
+        }
+
+        function openEdit(membershipId, monthly, old) {
+            document.getElementById('editMembershipId').value = membershipId;
+            document.getElementById('editMonthly').value = monthly;
+            document.getElementById('editOld').value = old;
+            document.getElementById('modalBg').classList.add('show');
+        }
+
+        function saveFee() {
+            const id = document.getElementById('editMembershipId').value;
+            const monthly = parseFloat(document.getElementById('editMonthly').value);
+            const old = parseFloat(document.getElementById('editOld').value);
+            fetch('/Club/UpdateFee', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ membershipId: parseInt(id), monthlyFee: monthly, oldDebt: old })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    document.getElementById('modalBg').classList.remove('show');
+                    location.reload();
+                }
+            });
+        }
+
+        document.getElementById('modalBg').addEventListener('click', function (e) {
+            if (e.target === this) this.classList.remove('show');
+        });
+
+        document.getElementById('searchInput').addEventListener('input', filterCards);
+        document.getElementById('statusFilter').addEventListener('change', filterCards);
+
+        function filterCards() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const s = document.getElementById('statusFilter').value;
+            document.querySelectorAll('.player-card').forEach(card => {
+                const name = card.dataset.name?.toLowerCase() || '';
+                const status = card.dataset.status || '';
+                const show = (!q || name.includes(q)) && (!s || status === s);
+                card.style.display = show ? '' : 'none';
+            });
+        }
+
+        function startNewYear() {
+            if (!confirm('هل أنت متأكد من بدء سنة جديدة؟\nسيتم إعادة ضبط الأشهر مع الاحتفاظ بالاستحقاقات القديمة')) return;
+            fetch('/Club/NewYear', { method: 'POST' })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('✅ تم بدء السنة الجديدة بنجاح!');
+                        window.location.href = '/Club/Entitlements?year=' + (new Date().getFullYear() + 1);
+                    }
+                });
+        }
+        function openPayOldDebt(membershipId, oldDebt) {
+            document.getElementById('payMembershipId').value = membershipId;
+            document.getElementById('currentOldDebt').value = oldDebt;
+            document.getElementById('payAmount').value = '';
+            document.getElementById('payError').style.display = 'none';
+            document.getElementById('payOldDebtModal').classList.add('show');
+        }
+
+        function submitPayOldDebt() {
+            const id = parseInt(document.getElementById('payMembershipId').value);
+            const amount = parseFloat(document.getElementById('payAmount').value);
+            const errorEl = document.getElementById('payError');
+
+            if (!amount || amount <= 0) {
+                errorEl.textContent = 'يرجى إدخال مبلغ صحيح';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            fetch('/Club/PayOldDebt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ membershipId: id, amount: amount })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    document.getElementById('payOldDebtModal').classList.remove('show');
+                    location.reload();
+                } else {
+                    errorEl.textContent = data.message;
+                    errorEl.style.display = 'block';
+                }
+            });
+        }
+
+        document.getElementById('payOldDebtModal').addEventListener('click', function (e) {
+            if (e.target === this) this.classList.remove('show');
+        });
+        const translations = {
+            ar: {
+                nav_home: "الرئيسية", nav_clubs: "الاندية", nav_tournaments: "البطولات", nav_logout: "تسجيل خروج",
+                title: "منصة الكاراتيه الفلسطينية", slogan: "اصنع تاريخك ...وكن بطلاً",
+                page_title: "📋 استحقاقات اللاعبين", back_btn: "🏠 العودة للوحة النادي",
+                search_placeholder: "🔍 ابحث باسم اللاعب...", new_year_btn: "🗓️ بدء سنة جديدة",
+                stat_player: "لاعب", stat_paid: "مدفوع كامل", stat_unpaid: "غير مكتمل",
+                footer_title: "منصة الكاراتيه الفلسطينية",
+                copyright: "© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة"
+            },
+            en: {
+                nav_home: "Home", nav_clubs: "Clubs", nav_tournaments: "Tournaments", nav_logout: "Logout",
+                title: "Palestinian Karate Platform", slogan: "Make your history... Be a champion",
+                page_title: "📋 Player Entitlements", back_btn: "🏠 Back to Dashboard",
+                search_placeholder: "🔍 Search by player name...", new_year_btn: "🗓️ Start New Year",
+                stat_player: "Players", stat_paid: "Fully Paid", stat_unpaid: "Incomplete",
+                footer_title: "Palestinian Karate Platform",
+                copyright: "© 2025 Palestinian Karate Platform — All Rights Reserved"
+            }
+        };
+
+        let currentLang = localStorage.getItem("lang") || "ar";
+
+        function applyLang(lang) {
+            const t = translations[lang];
+            const isAr = lang === "ar";
+            document.documentElement.lang = lang;
+            document.documentElement.dir = isAr ? "rtl" : "ltr";
+            document.getElementById("langBtn").textContent = isAr ? "EN" : "عر";
+            document.querySelector(".nav-header h1").textContent = t.title;
+            document.querySelector(".nav-header h2").textContent = t.slogan;
+            document.querySelectorAll("nav ul li a")[0].textContent = t.nav_home;
+            document.querySelectorAll("nav ul li a")[1].textContent = t.nav_clubs;
+            document.querySelectorAll("nav ul li a")[2].textContent = t.nav_tournaments;
+            document.querySelectorAll("nav ul li a")[3].textContent = t.nav_logout;
+            document.querySelector(".header h2").textContent = t.page_title;
+            document.querySelector(".back-btn").textContent = t.back_btn;
+            document.querySelector("#searchInput").placeholder = t.search_placeholder;
+            document.querySelector(".btn-new-year").textContent = t.new_year_btn;
+            const statLabels = document.querySelectorAll(".stat-l");
+            if (statLabels[0]) statLabels[0].textContent = t.stat_player;
+            if (statLabels[1]) statLabels[1].textContent = t.stat_paid;
+            if (statLabels[2]) statLabels[2].textContent = t.stat_unpaid;
+            document.querySelector(".footer-col.brand h3").textContent = t.footer_title;
+            document.querySelector(".footer-bottom p").textContent = t.copyright;
+            localStorage.setItem("lang", lang);
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === "ar" ? "en" : "ar";
+            applyLang(currentLang);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
+    </script>
+</body>
+</html>

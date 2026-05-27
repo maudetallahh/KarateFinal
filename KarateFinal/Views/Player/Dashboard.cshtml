@@ -1,0 +1,676 @@
+﻿@{
+    Layout = null;
+    var player = ViewBag.Player as KarateFinal.Models.Player;
+    var participations = ViewBag.Participations as IEnumerable<KarateFinal.Models.Participation>;
+    var pendingRequests = ViewBag.PendingRequests as IEnumerable<KarateFinal.Models.TournamentPlayerRequest>;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/image/www.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بطاقة اللاعب</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI",Tahoma,sans-serif;
+        }
+
+        body {
+            background: #eef3f8;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        nav {
+            background-color: #1e2a38;
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 4px solid #4a90e2;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-header {
+            text-align: center;
+        }
+
+            .nav-header h1 {
+                font-size: 26px;
+                color: #ffffff;
+                letter-spacing: 1px;
+            }
+
+            .nav-header h2 {
+                font-size: 14px;
+                color: #d1d5db;
+                font-weight: normal;
+                margin-top: 5px;
+            }
+
+        nav ul {
+            position: absolute;
+            left: 50px;
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+            nav ul li {
+                margin-left: 25px;
+            }
+
+                nav ul li a {
+                    text-decoration: none;
+                    color: white;
+                    font-weight: bold;
+                    transition: 0.3s;
+                    font-size: 15px;
+                }
+
+                    nav ul li a:hover {
+                        color: #81b3f7;
+                    }
+
+        .logout-btn {
+            background-color: #c0392b;
+            padding: 8px 25px;
+            border-radius: 5px;
+            border: 2px solid transparent;
+        }
+
+        .card-wrapper {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .player-card {
+            width: 100%;
+            max-width: 300px;
+            background: #0d1117;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .flag-bg {
+            width: 100%;
+            height: 160px;
+            position: relative;
+        }
+
+        .player-photo-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#1e2a38,#4a90e2);
+            position: absolute;
+            bottom: -36px;
+            left: 20px;
+            border: 4px solid #0d1117;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+        }
+
+        .player-info {
+            padding: 50px 20px 20px;
+            color: white;
+        }
+
+        .player-name {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 10px;
+        }
+
+        .player-meta {
+            font-size: 12px;
+            color: #bbb;
+            line-height: 1.8;
+        }
+
+        .category-label {
+            width: 100%;
+            max-width: 600px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 6px;
+        }
+
+        .stats-grid {
+            width: 100%;
+            max-width: 600px;
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 14px;
+        }
+
+        .stats-row2 {
+            width: 100%;
+            max-width: 600px;
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 14px;
+        }
+
+        .stats-row3 {
+            width: 100%;
+            max-width: 600px;
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 14px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e0e6ed;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+            .stat-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #777;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        .highlight {
+            border-color: #3b82f6;
+        }
+
+            .highlight .stat-value {
+                color: #3b82f6;
+            }
+
+        .gold {
+            border-color: #FFD700;
+        }
+
+            .gold .stat-value {
+                color: #b8860b;
+            }
+
+        .silver {
+            border-color: #C0C0C0;
+        }
+
+            .silver .stat-value {
+                color: #666;
+            }
+
+        .bronze {
+            border-color: #CD7F32;
+        }
+
+            .bronze .stat-value {
+                color: #8b4513;
+            }
+
+        .footer-tag {
+            font-size: 13px;
+            color: #888;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 6px 16px;
+            background: white;
+        }
+
+        .creds-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .creds-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .cred-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .cred-label {
+            color: #888;
+        }
+
+        .cred-value {
+            font-weight: 700;
+            color: #2c3e50;
+            font-family: monospace;
+        }
+
+        .requests-box {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #f39c12;
+        }
+
+        .requests-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 14px;
+        }
+
+        .request-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+            .request-row:last-child {
+                border-bottom: none;
+            }
+
+        .request-info .t-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .request-info .t-meta {
+            font-size: 11px;
+            color: #888;
+            margin-top: 3px;
+        }
+
+        .btn-approve {
+            padding: 6px 14px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-reject {
+            padding: 6px 14px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        footer {
+            background: #1e2a38;
+            color: white;
+            padding: 50px 40px 0;
+            direction: rtl;
+            margin-top: 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+            gap: 32px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-col h3 {
+            font-size: 15px;
+            font-weight: 500;
+            color: #e2e8f0;
+            margin-bottom: 14px;
+        }
+
+        .footer-col.brand h3 {
+            font-size: 16px;
+            color: #81b3f7;
+            border-right: 3px solid #4a90e2;
+            padding-right: 10px;
+        }
+
+        .footer-col p {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+            .footer-col ul li a {
+                color: #94a3b8;
+                text-decoration: none;
+                font-size: 13px;
+            }
+
+                .footer-col ul li a:hover {
+                    color: #81b3f7;
+                }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+            .footer-bottom p {
+                color: #475569;
+                font-size: 12px;
+                margin: 0;
+            }
+
+        @@media(max-width:768px) {
+            nav ul {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header">
+            <h1>منصة الكاراتيه الفلسطينية</h1>
+            <h2>اصنع تاريخك ...وكن بطلاً</h2>
+        </div>
+        <a href="/Home/Index">
+            <img src="/images/test.jpg" alt="لوغو"
+                 style="position:absolute;right:260px;height:55px;">
+        </a>
+        <ul>
+            <li><a href="/Home/Index">الرئيسية</a></li>
+            <li><a href="/Tournament/Index">البطولات</a></li>
+            <li><a href="/Account/Logout" class="logout-btn">تسجيل خروج</a></li>
+            <li><a href="/Player/Profile">⚙️ معلوماتي</a></li>
+        </ul>
+        <button onclick="toggleLang()" id="langBtn"
+                style="position:absolute;left:20px;top:50%;transform:translateY(-50%);background:rgba(74,144,226,0.2);border:1px solid rgba(74,144,226,0.4);color:#81b3f7;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:bold;font-family:inherit;">
+            EN
+        </button>
+    </nav>
+
+    <div class="card-wrapper">
+
+        @if (pendingRequests != null && pendingRequests.Any())
+        {
+            <div class="requests-box">
+                <div class="requests-title">🏆 طلبات تسجيل في البطولات (@pendingRequests.Count())</div>
+                @foreach (var req in pendingRequests)
+                {
+                    <div class="request-row">
+                        <div class="request-info">
+                            <div class="t-name">@req.Tournament?.Title</div>
+                            <div class="t-meta">📅 @req.Tournament?.Date.ToString("yyyy/MM/dd") — 📍 @req.Tournament?.City</div>
+                        </div>
+                        <div style="display:flex;gap:8px;">
+                            <button class="btn-approve" onclick="respondRequest(@req.Id, this)">✅ موافقة</button>
+                            <button class="btn-reject" onclick="respondRequest(@req.Id, this, true)">❌ رفض</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <!-- بطاقة اللاعب -->
+        <div class="player-card">
+            <div class="flag-bg">
+                <svg width="100%" height="160" viewBox="0 0 260 160">
+                    <rect width="260" height="53" fill="#000" />
+                    <rect y="53" width="260" height="54" fill="#fff" />
+                    <rect y="107" width="260" height="53" fill="#007a3d" />
+                    <polygon points="0,0 100,80 0,160" fill="#ce1126" />
+                </svg>
+                <div class="player-photo-circle">
+                    @(player?.Gender == "أنثى" ? "👩" : "👨")
+                </div>
+            </div>
+            <div class="player-info">
+                <div class="player-name">@player?.Name</div>
+                <div class="player-meta">
+                    الجنس: @player?.Gender<br>
+                    العمر: @player?.Age سنة<br>
+                    الحزام: @player?.Belt<br>
+                    🕐 آخر دخول: @ViewBag.LastLogin<br>
+                    @if (player?.Weight != null && player.Weight > 0)
+                    {
+                        <text>الوزن: @player.Weight كغ</text>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- بيانات الدخول -->
+        <div class="creds-box">
+            <div class="creds-title">🔐 بيانات الدخول الخاصة بك</div>
+            <div class="cred-row">
+                <span class="cred-label">اسم المستخدم</span>
+                <span class="cred-value">@player?.Username</span>
+            </div>
+            <div class="cred-row">
+                <span class="cred-label">كلمة المرور</span>
+                <span class="cred-value">@player?.Password</span>
+            </div>
+        </div>
+
+        <!-- الإحصائيات -->
+        <div class="category-label">الإحصائيات الرئيسية</div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">@(participations?.Count() ?? 0)</div>
+                <div class="stat-label">البطولات</div>
+            </div>
+            <div class="stat-card gold">
+                <div class="stat-value">🥇 @ViewBag.Gold</div>
+                <div class="stat-label">ذهب</div>
+            </div>
+            <div class="stat-card silver">
+                <div class="stat-value">🥈 @ViewBag.Silver</div>
+                <div class="stat-label">فضة</div>
+            </div>
+            <div class="stat-card bronze">
+                <div class="stat-value">🥉 @ViewBag.Bronze</div>
+                <div class="stat-label">برونز</div>
+            </div>
+        </div>
+
+        <div class="category-label">النقاط</div>
+        <div class="stats-row2">
+            <div class="stat-card highlight">
+                <div class="stat-value">@ViewBag.TotalPoints ⭐</div>
+                <div class="stat-label">مجموع النقاط</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">@player?.Belt</div>
+                <div class="stat-label">درجة الحزام</div>
+            </div>
+        </div>
+
+        @if (participations != null && participations.Any())
+        {
+            <div class="category-label">آخر المشاركات</div>
+            <div class="stats-row3">
+                @foreach (var p in participations.Take(3))
+                {
+                    var medal = p.Rank == 1 ? "🥇" : p.Rank == 2 ? "🥈" : p.Rank == 3 ? "🥉" : "🏅";
+                    <div class="stat-card">
+                        <div class="stat-value">@medal</div>
+                        <div class="stat-label">@(p.Tournament?.Title ?? "—")</div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="footer-tag">
+            @(player?.Gender == "أنثى" ? "Female" : "Male") Karate — @player?.Belt Belt
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col brand">
+                <h3>منصة الكاراتيه الفلسطينية</h3>
+                <p>بناء أبطال المستقبل وتطوير رياضة الكاراتيه في فلسطين من خلال التدريب والمنافسة.</p>
+            </div>
+            <div class="footer-col">
+                <h3>روابط سريعة</h3>
+                <ul>
+                    <li><a href="/Home/Index">← الرئيسية</a></li>
+                    <li><a href="/Tournament/Index">← البطولات</a></li>
+                    <li><a href="/Account/Logout">← تسجيل خروج</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>تواصل معنا</h3>
+                <div class="contact-item"><div class="contact-icon">📍</div><span>فلسطين، الضفة الغربية</span></div>
+                <div class="contact-item"><div class="contact-icon">📞</div><span style="direction:ltr;">+970 59X XXX XXXX</span></div>
+                <div class="contact-item"><div class="contact-icon">✉️</div><span>info@karate-ps.com</span></div>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة</p></div>
+    </footer>
+
+    <script>
+        function respondRequest(requestId, btn, isReject) {
+            const status = isReject ? "مرفوض" : "موافق";
+            fetch("/Player/RespondRequest", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ requestId: requestId, status: status })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    const row = btn.closest(".request-row");
+                    if (isReject) {
+                        row.innerHTML = "<span style=\"color:#e74c3c;font-size:12px;\">❌ تم الرفض</span>";
+                    } else {
+                        row.innerHTML = "<span style=\"color:#27ae60;font-size:12px;\">✅ تم القبول — سيتم تسجيل ناديك في البطولة</span>";
+                    }
+                    setTimeout(() => location.reload(), 1500);
+                }
+            });
+        }
+
+        const translations = {
+            ar: {
+                nav_home: "الرئيسية", nav_tournaments: "البطولات", nav_logout: "تسجيل خروج", nav_profile: "⚙️ معلوماتي",
+                title: "منصة الكاراتيه الفلسطينية", slogan: "اصنع تاريخك ...وكن بطلاً",
+                stat_tournaments: "البطولات", stat_gold: "ذهب", stat_silver: "فضة", stat_bronze: "برونز",
+                stat_points: "مجموع النقاط", stat_belt: "درجة الحزام",
+                label_main: "الإحصائيات الرئيسية", label_points: "النقاط", label_recent: "آخر المشاركات",
+                creds_title: "🔐 بيانات الدخول الخاصة بك", cred_username: "اسم المستخدم", cred_password: "كلمة المرور",
+                footer_title: "منصة الكاراتيه الفلسطينية",
+                copyright: "© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة"
+            },
+            en: {
+                nav_home: "Home", nav_tournaments: "Tournaments", nav_logout: "Logout", nav_profile: "⚙️ My Profile",
+                title: "Palestinian Karate Platform", slogan: "Make your history... Be a champion",
+                stat_tournaments: "Tournaments", stat_gold: "Gold", stat_silver: "Silver", stat_bronze: "Bronze",
+                stat_points: "Total Points", stat_belt: "Belt Level",
+                label_main: "Main Statistics", label_points: "Points", label_recent: "Recent Participations",
+                creds_title: "🔐 Your Login Credentials", cred_username: "Username", cred_password: "Password",
+                footer_title: "Palestinian Karate Platform",
+                copyright: "© 2025 Palestinian Karate Platform — All Rights Reserved"
+            }
+        };
+
+        let currentLang = localStorage.getItem("lang") || "ar";
+
+        function applyLang(lang) {
+            const t = translations[lang];
+            const isAr = lang === "ar";
+            document.documentElement.lang = lang;
+            document.documentElement.dir = isAr ? "rtl" : "ltr";
+            document.getElementById("langBtn").textContent = isAr ? "EN" : "عر";
+            document.querySelector(".nav-header h1").textContent = t.title;
+            document.querySelector(".nav-header h2").textContent = t.slogan;
+            const navLinks = document.querySelectorAll("nav ul li a");
+            if (navLinks[0]) navLinks[0].textContent = t.nav_home;
+            if (navLinks[1]) navLinks[1].textContent = t.nav_tournaments;
+            if (navLinks[2]) navLinks[2].textContent = t.nav_logout;
+            if (navLinks[3]) navLinks[3].textContent = t.nav_profile;
+            const statLabels = document.querySelectorAll(".stat-label");
+            if (statLabels[0]) statLabels[0].textContent = t.stat_tournaments;
+            if (statLabels[1]) statLabels[1].textContent = t.stat_gold;
+            if (statLabels[2]) statLabels[2].textContent = t.stat_silver;
+            if (statLabels[3]) statLabels[3].textContent = t.stat_bronze;
+            if (statLabels[4]) statLabels[4].textContent = t.stat_points;
+            if (statLabels[5]) statLabels[5].textContent = t.stat_belt;
+            const catLabels = document.querySelectorAll(".category-label");
+            if (catLabels[0]) catLabels[0].textContent = t.label_main;
+            if (catLabels[1]) catLabels[1].textContent = t.label_points;
+            if (catLabels[2]) catLabels[2].textContent = t.label_recent;
+            document.querySelector(".creds-title").textContent = t.creds_title;
+            const credLabels = document.querySelectorAll(".cred-label");
+            if (credLabels[0]) credLabels[0].textContent = t.cred_username;
+            if (credLabels[1]) credLabels[1].textContent = t.cred_password;
+            document.querySelector(".footer-col.brand h3").textContent = t.footer_title;
+            document.querySelector(".footer-bottom p").textContent = t.copyright;
+            localStorage.setItem("lang", lang);
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === "ar" ? "en" : "ar";
+            applyLang(currentLang);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
+    </script>
+</body>
+</html>

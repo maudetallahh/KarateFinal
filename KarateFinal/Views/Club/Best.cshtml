@@ -1,0 +1,643 @@
+﻿@{
+    Layout = null;
+    var players = ViewBag.Players as IEnumerable<KarateFinal.Models.Player>;
+    var males = players?.Where(p => p.Gender == "ذكر").ToList();
+    var females = players?.Where(p => p.Gender == "أنثى").ToList();
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/image/www.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أفضل اللاعبين</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI',Tahoma,sans-serif;
+        }
+
+        body {
+            background: #eef3f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            background-color: #1e2a38;
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 4px solid #4a90e2;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-header {
+            text-align: center;
+        }
+
+            .nav-header h1 {
+                font-size: 26px;
+                color: #ffffff;
+                letter-spacing: 1px;
+            }
+
+            .nav-header h2 {
+                font-size: 14px;
+                color: #d1d5db;
+                font-weight: normal;
+                margin-top: 5px;
+            }
+
+        nav ul {
+            position: absolute;
+            left: 50px;
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+            nav ul li {
+                margin-left: 25px;
+            }
+
+                nav ul li a {
+                    text-decoration: none;
+                    color: white;
+                    font-weight: bold;
+                    transition: 0.3s;
+                    font-size: 15px;
+                }
+
+                    nav ul li a:hover {
+                        color: #81b3f7;
+                    }
+
+        .login-btn {
+            background-color: #2c3e50;
+            padding: 8px 25px;
+            border-radius: 5px;
+            border: 2px solid transparent;
+            transition: 0.3s ease;
+        }
+
+            .login-btn:hover {
+                background-color: transparent;
+                color: #ffffff;
+                border: 2px solid #4a90e2;
+            }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+        }
+
+            .hamburger span {
+                width: 25px;
+                height: 2px;
+                background: white;
+                border-radius: 2px;
+                transition: 0.3s;
+            }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            background: #1e2a38;
+            padding: 10px 20px;
+            gap: 10px;
+        }
+
+            .mobile-menu a {
+                color: white;
+                text-decoration: none;
+                font-size: 15px;
+                padding: 8px 0;
+                border-bottom: 1px solid #2c3e50;
+            }
+
+            .mobile-menu.show {
+                display: flex;
+            }
+
+        .content-wrapper {
+            padding: 40px 20px;
+            flex-grow: 1;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .search-bar {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+            .search-bar input {
+                padding: 8px 18px;
+                border-radius: 20px;
+                border: 1px solid #ccc;
+                font-size: 14px;
+                width: 260px;
+                outline: none;
+            }
+
+                .search-bar input:focus {
+                    border-color: #4a90e2;
+                }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(5,1fr);
+            gap: 25px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .player-card {
+            background: white;
+            padding: 20px 15px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .player-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            }
+
+        .player-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#1e2a38,#4a90e2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+
+        .player-name {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 15px;
+        }
+
+        .player-points {
+            color: #777;
+            font-size: 13px;
+        }
+
+        .rank-badge {
+            font-size: 22px;
+        }
+
+        .belt-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: #e1f5ee;
+            color: #0f6e56;
+        }
+
+        .card-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .view-btn {
+            display: block;
+            padding: 7px 12px;
+            background: #34495e;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 12px;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+            .view-btn:hover {
+                background: #4a90e2;
+            }
+
+        .del-btn {
+            display: block;
+            padding: 6px 12px;
+            background: #e74c3c;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 12px;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+            .del-btn:hover {
+                background: #c0392b;
+            }
+
+        .empty-msg {
+            text-align: center;
+            color: #888;
+            padding: 2rem;
+            font-size: 16px;
+        }
+
+        .back-btn {
+            display: block;
+            width: 160px;
+            margin: 50px auto 0;
+            text-align: center;
+            padding: 12px;
+            background: #2c3e50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+            .back-btn:hover {
+                background: #1b2a38;
+            }
+
+        footer {
+            background: #1e2a38;
+            color: white;
+            padding: 50px 40px 0;
+            direction: rtl;
+            margin-top: 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+            gap: 32px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-col h3 {
+            font-size: 15px;
+            font-weight: 500;
+            color: #e2e8f0;
+            margin-bottom: 14px;
+        }
+
+        .footer-col.brand h3 {
+            font-size: 16px;
+            color: #81b3f7;
+            border-right: 3px solid #4a90e2;
+            padding-right: 10px;
+        }
+
+        .footer-col p {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+            .footer-col ul li a {
+                color: #94a3b8;
+                text-decoration: none;
+                font-size: 13px;
+            }
+
+                .footer-col ul li a:hover {
+                    color: #81b3f7;
+                }
+
+        .social-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+            .social-links a {
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                background: rgba(74,144,226,0.15);
+                border: 1px solid rgba(74,144,226,0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                color: #81b3f7;
+                font-size: 14px;
+            }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .contact-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: rgba(74,144,226,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .contact-item span {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+            .footer-bottom p {
+                color: #475569;
+                font-size: 12px;
+                margin: 0;
+            }
+
+        @@media(max-width:1200px) {
+            .cards {
+                grid-template-columns: repeat(4,1fr);
+            }
+        }
+
+        @@media(max-width:992px) {
+            .cards {
+                grid-template-columns: repeat(3,1fr);
+            }
+        }
+
+        @@media(max-width:768px) {
+            nav ul {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .cards {
+                grid-template-columns: repeat(2,1fr);
+            }
+        }
+
+        @@media(max-width:500px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header">
+            <h1>منصة الكاراتيه الفلسطينية</h1>
+            <h2>اصنع تاريخك ...وكن بطلاً</h2>
+        </div>
+        <img src="/images/test.jpg" alt="لوغو"
+             style="position:absolute;right:260px;height:55px;">
+        <ul>
+            <li><a href="/Home/Index">الرئيسية</a></li>
+            <li><a href="/Tour/Index">الاندية</a></li>
+            <li><a href="/Tournament/Index">البطولات</a></li>
+            <li><a href="/Account/Logout" class="login-btn">تسجيل خروج</a></li>
+        </ul>
+        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+
+        <button onclick="toggleLang()" id="langBtn"
+                style="position:absolute;left:20px;top:50%;transform:translateY(-50%);background:rgba(74,144,226,0.2);border:1px solid rgba(74,144,226,0.4);color:#81b3f7;padding:6px 16px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:bold;font-family:inherit;">
+            EN
+        </button>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="/Home/Index">الرئيسية</a>
+        <a href="/Tour/Index">الاندية</a>
+        <a href="/Tournament/Index">البطولات</a>
+        <a href="/Account/Logout">تسجيل خروج</a>
+    </div>
+
+    <div class="content-wrapper">
+        <h1 class="page-title">⭐  اللاعبين واللاعبات</h1>
+
+        <div class="search-bar">
+            <input type="text" id="searchPlayer" placeholder="🔍 ابحث عن لاعب..." oninput="filterPlayers(this.value)">
+        </div>
+
+        @{
+            string[] medals = { "🥇", "🥈", "🥉" };
+        }
+
+        @if (males != null && males.Any())
+        {
+            <h2 class="section-title"> اللاعبين 👨</h2>
+            <div class="cards" id="malesGrid">
+                @for (int i = 0; i < males.Count; i++)
+                {
+                    var p = males[i];
+                    var medal = i < 3 ? medals[i] : "";
+                    <div class="player-card" data-name="@p.Name.ToLower()">
+                        @if (!string.IsNullOrEmpty(medal))
+                        {
+                            <span class="rank-badge">@medal</span>
+                        }
+                        <div class="player-avatar">👨</div>
+                        <div class="player-name">@p.Name</div>
+                        <div class="player-points">العمر: @p.Age</div>
+                        <span class="belt-badge">@p.Belt</span>
+                        <div class="card-btns">
+                            <a href="/Club/PlayerCard?id=@p.Id" class="view-btn">🪪 تفاصيل اللاعب</a>
+                            <a href="/Club/DeletePlayer/@p.Id" class="del-btn" onclick="return confirm('هل أنت متأكد من الحذف؟')">🗑️ حذف</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (females != null && females.Any())
+        {
+            <h2 class="section-title"> اللاعبات 👩</h2>
+            <div class="cards" id="femalesGrid">
+                @for (int i = 0; i < females.Count; i++)
+                {
+                    var p = females[i];
+                    var medal = i < 3 ? medals[i] : "";
+                    <div class="player-card" data-name="@p.Name.ToLower()">
+                        @if (!string.IsNullOrEmpty(medal))
+                        {
+                            <span class="rank-badge">@medal</span>
+                        }
+                        <div class="player-avatar">👩</div>
+                        <div class="player-name">@p.Name</div>
+                        <div class="player-points">العمر: @p.Age</div>
+                        <span class="belt-badge">@p.Belt</span>
+                        <div class="card-btns">
+                            <a href="/Club/PlayerCard?id=@p.Id" class="view-btn">🪪 تفاصيل اللاعبة</a>
+                            <a href="/Club/DeletePlayer/@p.Id" class="del-btn" onclick="return confirm('هل أنت متأكد من الحذف؟')">🗑️ حذف</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if ((males == null || !males.Any()) && (females == null || !females.Any()))
+        {
+            <div class="empty-msg">لا يوجد لاعبون مسجّلون في هذا النادي</div>
+        }
+
+        <a href="/Club/Dashboard" class="back-btn">← العودة</a>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col brand">
+                <h3>منصة الكاراتيه الفلسطينية</h3>
+                <p>بناء أبطال المستقبل وتطوير رياضة الكاراتيه في فلسطين من خلال التدريب والمنافسة.</p>
+                <div class="social-links"><a href="#">f</a><a href="#">in</a><a href="#">ig</a></div>
+            </div>
+            <div class="footer-col">
+                <h3>روابط سريعة</h3>
+                <ul>
+                    <li><a href="/Home/Index">← الرئيسية</a></li>
+                    <li><a href="/Tour/Index">← الأندية</a></li>
+                    <li><a href="/Tournament/Index">← البطولات</a></li>
+                    <li><a href="/Account/Login">← تسجيل دخول</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>خدماتنا</h3>
+                <ul>
+                    <li><a href="/Club/AddPlayer">تسجيل اللاعبين</a></li>
+                    <li><a href="/Tournament/Index">إدارة البطولات</a></li>
+                    <li><a href="/Club/Participation">متابعة النتائج</a></li>
+                    <li><a href="/Club/Entitlements">الاستحقاقات</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>تواصل معنا</h3>
+                <div class="contact-item"><div class="contact-icon">📍</div><span>فلسطين، الضفة الغربية</span></div>
+                <div class="contact-item"><div class="contact-icon">📞</div><span style="direction:ltr;">+970 59X XXX XXXX</span></div>
+                <div class="contact-item"><div class="contact-icon">✉️</div><span>info@karate-ps.com</span></div>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة</p></div>
+    </footer>
+
+    <script>
+        document.getElementById('hamburger').addEventListener('click', function () {
+            this.classList.toggle('open');
+            document.getElementById('mobileMenu').classList.toggle('show');
+        });
+
+        function filterPlayers(q) {
+            document.querySelectorAll('.player-card').forEach(card => {
+                const name = card.dataset.name || '';
+                card.style.display = name.includes(q.toLowerCase()) ? '' : 'none';
+            });
+        }
+        const translations = {
+            ar: {
+                nav_home: "الرئيسية", nav_clubs: "الاندية", nav_tournaments: "البطولات", nav_logout: "تسجيل خروج",
+                title: "منصة الكاراتيه الفلسطينية", slogan: "اصنع تاريخك ...وكن بطلاً",
+                page_title: "⭐ اللاعبين واللاعبات",
+                males_title: "اللاعبين 👨", females_title: "اللاعبات 👩",
+                search_placeholder: "🔍 ابحث عن لاعب...",
+                back_btn: "← العودة",
+                footer_title: "منصة الكاراتيه الفلسطينية",
+                copyright: "© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة"
+            },
+            en: {
+                nav_home: "Home", nav_clubs: "Clubs", nav_tournaments: "Tournaments", nav_logout: "Logout",
+                title: "Palestinian Karate Platform", slogan: "Make your history... Be a champion",
+                page_title: "⭐ Players",
+                males_title: "Male Players 👨", females_title: "Female Players 👩",
+                search_placeholder: "🔍 Search for a player...",
+                back_btn: "← Back",
+                footer_title: "Palestinian Karate Platform",
+                copyright: "© 2025 Palestinian Karate Platform — All Rights Reserved"
+            }
+        };
+
+        let currentLang = localStorage.getItem("lang") || "ar";
+
+        function applyLang(lang) {
+            const t = translations[lang];
+            const isAr = lang === "ar";
+            document.documentElement.lang = lang;
+            document.documentElement.dir = isAr ? "rtl" : "ltr";
+            document.getElementById("langBtn").textContent = isAr ? "EN" : "عر";
+            document.querySelector(".nav-header h1").textContent = t.title;
+            document.querySelector(".nav-header h2").textContent = t.slogan;
+            document.querySelectorAll("nav ul li a")[0].textContent = t.nav_home;
+            document.querySelectorAll("nav ul li a")[1].textContent = t.nav_clubs;
+            document.querySelectorAll("nav ul li a")[2].textContent = t.nav_tournaments;
+            document.querySelectorAll("nav ul li a")[3].textContent = t.nav_logout;
+            document.querySelector(".page-title").textContent = t.page_title;
+            document.querySelector("#searchPlayer").placeholder = t.search_placeholder;
+            document.querySelector(".back-btn").textContent = t.back_btn;
+            const sections = document.querySelectorAll(".section-title");
+            if (sections[0]) sections[0].textContent = t.males_title;
+            if (sections[1]) sections[1].textContent = t.females_title;
+            document.querySelector(".footer-col.brand h3").textContent = t.footer_title;
+            document.querySelector(".footer-bottom p").textContent = t.copyright;
+            localStorage.setItem("lang", lang);
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === "ar" ? "en" : "ar";
+            applyLang(currentLang);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
+    </script>
+</body>
+</html>

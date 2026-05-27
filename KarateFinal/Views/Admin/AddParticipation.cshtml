@@ -1,0 +1,123 @@
+﻿@{
+    Layout = null;
+    var selectedTournament = ViewBag.SelectedTournament;
+    var clubs = ViewBag.Clubs as IEnumerable<KarateFinal.Models.Club>;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/image/www.png">
+    <title>إضافة نتيجة مشاركة</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Segoe UI',sans-serif; background:#0d1117; display:flex; align-items:center; justify-content:center; min-height:100vh; }
+        .card { background:#161b22; border:1px solid #30363d; border-radius:16px; padding:36px 32px; width:100%; max-width:500px; }
+        h2 { color:white; margin-bottom:24px; font-size:1.4rem; }
+        .field { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+        label { color:#8b949e; font-size:13px; font-weight:600; }
+        input, select { padding:10px 14px; background:#0d1117; border:1.5px solid #30363d; border-radius:8px; color:white; font-size:14px; width:100%; }
+        input:focus, select:focus { outline:none; border-color:#4a90e2; }
+        .btn { width:100%; padding:12px; background:#4a90e2; color:white; border:none; border-radius:8px; font-size:15px; font-weight:700; cursor:pointer; margin-top:8px; }
+        .btn:hover { background:#1e6fc4; }
+        .back { display:block; text-align:center; margin-top:16px; color:#4a90e2; text-decoration:none; font-size:13px; }
+        .error-msg { background:rgba(218,54,51,0.15); color:#f85149; border:1px solid rgba(218,54,51,0.3); border-radius:8px; padding:10px 14px; margin-bottom:16px; font-size:13px; display:none; }
+        .field-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .medal-hint { font-size:11px; color:#8b949e; margin-top:4px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🏆 إضافة نتيجة مشاركة</h2>
+
+        <div class="error-msg" id="errorMsg"></div>
+
+        <form method="post" onsubmit="return validateForm()">
+            <div class="field">
+                <label>البطولة *</label>
+                <select name="TournamentId" id="tournamentId" onchange="loadClubs(this.value)">
+                    <option value="">-- اختر البطولة --</option>
+                    @if(ViewBag.Tournaments != null){
+                        foreach(var t in ViewBag.Tournaments){
+                            var sel = selectedTournament != null && (int)selectedTournament == t.Id ? "selected" : "";
+                            @if (sel == "selected")
+                            {
+                                <option value="@t.Id" selected>@t.Title</option>
+                            }
+                            else
+                            {
+                                <option value="@t.Id">@t.Title</option>
+                            }                        }
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label>النادي *</label>
+                <select name="ClubId" id="clubId">
+                    @if(clubs != null && clubs.Any()){
+                        <option value="">-- اختر النادي --</option>
+                        foreach(var c in clubs){
+                            <option value="@c.Id">@c.Name</option>
+                        }
+                    } else {
+                        <option value="">-- اختر البطولة أولاً --</option>
+                    }
+                </select>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>المركز *</label>
+                    <input type="number" name="Rank" id="rank" min="1" max="100" placeholder="1">
+                    <span class="medal-hint">🥇1 🥈2 🥉3</span>
+                </div>
+                <div class="field">
+                    <label>النقاط المحصّلة *</label>
+                    <input type="number" name="Points" id="points" min="0" placeholder="0">
+                </div>
+            </div>
+            <input type="hidden" name="Result" value="تم تسجيل النتيجة">
+            <button type="submit" class="btn">✅ حفظ النتيجة</button>
+        </form>
+        <a href="/Admin/Index" class="back">← العودة للوحة التحكم</a>
+    </div>
+
+    <script>
+        function validateForm() {
+            const errors = [];
+            if (!document.getElementById('tournamentId').value) errors.push('يرجى اختيار البطولة');
+            if (!document.getElementById('clubId').value) errors.push('يرجى اختيار النادي');
+            if (!document.getElementById('rank').value) errors.push('يرجى إدخال المركز');
+            if (!document.getElementById('points').value) errors.push('يرجى إدخال النقاط');
+
+            if (errors.length > 0) {
+                const msg = document.getElementById('errorMsg');
+                msg.style.display = 'block';
+                msg.innerHTML = '❌ ' + errors.join('<br>❌ ');
+                return false;
+            }
+            return true;
+        }
+
+        function loadClubs(tournamentId) {
+            if (!tournamentId) {
+                document.getElementById('clubId').innerHTML = '<option value="">-- اختر البطولة أولاً --</option>';
+                return;
+            }
+
+            fetch('/Admin/GetApprovedClubs?tournamentId=' + tournamentId)
+                .then(r => r.json())
+                .then(data => {
+                    const select = document.getElementById('clubId');
+                    if (data.length === 0) {
+                        select.innerHTML = '<option value="">لا يوجد أندية موافق عليها</option>';
+                    } else {
+                        select.innerHTML = '<option value="">-- اختر النادي --</option>';
+                        data.forEach(c => {
+                            select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                        });
+                    }
+                });
+        }
+    </script>
+</body>
+</html>

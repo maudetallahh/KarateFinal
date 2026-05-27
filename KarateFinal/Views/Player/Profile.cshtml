@@ -1,0 +1,132 @@
+﻿@{
+    Layout = null;
+
+    var player = ViewBag.Player as KarateFinal.Models.Player;
+
+    var user = ViewBag.User as KarateFinal.Models.User;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/image/www.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معلومات اللاعب</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+        body { background:#eef3f8; min-height:100vh; display:flex; flex-direction:column; }
+        nav { background:#1e2a38; color:white; padding:20px 50px; display:flex; justify-content:center; align-items:center; border-bottom:4px solid #4a90e2; position:sticky; top:0; z-index:1000; }
+        .nav-header { text-align:center; }
+        .nav-header h1 { font-size:26px; color:#fff; letter-spacing:1px; }
+        .nav-header h2 { font-size:14px; color:#d1d5db; font-weight:normal; margin-top:5px; }
+        nav ul { position:absolute; left:50px; display:flex; list-style:none; align-items:center; }
+        nav ul li { margin-left:25px; }
+        nav ul li a { text-decoration:none; color:white; font-weight:bold; font-size:15px; transition:0.3s; }
+        nav ul li a:hover { color:#81b3f7; }
+        .logout-btn { background:#2c3e50; padding:8px 25px; border-radius:5px; }
+        .container { max-width:600px; margin:40px auto; padding:20px; flex:1; }
+        .card { background:white; border-radius:16px; padding:32px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+        .card-title { font-size:22px; font-weight:700; color:#2c3e50; margin-bottom:24px; }
+        .section-title { font-size:13px; font-weight:700; color:#4a90e2; margin:20px 0 12px; border-bottom:2px solid #e8f0fe; padding-bottom:6px; text-transform:uppercase; }
+        .field { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+        label { font-size:13px; font-weight:600; color:#555; }
+        input { padding:10px 14px; border:1px solid #ddd; border-radius:8px; font-size:14px; font-family:inherit; transition:0.2s; }
+        input:focus { outline:none; border-color:#4a90e2; box-shadow:0 0 0 3px rgba(74,144,226,0.1); }
+        input[readonly] { background:#f5f5f5; cursor:default; color:#888; }
+        .btn-save { padding:12px 32px; background:#4a90e2; color:white; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; transition:0.3s; font-family:inherit; }
+        .btn-save:hover { background:#1e6fc4; }
+        .back-btn { display:inline-block; margin-top:0; padding:12px 20px; background:#eee; color:#555; text-decoration:none; border-radius:8px; font-size:14px; transition:0.3s; }
+        .back-btn:hover { background:#ddd; }
+        .success { background:#e8f5e9; color:#27ae60; border:1px solid #a5d6a7; border-radius:8px; padding:12px 16px; margin-bottom:20px; font-weight:600; }
+        .hint { font-size:11px; color:#999; margin-top:3px; }
+        .info-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px 16px; margin-bottom:16px; }
+        .info-row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f0f0f0; font-size:13px; }
+        .info-row:last-child { border-bottom:none; }
+        .info-label { color:#888; }
+        .info-val { font-weight:600; color:#2c3e50; }
+        footer { background:#1e2a38; color:white; padding:30px 40px; margin-top:40px; text-align:center; }
+        .footer-bottom p { color:#475569; font-size:12px; }
+        @@media(max-width:768px) { nav ul { display:none; } }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header">
+            <h1>منصة الكاراتيه الفلسطينية</h1>
+            <h2>اصنع تاريخك ...وكن بطلاً</h2>
+        </div>
+        <img src="/images/test.jpg" alt="لوغو"
+             style="position:absolute;right:260px;height:55px;">
+        <ul>
+            <li><a href="/Player/Dashboard">بطاقتي</a></li>
+            <li><a href="/Account/Logout" class="logout-btn">تسجيل خروج</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-title">⚙️ معلومات اللاعب</div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="success">@TempData["Success"]</div>
+            }
+
+            <!-- معلومات اللاعب الثابتة -->
+            <div class="section-title">بياناتي</div>
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="info-label">الاسم</span>
+                    <span class="info-val">@player?.Name</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">الجنس</span>
+                    <span class="info-val">@player?.Gender</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">العمر</span>
+                    <span class="info-val">@player?.Age سنة</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">الحزام</span>
+                    <span class="info-val">@player?.Belt</span>
+                </div>
+                @if (player?.Weight > 0)
+                {
+                    <div class="info-row">
+                        <span class="info-label">الوزن</span>
+                        <span class="info-val">@player?.Weight كغ</span>
+                    </div>
+                }
+            </div>
+
+            <!-- تعديل بيانات الدخول -->
+            <div class="section-title">بيانات الدخول</div>
+            <form method="post" action="/Player/UpdateProfile">
+                <div class="field">
+                    <label>اسم المستخدم الحالي</label>
+                    <input type="text" value="@user?.Username" readonly>
+                </div>
+                <div class="field">
+                    <label>اسم المستخدم الجديد</label>
+                    <input type="text" name="newUsername" placeholder="اتركه فارغاً إذا لا تريد التغيير">
+                </div>
+                <div class="field">
+                    <label>كلمة المرور الجديدة</label>
+                    <input type="password" name="newPassword" placeholder="اتركها فارغة إذا لا تريد التغيير">
+                    <span class="hint">يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير، رقم، ورمز خاص</span>
+                </div>
+
+                <div style="display:flex;gap:12px;margin-top:20px;">
+                    <button type="submit" class="btn-save">💾 حفظ التغييرات</button>
+                    <a href="/Player/Dashboard" class="back-btn">← العودة</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-bottom"><p>© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة</p></div>
+    </footer>
+</body>
+</html>

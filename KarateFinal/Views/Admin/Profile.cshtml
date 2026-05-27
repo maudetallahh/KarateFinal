@@ -1,0 +1,110 @@
+﻿@{
+    Layout = null;
+    var user = ViewBag.User as KarateFinal.Models.User;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/image/www.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معلومات الأدمن</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+        body { background:#0d1117; min-height:100vh; display:flex; flex-direction:column; color:#e6edf3; }
+        nav { background:#161b22; color:white; padding:20px 50px; display:flex; justify-content:center; align-items:center; border-bottom:4px solid #4a90e2; position:sticky; top:0; z-index:1000; }
+        .nav-header { text-align:center; }
+        .nav-header h1 { font-size:26px; color:#fff; letter-spacing:1px; }
+        .nav-header h2 { font-size:14px; color:#8b949e; font-weight:normal; margin-top:5px; }
+        nav ul { position:absolute; left:50px; display:flex; list-style:none; align-items:center; }
+        nav ul li { margin-left:25px; }
+        nav ul li a { text-decoration:none; color:white; font-weight:bold; font-size:15px; transition:0.3s; }
+        nav ul li a:hover { color:#81b3f7; }
+        .logout-btn { background:#2c3e50; padding:8px 25px; border-radius:5px; }
+        .container { max-width:600px; margin:40px auto; padding:20px; flex:1; }
+        .card { background:#161b22; border:1px solid #30363d; border-radius:16px; padding:32px; box-shadow:0 4px 20px rgba(0,0,0,0.3); }
+        .card-title { font-size:22px; font-weight:700; color:#e6edf3; margin-bottom:24px; }
+        .section-title { font-size:11px; font-weight:700; color:#4a90e2; margin:20px 0 12px; border-bottom:1px solid #30363d; padding-bottom:6px; text-transform:uppercase; letter-spacing:0.08em; }
+        .field { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+        label { font-size:12px; font-weight:700; color:#8b949e; }
+        input { padding:10px 14px; border:1px solid #30363d; border-radius:8px; font-size:14px; font-family:inherit; background:#0d1117; color:#e6edf3; transition:0.2s; }
+        input:focus { outline:none; border-color:#4a90e2; box-shadow:0 0 0 3px rgba(74,144,226,0.15); }
+        input[readonly] { background:#1c2333; cursor:default; color:#8b949e; }
+        .btn-save { padding:12px 32px; background:#4a90e2; color:white; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; transition:0.3s; font-family:inherit; }
+        .btn-save:hover { background:#1e6fc4; }
+        .back-btn { display:inline-block; padding:12px 20px; background:#1c2333; color:#8b949e; text-decoration:none; border-radius:8px; font-size:14px; transition:0.3s; border:1px solid #30363d; }
+        .back-btn:hover { background:#30363d; color:#e6edf3; }
+        .success { background:rgba(46,160,67,0.15); color:#3fb950; border:1px solid rgba(46,160,67,0.3); border-radius:8px; padding:12px 16px; margin-bottom:20px; font-weight:600; }
+        .hint { font-size:11px; color:#8b949e; margin-top:3px; }
+        footer { background:#161b22; color:white; padding:20px 40px; margin-top:40px; text-align:center; border-top:1px solid #30363d; }
+        footer p { color:#475569; font-size:12px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header">
+            <h1>منصة الكاراتيه الفلسطينية</h1>
+            <h2>لوحة الإدارة</h2>
+        </div>
+        <ul>
+            <li><a href="/Admin/Index">لوحة التحكم</a></li>
+            <li><a href="/Account/Logout" class="logout-btn">تسجيل خروج</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-title">⚙️ معلومات الأدمن</div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="success">@TempData["Success"]</div>
+            }
+
+            <form method="post" action="/Admin/UpdateProfile">
+                <div class="section-title">بيانات الدخول</div>
+                <div class="field">
+                    <label>اسم المستخدم الحالي</label>
+                    <input type="text" value="@user?.Username" readonly>
+                </div>
+                <div class="field">
+                    <label>اسم المستخدم الجديد</label>
+                    <input type="text" name="newUsername" placeholder="اتركه فارغاً إذا لا تريد التغيير">
+                </div>
+                <div class="field">
+                    <label>كلمة المرور الجديدة</label>
+                    <div style="position:relative;">
+                        <input type="password" name="newPassword" id="newPass"
+                               placeholder="اتركها فارغة إذا لا تريد التغيير"
+                               style="width:100%;padding-left:40px;">
+                        <span onclick="togglePass()"
+                              style="position:absolute;left:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px;">
+                            👁️
+                        </span>
+                    </div>
+                    <span class="hint">يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير، رقم، ورمز خاص</span>
+                </div>
+
+                <div class="section-title">معلومات إضافية</div>
+                <div class="field">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" name="email" value="@user?.Email" placeholder="admin@karate-ps.com">
+                </div>
+
+                <div style="display:flex;gap:12px;margin-top:24px;">
+                    <button type="submit" class="btn-save">💾 حفظ التغييرات</button>
+                    <a href="/Admin/Index" class="back-btn">← العودة</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer><p>© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة</p></footer>
+    <script>
+        function togglePass() {
+            const input = document.getElementById('newPass');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+    </script>
+</body>
+</html>

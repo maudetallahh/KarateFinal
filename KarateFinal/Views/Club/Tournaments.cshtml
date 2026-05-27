@@ -1,0 +1,528 @@
+﻿@{
+    Layout = null;
+    var tournaments = ViewBag.Tournaments as IEnumerable<KarateFinal.Models.Tournament>;
+    var myRegs = ViewBag.MyRegistrations as IEnumerable<KarateFinal.Models.TournamentRegistration>;
+    var clubPlayers = ViewBag.ClubPlayers as IEnumerable<KarateFinal.Models.Player>;
+    var myRequests = ViewBag.MyRequests as IEnumerable<KarateFinal.Models.TournamentPlayerRequest>;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/image/www.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البطولات</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI',Tahoma,sans-serif;
+        }
+
+        body {
+            background: #eef3f8;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            background: #1e2a38;
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 4px solid #4a90e2;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-header {
+            text-align: center;
+        }
+
+            .nav-header h1 {
+                font-size: 26px;
+                color: #fff;
+                letter-spacing: 1px;
+            }
+
+            .nav-header h2 {
+                font-size: 14px;
+                color: #d1d5db;
+                font-weight: normal;
+                margin-top: 5px;
+            }
+
+        nav ul {
+            position: absolute;
+            left: 50px;
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+            nav ul li {
+                margin-left: 25px;
+            }
+
+                nav ul li a {
+                    text-decoration: none;
+                    color: white;
+                    font-weight: bold;
+                    font-size: 15px;
+                    transition: 0.3s;
+                }
+
+                    nav ul li a:hover {
+                        color: #81b3f7;
+                    }
+
+        .logout-btn {
+            background: #2c3e50;
+            padding: 8px 25px;
+            border-radius: 5px;
+            border: 2px solid transparent;
+        }
+
+        .content {
+            padding: 40px 20px;
+            flex: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-title {
+            text-align: center;
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .tournaments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
+            gap: 20px;
+        }
+
+        .tournament-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #e1e8ed;
+            transition: 0.3s;
+        }
+
+            .tournament-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            }
+
+            .tournament-card.registered {
+                border-color: #27ae60;
+                background: #f0fff4;
+            }
+
+            .tournament-card.pending {
+                border-color: #f39c12;
+                background: #fffbf0;
+            }
+
+            .tournament-card.rejected {
+                border-color: #e74c3c;
+                background: #fff5f5;
+            }
+
+            .tournament-card.closed {
+                border-color: #aaa;
+                background: #f8f8f8;
+                opacity: 0.85;
+            }
+
+        .t-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .t-info {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .t-badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+
+            .t-badge.open {
+                background: #e8f5e9;
+                color: #27ae60;
+            }
+
+            .t-badge.closed-reg {
+                background: #f5f5f5;
+                color: #888;
+            }
+
+            .t-badge.registered {
+                background: #27ae60;
+                color: white;
+            }
+
+            .t-badge.pending {
+                background: #fff3cd;
+                color: #856404;
+            }
+
+            .t-badge.rejected {
+                background: #fee2e2;
+                color: #991b1b;
+            }
+
+        .reg-btn {
+            width: 100%;
+            padding: 10px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.3s;
+            margin-top: 8px;
+        }
+
+            .reg-btn:hover {
+                background: #1e6fc4;
+            }
+
+        .players-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 8px;
+            font-family: inherit;
+        }
+
+            .players-input:focus {
+                outline: none;
+                border-color: #4a90e2;
+            }
+
+        .file-input {
+            width: 100%;
+            padding: 6px;
+            border: 1px dashed #ddd;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 4px;
+            font-family: inherit;
+        }
+
+        .file-hint {
+            font-size: 11px;
+            color: #e74c3c;
+            margin-bottom: 8px;
+        }
+
+        .reg-info {
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+            .reg-info.success {
+                background: #e8f5e9;
+                color: #27ae60;
+            }
+
+            .reg-info.warning {
+                background: #fff3cd;
+                color: #856404;
+            }
+
+            .reg-info.danger {
+                background: #fee2e2;
+                color: #991b1b;
+            }
+
+        .admin-note {
+            font-size: 12px;
+            color: #e74c3c;
+            margin-top: 6px;
+            padding: 6px 10px;
+            background: #fff5f5;
+            border-radius: 6px;
+            border-right: 3px solid #e74c3c;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 24px;
+            background: #34495e;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+
+            .back-btn:hover {
+                background: #4a90e2;
+            }
+
+        .empty-msg {
+            text-align: center;
+            color: #888;
+            padding: 2rem;
+            font-size: 16px;
+        }
+
+        footer {
+            background: #1e2a38;
+            color: white;
+            padding: 30px 40px;
+            margin-top: 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+            gap: 32px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-col h3 {
+            font-size: 15px;
+            font-weight: 500;
+            color: #e2e8f0;
+            margin-bottom: 14px;
+        }
+
+        .footer-col.brand h3 {
+            font-size: 16px;
+            color: #81b3f7;
+            border-right: 3px solid #4a90e2;
+            padding-right: 10px;
+        }
+
+        .footer-col p {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+            .footer-col ul li a {
+                color: #94a3b8;
+                text-decoration: none;
+                font-size: 13px;
+            }
+
+                .footer-col ul li a:hover {
+                    color: #81b3f7;
+                }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+            .footer-bottom p {
+                color: #475569;
+                font-size: 12px;
+                margin: 0;
+            }
+
+        @@media(max-width:768px) {
+            nav ul {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header">
+            <h1>منصة الكاراتيه الفلسطينية</h1>
+            <h2>اصنع تاريخك ...وكن بطلاً</h2>
+        </div>
+        <a href="/Home/Index">
+            <img src="/images/test.jpg" alt="لوغو"
+                 style="position:absolute;right:260px;height:55px;">
+        </a>
+        <ul>
+            <li><a href="/Home/Index">الرئيسية</a></li>
+            <li><a href="/Club/Dashboard">لوحة النادي</a></li>
+            <li><a href="/Account/Logout" class="logout-btn">تسجيل خروج</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h1 class="page-title">🏆 البطولات المتاحة</h1>
+
+        @if (tournaments != null && tournaments.Any())
+        {
+            <div class="tournaments-grid">
+                @foreach (var t in tournaments)
+                {
+                    var myReg = myRegs?.FirstOrDefault(r => r.TournamentId == t.Id);
+                    var isRegistered = myReg != null;
+                    var regStatus = myReg?.Status ?? "";
+                    var isClosed = t.RegistrationClosed || (t.RegistrationDeadline.HasValue && t.RegistrationDeadline.Value < DateTime.Now);
+
+                    string cardClass = "";
+                    if (regStatus == "موافق") cardClass = "registered";
+                    else if (regStatus == "بانتظار الموافقة") cardClass = "pending";
+                    else if (regStatus == "مرفوض") cardClass = "rejected";
+                    else if (isClosed) cardClass = "closed";
+
+                    <div class="tournament-card @cardClass">
+                        <div class="t-title">🏆 @t.Title</div>
+                        <div class="t-info">📅 @t.Date.ToString("yyyy/MM/dd")</div>
+                        <div class="t-info">📍 @t.City</div>
+                        @if (!string.IsNullOrEmpty(t.Location))
+                        {
+                            <div class="t-info">🏟️ @t.Location</div>
+                        }
+                        @if (t.RegistrationFee > 0)
+                        {
+                            <div class="t-info">💰 رسوم التسجيل: @t.RegistrationFee ₪</div>
+                        }
+                        @if (t.RegistrationDeadline.HasValue)
+                        {
+                            <div class="t-info">⏰ آخر موعد: @t.RegistrationDeadline.Value.ToString("yyyy/MM/dd")</div>
+                        }
+                        @if (!string.IsNullOrEmpty(t.Description))
+                        {
+                            <div class="t-info">📝 @t.Description</div>
+                        }
+                        <br>
+
+                        @if (regStatus == "موافق")
+                        {
+                            <span class="t-badge registered">✅ تم قبول تسجيلك</span>
+                            <div class="reg-info success">👥 عدد اللاعبين: @myReg?.PlayersCount لاعب</div>
+                        }
+                        else if (regStatus == "بانتظار الموافقة")
+                        {
+                            <span class="t-badge pending">⏳ بانتظار موافقة الإدارة</span>
+                            <div class="reg-info warning">👥 عدد اللاعبين المقدم: @myReg?.PlayersCount لاعب</div>
+                        }
+                        else if (regStatus == "مرفوض")
+                        {
+                            <span class="t-badge rejected">❌ تم رفض تسجيلك</span>
+                            @if (!string.IsNullOrEmpty(myReg?.AdminNote))
+                            {
+                                <div class="admin-note">📋 سبب الرفض: @myReg.AdminNote</div>
+                            }
+                        }
+                        else if (isClosed)
+                        {
+                            <span class="t-badge closed-reg">🔒 أُغلق باب التسجيل</span>
+                        }
+                  else
+{
+    <span class="t-badge open">🟢 مفتوح للتسجيل</span>
+
+    @if(clubPlayers != null && clubPlayers.Any()){
+        <div style="margin-top:10px;border-top:1px solid #e1e8ed;padding-top:12px;">
+            <div style="font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:8px;">👥 اختر اللاعبين المشاركين:</div>
+            @foreach(var p in clubPlayers){
+                var playerReq = myRequests?.FirstOrDefault(r => r.PlayerId == p.Id && r.TournamentId == t.Id);
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f5f5f5;">
+                    <span style="font-size:13px;">@p.Name — @p.Belt</span>
+                    @if(playerReq == null){
+                        <button style="padding:4px 12px;background:#34495e;color:white;border:none;border-radius:15px;font-size:11px;cursor:pointer;"
+                                onclick="requestPlayer(@t.Id, @p.Id, this)">📝 اختيار</button>
+                    } else if(playerReq.Status == "بانتظار الموافقة"){
+                        <span style="font-size:11px;color:#f39c12;font-weight:bold;">⏳ بانتظار موافقة اللاعب</span>
+                    } else if(playerReq.Status == "موافق"){
+                        <span style="font-size:11px;color:#27ae60;font-weight:bold;">✅ موافق</span>
+                    } else {
+                        <span style="font-size:11px;color:#e74c3c;font-weight:bold;">❌ مرفوض</span>
+                    }
+                </div>
+            }
+        </div>
+    }
+}
+ 
+</div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-msg">لا توجد بطولات متاحة حالياً 🏆</div>
+        }
+
+        <a href="/Club/Dashboard" class="back-btn">← العودة للوحة النادي</a>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col brand">
+                <h3>منصة الكاراتيه الفلسطينية</h3>
+                <p>بناء أبطال المستقبل وتطوير رياضة الكاراتيه في فلسطين.</p>
+            </div>
+            <div class="footer-col">
+                <h3>روابط سريعة</h3>
+                <ul>
+                    <li><a href="/Home/Index">← الرئيسية</a></li>
+                    <li><a href="/Club/Dashboard">← لوحة النادي</a></li>
+                    <li><a href="/Account/Logout">← تسجيل خروج</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة</p></div>
+    </footer>
+
+    <script>
+        
+
+        function requestPlayer(tournamentId, playerId, btn) {
+            fetch('/Club/RequestPlayerTournament', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tournamentId: tournamentId, playerId: playerId })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    // تحديث الزر مباشرة بدون reload
+                    btn.parentElement.innerHTML = '<span style="font-size:11px;color:#f39c12;font-weight:bold;">⏳ بانتظار موافقة اللاعب</span>';
+                } else {
+                    alert(data.message || 'حدث خطأ');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

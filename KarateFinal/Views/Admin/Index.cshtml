@@ -1,0 +1,1511 @@
+﻿@{
+    Layout = null;
+    var username = Context.Session.GetString("Username");
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/image/www.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم الإدارة - منصة الكاراتيه</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --surface2: #1c2333;
+            --border: #30363d;
+            --accent: #4a90e2;
+            --accent2: #1e6fc4;
+            --green: #2ea043;
+            --red: #da3633;
+            --amber: #d29922;
+            --text: #e6edf3;
+            --muted: #8b949e;
+            --sidebar-w: 240px;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo',sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            padding: 24px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+            .sidebar-logo .belt {
+                font-size: 28px;
+                margin-bottom: 6px;
+            }
+
+            .sidebar-logo h2 {
+                font-size: 14px;
+                font-weight: 700;
+                color: var(--text);
+                line-height: 1.3;
+            }
+
+            .sidebar-logo span {
+                font-size: 11px;
+                color: var(--muted);
+            }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: .08em;
+            padding: 12px 20px 6px;
+            text-transform: uppercase;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.15s;
+            border-right: 3px solid transparent;
+        }
+
+            .nav-item:hover {
+                color: var(--text);
+                background: rgba(255,255,255,0.04);
+            }
+
+            .nav-item.active {
+                color: var(--accent);
+                background: rgba(74,144,226,0.1);
+                border-right-color: var(--accent);
+            }
+
+            .nav-item .icon {
+                font-size: 17px;
+                width: 20px;
+                text-align: center;
+            }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .admin-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface2);
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .admin-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,var(--accent),var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .admin-info .name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .admin-info .role {
+            font-size: 10px;
+            color: var(--accent);
+        }
+
+        .main {
+            margin-right: var(--sidebar-w);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 28px;
+            height: auto;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .topbar-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .topbar-badge {
+            background: rgba(74,144,226,0.15);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(74,144,226,0.3);
+        }
+
+        .logout-btn {
+            background: rgba(218,54,51,0.15);
+            color: #f85149;
+            border: 1px solid rgba(218,54,51,0.3);
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .last-login-box {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 8px 14px;
+            font-size: 12px;
+        }
+
+        .ll-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 5px;
+            letter-spacing: 0.05em;
+        }
+
+        .ll-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 2px;
+        }
+
+        .ll-label {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .ll-val {
+            color: var(--text);
+            font-weight: 600;
+            font-family: monospace;
+            font-size: 11px;
+        }
+
+        .content {
+            padding: 28px;
+            flex: 1;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+            .page.active {
+                display: block;
+            }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4,1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+            .stat-card .sc-label {
+                font-size: 12px;
+                color: var(--muted);
+                font-weight: 600;
+            }
+
+            .stat-card .sc-value {
+                font-size: 32px;
+                font-weight: 900;
+                color: var(--text);
+                line-height: 1;
+            }
+
+            .stat-card .sc-change {
+                font-size: 12px;
+                color: var(--muted);
+            }
+
+        .section-hd {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+            .section-hd h3 {
+                font-size: 16px;
+                font-weight: 700;
+            }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 18px;
+            border-radius: 8px;
+            border: none;
+            font-family: 'Cairo',sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+            .btn-primary:hover {
+                background: var(--accent2);
+            }
+
+        .btn-success {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-info {
+            background: rgba(74,144,226,0.15);
+            color: var(--accent);
+            border: 1px solid rgba(74,144,226,0.3);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+        }
+
+        .table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .tbl-toolbar {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+            .tbl-toolbar input, .tbl-toolbar select {
+                padding: 7px 12px;
+                border-radius: 7px;
+                border: 1px solid var(--border);
+                background: var(--bg);
+                color: var(--text);
+                font-family: 'Cairo',sans-serif;
+                font-size: 13px;
+            }
+
+        .tbl-count {
+            font-size: 12px;
+            color: var(--muted);
+            margin-right: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            padding: 11px 16px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+            text-align: right;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+            tbody tr:hover {
+                background: rgba(255,255,255,0.03);
+            }
+
+        tbody td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--text);
+            text-align: right;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-active {
+            background: rgba(46,160,67,0.15);
+            color: #3fb950;
+            border: 1px solid rgba(46,160,67,0.3);
+        }
+
+        .badge-inactive {
+            background: rgba(218,54,51,0.12);
+            color: #f85149;
+            border: 1px solid rgba(218,54,51,0.25);
+        }
+
+        .badge-pending {
+            background: rgba(210,153,34,0.15);
+            color: #e3b341;
+            border: 1px solid rgba(210,153,34,0.3);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .modal-overlay.show {
+                display: flex;
+            }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 520px;
+            max-width: 95vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.25s ease;
+        }
+
+        @@keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.93)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .modal-header {
+            padding: 22px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+            .modal-header h3 {
+                font-size: 16px;
+                font-weight: 700;
+            }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+            .modal-close:hover {
+                color: var(--text);
+            }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+            .form-grid .full {
+                grid-column: 1/-1;
+            }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+            .form-group label {
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--muted);
+            }
+
+            .form-group input, .form-group select, .form-group textarea {
+                padding: 9px 12px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                background: var(--bg);
+                color: var(--text);
+                font-family: 'Cairo',sans-serif;
+                font-size: 13px;
+            }
+
+                .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+                    outline: none;
+                    border-color: var(--accent);
+                }
+
+        .creds-box {
+            background: var(--bg);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-top: 12px;
+        }
+
+            .creds-box .creds-title {
+                font-size: 12px;
+                font-weight: 700;
+                color: var(--accent);
+                margin-bottom: 6px;
+            }
+
+        #toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 240px;
+        }
+
+            .toast.success {
+                border-right: 3px solid var(--green);
+            }
+
+            .toast.error {
+                border-right: 3px solid var(--red);
+            }
+
+            .toast.info {
+                border-right: 3px solid var(--accent);
+            }
+
+        .mem-summary {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .mem-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px 20px;
+        }
+
+            .mem-card .mc-label {
+                font-size: 12px;
+                color: var(--muted);
+                font-weight: 600;
+            }
+
+            .mem-card .mc-value {
+                font-size: 28px;
+                font-weight: 900;
+                line-height: 1;
+            }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="belt">🥋</div>
+            <h2>منصة الكاراتيه<br>الفلسطينية</h2>
+           
+            <span>لوحة الإدارة</span>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-label">الرئيسية</div>
+            <div class="nav-item" onclick="window.location='/Admin/Profile'"><span class="icon">⚙️</span> معلوماتي      
+                <div class="nav-label">إدارة</div>
+            </div>
+            <div class="nav-item" onclick="showPage('clubs',this)"><span class="icon">🏟️</span> الأندية</div>
+            <div class="nav-item" onclick="showPage('players',this)"><span class="icon">👥</span> اللاعبون</div>
+            <div class="nav-item" onclick="showPage('tournaments',this)"><span class="icon">🏆</span> البطولات</div>
+            <div class="nav-item" onclick="showPage('participations',this)"><span class="icon">🏅</span> المشاركات</div>
+            <div class="nav-item" onclick="showPage('memberships',this)"><span class="icon">🪪</span> العضويات</div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="admin-chip">
+                <div class="admin-avatar">A</div>
+                <div class="admin-info">
+                    <div class="name">@username</div>
+                    <div class="role">Admin</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div class="topbar-title" id="pageTitle">لوحة التحكم</div>
+            <div class="topbar-actions">
+                <!-- خانة آخر تسجيل دخول -->
+                <div class="last-login-box">
+                    <div class="ll-title">🕐 آخر تسجيل دخول</div>
+                    <div class="ll-row">
+                        <span class="ll-label">👤 آخر دخول</span>
+                        <span class="ll-val">@(ViewBag.LastAdminLogin != null ? ((DateTime)ViewBag.LastAdminLogin).ToString("MM/dd HH:mm") : "—")</span>
+                    </div>
+                  
+                </div>
+                <span class="topbar-badge" id="dateLabel"></span>
+                <a href="/Account/Logout" class="logout-btn">🚪 خروج</a>
+            </div>
+            <button onclick="toggleLang()" id="langBtn"
+                    style="background:rgba(74,144,226,0.15);border:1px solid rgba(74,144,226,0.3);color:#4a90e2;padding:6px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;font-family:'Cairo',sans-serif;">
+                EN
+            </button>
+        </header>
+
+        <div class="content">
+
+            @if (TempData["Error"] != null)
+            {
+                <div style="background:#fee2e2;color:#991b1b;padding:12px 20px;border-radius:8px;margin-bottom:16px;border:1px solid #fca5a5;">
+                    ❌ @TempData["Error"]
+                </div>
+            }
+
+            <!-- DASHBOARD -->
+            <div class="page active" id="page-dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="sc-label">إجمالي الأندية</div><div class="sc-value">@ViewBag.ClubsCount</div><div class="sc-change">نادي مسجّل</div></div>
+                    <div class="stat-card"><div class="sc-label">إجمالي اللاعبين</div><div class="sc-value">@ViewBag.PlayersCount</div><div class="sc-change">في جميع الأندية</div></div>
+                    <div class="stat-card"><div class="sc-label">البطولات</div><div class="sc-value">@ViewBag.TournamentsCount</div><div class="sc-change">بطولة مسجّلة</div></div>
+                    <div class="stat-card"><div class="sc-label">عضويات غير مدفوعة</div><div class="sc-value">@ViewBag.UnpaidCount</div><div class="sc-change" style="color:var(--amber)">بانتظار الدفع</div></div>
+                </div>
+                <div class="section-hd"><h3>آخر الأندية المضافة</h3></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>اسم النادي</th><th>المسؤول</th><th>المدينة</th><th>التصنيف</th><th>الحالة</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.Clubs != null)
+                            {
+                                foreach (var c in ViewBag.Clubs)
+                                {
+                                    <tr>
+                                        <td>@c.Name</td>
+                                        <td>@c.ManagerName</td>
+                                        <td>@c.City</td>
+                                        <td>@c.Category</td>
+                                        <td><span class="badge badge-active">نشط</span></td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- CLUBS -->
+            <div class="page" id="page-clubs">
+                <div class="section-hd">
+                    <h3>إدارة الأندية</h3>
+                    <button class="btn btn-primary" onclick="document.getElementById('clubModal').classList.add('show')">➕ إضافة نادي</button>
+                </div>
+                <div class="table-wrap">
+                    <div class="tbl-toolbar">
+                        <input type="text" id="clubSearch" placeholder="ابحث عن نادٍ..." oninput="filterClubs()">
+                        <span class="tbl-count" id="clubsCount"></span>
+                    </div>
+                    <table>
+                        <thead><tr><th>#</th><th>اسم النادي</th><th>المسؤول</th><th>المدينة</th><th>التصنيف</th><th>إجراءات</th></tr></thead>
+                        <tbody id="clubsTableBody">
+                            @if (ViewBag.Clubs != null)
+                            {
+                                int i = 1;
+                                foreach (var c in ViewBag.Clubs)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@c.Name</td>
+                                        <td>@c.ManagerName</td>
+                                        <td>@c.City</td>
+                                        <td>@c.Category</td>
+                                        <td style="display:flex;gap:6px;">
+                                            <button class="btn btn-info btn-sm" onclick="showClubDetails(@c.Id,'@c.Name','@c.ManagerName','@c.Username','@c.Password')">📋 تفاصيل</button>
+                                            <a href="/Admin/DeleteClub/@c.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد من الحذف؟')">🗑️ حذف</a>
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PLAYERS -->
+            <div class="page" id="page-players">
+                <div class="section-hd"><h3>اللاعبون</h3></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>الاسم</th><th>النادي</th><th>الحزام</th><th>العمر</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.Players != null)
+                            {
+                                int i = 1;
+                                foreach (var p in ViewBag.Players)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@p.Name</td>
+                                        <td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == p.ClubId)?.Name ?? "—" : "—")</td>
+                                        <td>@p.Belt</td>
+                                        <td>@p.Age</td>
+                                        <td><span class="badge badge-active">@p.Status</span></td>
+                                        <td><a href="/Club/PlayerCard?id=@p.Id" class="btn btn-info btn-sm">🪪 تفاصيل</a></td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TOURNAMENTS -->
+            <div class="page" id="page-tournaments">
+                <div class="section-hd">
+                    <h3>البطولات</h3>
+                    <button class="btn btn-primary" onclick="document.getElementById('tournamentModal').classList.add('show')">➕ إضافة بطولة</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>اسم البطولة</th><th>التاريخ</th><th>المدينة</th><th>إجراءات</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.Tournaments != null)
+                            {
+                                int i = 1;
+                                foreach (var t in ViewBag.Tournaments)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@t.Title</td>
+                                        <td>@t.Date.ToString("yyyy-MM-dd")</td>
+                                        <td>@t.City</td>
+                                        <td style="display:flex;gap:6px;flex-wrap:wrap;">
+                                            <button class="btn btn-info btn-sm" onclick="showTournamentDetails(@t.Id)">📋 تفاصيل</button>
+                                            <button class="btn btn-sm @(t.RegistrationClosed ? "btn-success" : "btn-danger")"
+                                                    onclick="toggleTournamentReg(@t.Id)">
+                                                @(t.RegistrationClosed ? "🔓 فتح التسجيل" : "🔒 إغلاق التسجيل")
+                                            </button>
+                                            <button class="btn btn-info btn-sm" onclick="showEditTournament(@t.Id, '@t.Title', '@t.Date.ToString("yyyy-MM-dd")', '@t.City', '@(t.Location??"")', '@(t.Description??"")', @t.RegistrationFee, @t.MaxPlayersPerClub, '@(t.Categories??"")')">✏️ تعديل</button>
+                                            <a href="/Admin/DeleteTournament/@t.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد من الحذف؟')">🗑️ حذف</a>
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PARTICIPATIONS -->
+            <div class="page" id="page-participations">
+                <div class="section-hd">
+                    <h3>المشاركات في البطولات</h3>
+                    <a href="/Admin/AddParticipation" class="btn btn-primary">➕ إضافة نتيجة</a>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>النادي</th><th>البطولة</th><th>المركز</th><th>النقاط</th><th>النتيجة</th><th>إجراءات</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.Participations != null)
+                            {
+                                int i = 1;
+                                foreach (var p in ViewBag.Participations)
+                                {
+                                    var medal = p.Rank == 1 ? "🥇" : p.Rank == 2 ? "🥈" : p.Rank == 3 ? "🥉" : "";
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == p.ClubId)?.Name ?? "—" : "—")</td>
+                                        <td>@(ViewBag.Tournaments != null ? ((IEnumerable<dynamic>)ViewBag.Tournaments).FirstOrDefault(t => t.Id == p.TournamentId)?.Title ?? "—" : "—")</td>
+                                        <td>@medal المركز @p.Rank</td>
+                                        <td>@p.Points ⭐</td>
+                                        <td>@p.Result</td>
+                                        <td><a href="/Admin/DeleteParticipation/@p.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد من الحذف؟')">🗑️ حذف</a></td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MEMBERSHIPS -->
+            <div class="page" id="page-memberships">
+                <div class="section-hd"><h3>العضويات</h3></div>
+                <div class="mem-summary">
+                    <div class="mem-card"><div class="mc-label">إجمالي الأندية</div><div class="mc-value">@ViewBag.ClubsCount</div></div>
+                    <div class="mem-card"><div class="mc-label">مدفوعة</div><div class="mc-value" style="color:var(--green)">@ViewBag.PaidCount</div></div>
+                    <div class="mem-card"><div class="mc-label">غير مدفوعة</div><div class="mc-value" style="color:var(--amber)">@ViewBag.UnpaidCount</div></div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>النادي</th><th>السنة</th><th>الرسوم</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.Memberships != null)
+                            {
+                                int i = 1;
+                                foreach (var m in ViewBag.Memberships)
+                                {
+                                    var isPaid = m.Status == "مدفوع";
+                                    <tr id="mem-row-@m.Id" style="@(isPaid ? "background:rgba(46,160,67,0.08);" : "")">
+                                        <td>@i</td>
+                                        <td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == m.ClubId)?.Name ?? "—" : "—")</td>
+                                        <td>@m.Year</td>
+                                        <td>@m.Fee ₪</td>
+                                        <td><span class="badge @(isPaid ? "badge-active" : "badge-inactive")" id="mem-badge-@m.Id">@m.Status</span></td>
+                                        <td>
+                                            <button class="btn btn-sm @(isPaid ? "btn-ghost" : "btn-success")" id="mem-btn-@m.Id" onclick="toggleMembership(@m.Id, '@m.Status')">
+                                                @(isPaid ? "↩️ إلغاء الدفع" : "✅ تحديد كمدفوع")
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- CLUB MODAL -->
+    <div class="modal-overlay" id="clubModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🏟️ إضافة نادي جديد</h3>
+                <button class="modal-close" onclick="document.getElementById('clubModal').classList.remove('show')">×</button>
+            </div>
+            <form method="post" action="/Admin/AddClub">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group full"><label>اسم النادي *</label><input type="text" name="Name" placeholder="أدخل اسم النادي" required></div>
+                        <div class="form-group full"><label>اسم المسؤول *</label><input type="text" name="ManagerName" placeholder="اسم مدير النادي" required></div>
+                        <div class="form-group">
+                            <label>المدينة *</label>
+                            <select name="City" required>
+                                <option value="">-- اختر المدينة --</option>
+                                <option>نابلس</option>
+                                <option>رام الله</option>
+                                <option>القدس</option>
+                                <option>الخليل</option>
+                                <option>جنين</option>
+                                <option>طولكرم</option>
+                                <option>قلقيلية</option>
+                                <option>بيت لحم</option>
+                                <option>أريحا</option>
+                                <option>سلفيت</option>
+                                <option>طوباس</option>
+                                <option>غزة</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>التصنيف *</label>
+                            <select name="Category" required>
+                                <option value="">-- اختر التصنيف --</option>
+                                <option value="A">A — الدرجة الأولى</option>
+                                <option value="B">B — الدرجة الثانية</option>
+                                <option value="C">C — الدرجة الثالثة</option>
+                            </select>
+                        </div>
+                        <div class="form-group full"><label>الوصف</label><input type="text" name="Description" placeholder="وصف مختصر للنادي"></div>
+                        <div class="form-group">
+                            <label>البريد الإلكتروني *</label>
+                            <input type="email" name="Email" placeholder="example@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الهاتف *</label>
+                            <input type="tel" name="Phone" placeholder="+970 5X XXX XXXX" required>
+                        </div>
+                        <div class="form-group">
+                            <label>سنة التأسيس *</label>
+                            <input type="number" name="FoundedYear" min="1900" max="2025" placeholder="مثال: 2010" required>
+                        </div>
+                    </div>
+                    <div class="creds-box">
+                        <div class="creds-title">🔐 سيتم توليد بيانات الدخول تلقائياً عند الحفظ</div>
+                        <div style="font-size:12px;color:var(--muted);">اسم المستخدم وكلمة المرور ستظهر في تفاصيل النادي بعد الإضافة</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" onclick="document.getElementById('clubModal').classList.remove('show')">إلغاء</button>
+                    <button type="submit" class="btn btn-success">💾 حفظ النادي</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CLUB DETAILS MODAL -->
+    <div class="modal-overlay" id="clubDetailsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>📋 تفاصيل النادي</h3>
+                <button class="modal-close" onclick="document.getElementById('clubDetailsModal').classList.remove('show')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group full"><label>اسم النادي</label><input type="text" id="detailName" readonly style="background:var(--surface2);cursor:default;"></div>
+                    <div class="form-group full"><label>اسم المسؤول</label><input type="text" id="detailManager" readonly style="background:var(--surface2);cursor:default;"></div>
+                    <div class="form-group"><label>اسم المستخدم</label><input type="text" id="detailUsername" readonly style="background:var(--surface2);cursor:default;font-family:monospace;"></div>
+                    <div class="form-group"><label>كلمة المرور الحالية</label><input type="text" id="detailPassword" readonly style="background:var(--surface2);cursor:default;font-family:monospace;"></div>
+                </div>
+                <hr style="border-color:var(--border);margin:16px 0;">
+                <div class="form-group">
+                    <label>🔑 إعادة تعيين كلمة المرور</label>
+                    <div style="display:flex;gap:10px;margin-top:6px;">
+                        <input type="text" id="newPasswordInput" placeholder="أدخل كلمة مرور جديدة" style="flex:1;">
+                        <button class="btn btn-primary" onclick="resetClubPassword()">تغيير</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="document.getElementById('clubDetailsModal').classList.remove('show')">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PLAYER MODAL -->
+    <div class="modal-overlay" id="playerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🥋 إضافة لاعب جديد</h3>
+                <button class="modal-close" onclick="document.getElementById('playerModal').classList.remove('show')">×</button>
+            </div>
+            <form method="post" action="/Admin/AddPlayer">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group full"><label>اسم اللاعب *</label><input type="text" name="Name" placeholder="أدخل اسم اللاعب" required></div>
+                        <input type="date" name="BirthDate" required>
+                        <div class="form-group"><label>الجنس</label><select name="Gender"><option value="ذكر">ذكر</option><option value="أنثى">أنثى</option></select></div>
+                        <div class="form-group"><label>الحزام</label><select name="Belt"><option>أبيض</option><option>أصفر</option><option>برتقالي</option><option>أخضر</option><option>أزرق</option><option>بني</option><option>أسود</option></select></div>
+                        <div class="form-group"><label>الوزن (كغ)</label><input type="number" name="Weight" placeholder="الوزن" step="0.1"></div>
+                        <div class="form-group full">
+                            <label>النادي</label>
+                            <select name="ClubId">
+                                <option value="">-- اختر النادي --</option>
+                                @if (ViewBag.Clubs != null)
+                                {
+                                    foreach (var c in ViewBag.Clubs)
+                                    {
+                                        <option value="@c.Id">@c.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" onclick="document.getElementById('playerModal').classList.remove('show')">إلغاء</button>
+                    <button type="submit" class="btn btn-success">💾 حفظ اللاعب</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOURNAMENT MODAL -->
+    <div class="modal-overlay" id="tournamentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>🏆 إضافة بطولة جديدة</h3>
+                <button class="modal-close" onclick="document.getElementById('tournamentModal').classList.remove('show')">×</button>
+            </div>
+            <form method="post" action="/Admin/AddTournament">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <div class="form-group full"><label>اسم البطولة *</label><input type="text" name="Title" placeholder="أدخل اسم البطولة" required></div>
+                        <div class="form-group"><label>التاريخ *</label><input type="date" name="Date" required></div>
+                        <div class="form-group">
+                            <label>المدينة *</label>
+                            <select name="City" required>
+                                <option value="">-- اختر المدينة --</option>
+                                <option>نابلس</option>
+                                <option>رام الله</option>
+                                <option>القدس</option>
+                                <option>الخليل</option>
+                                <option>جنين</option>
+                                <option>طولكرم</option>
+                                <option>بيت لحم</option>
+                                <option>غزة</option>
+                                <option>أريحا</option>
+                            </select>
+                        </div>
+                        <div class="form-group full"><label>الوصف</label><textarea name="Description" rows="3" placeholder="وصف مختصر للبطولة"></textarea></div>
+                        <div class="form-group full">
+                            <label>مكان البطولة *</label>
+                            <input type="text" name="Location" placeholder="اسم القاعة أو الملعب" required>
+                        </div>
+                        <div class="form-group">
+                            <label>الجنس</label>
+                            <select name="Gender">
+                                <option value="الكل">الكل</option>
+                                <option value="ذكور">ذكور</option>
+                                <option value="إناث">إناث</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>رسوم الاشتراك (₪)</label>
+                            <input type="number" name="RegistrationFee" min="0" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>آخر موعد للتسجيل *</label>
+                            <input type="date" name="RegistrationDeadline" required>
+                        </div>
+                        <div class="form-group">
+                            <label>العدد المسموح من كل نادي</label>
+                            <input type="number" name="MaxPlayersPerClub" min="1" placeholder="مثال: 5">
+                        </div>
+                        <div class="form-group full">
+                            <label>الفئات المشاركة</label>
+                            <input type="text" name="Categories" placeholder="مثال: أشبال، ناشئين، شباب">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-ghost" onclick="document.getElementById('tournamentModal').classList.remove('show')">إلغاء</button>
+                    <button type="submit" class="btn btn-success">💾 حفظ البطولة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOURNAMENT DETAILS MODAL -->
+    <div class="modal-overlay" id="tournamentDetailsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>📋 تفاصيل البطولة</h3>
+                <button class="modal-close" onclick="document.getElementById('tournamentDetailsModal').classList.remove('show')">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="tournamentDetailsContent">
+                    <p style="color:var(--muted);text-align:center;">جاري التحميل...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="document.getElementById('tournamentDetailsModal').classList.remove('show')">إغلاق</button>
+            </div>
+        </div>
+    </div>
+  
+    <!-- EDIT TOURNAMENT MODAL -->
+    <div class="modal-overlay" id="editTournamentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>✏️ تعديل البطولة</h3>
+                <button class="modal-close" onclick="document.getElementById('editTournamentModal').classList.remove('show')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editTId">
+                <div class="form-grid">
+                    <div class="form-group full"><label>اسم البطولة *</label><input type="text" id="editTTitle"></div>
+                    <div class="form-group"><label>التاريخ *</label><input type="date" id="editTDate"></div>
+                    <div class="form-group">
+                        <label>المدينة *</label>
+                        <select id="editTCity">
+                            <option>نابلس</option>
+                            <option>رام الله</option>
+                            <option>القدس</option>
+                            <option>الخليل</option>
+                            <option>جنين</option>
+                            <option>طولكرم</option>
+                            <option>بيت لحم</option>
+                            <option>غزة</option>
+                            <option>أريحا</option>
+                        </select>
+                    </div>
+                    <div class="form-group full"><label>المكان</label><input type="text" id="editTLocation"></div>
+                    <div class="form-group"><label>رسوم التسجيل (₪)</label><input type="number" id="editTFee" min="0"></div>
+                    <div class="form-group"><label>الحد الأقصى لكل نادي</label><input type="number" id="editTMax" min="1"></div>
+                    <div class="form-group full"><label>الفئات</label><input type="text" id="editTCategories"></div>
+                    <div class="form-group full"><label>الوصف</label><input type="text" id="editTDesc"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="document.getElementById('editTournamentModal').classList.remove('show')">إلغاء</button>
+                <button class="btn btn-success" onclick="saveEditTournament()">💾 حفظ</button>
+            </div>
+        </div>
+    </div>
+    <div id="toast-container"></div>
+
+    <script>
+        document.getElementById('dateLabel').textContent = new Date().toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+
+        const pageTitles = { dashboard: 'لوحة التحكم', clubs: 'الأندية', players: 'اللاعبون', tournaments: 'البطولات', participations: 'المشاركات', memberships: 'العضويات' };
+        function showPage(id, navEl) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            if (navEl) navEl.classList.add('active');
+            document.getElementById('pageTitle').textContent = pageTitles[id] || id;
+        }
+
+        function filterClubs() {
+            const q = document.getElementById('clubSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#clubsTableBody tr');
+            let count = 0;
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(q)) { row.style.display = ''; count++; }
+                else row.style.display = 'none';
+            });
+            document.getElementById('clubsCount').textContent = count + ' نادٍ';
+        }
+
+        let currentClubId = null;
+        function showClubDetails(id, name, manager, username, password) {
+            currentClubId = id;
+            document.getElementById('detailName').value = name;
+            document.getElementById('detailManager').value = manager;
+            document.getElementById('detailUsername').value = username;
+            document.getElementById('detailPassword').value = password;
+            document.getElementById('newPasswordInput').value = '';
+            document.getElementById('clubDetailsModal').classList.add('show');
+        }
+
+        function resetClubPassword() {
+            const newPass = document.getElementById('newPasswordInput').value.trim();
+            if (!newPass) { toast('أدخل كلمة مرور جديدة', 'error'); return; }
+            fetch('/Admin/ResetClubPassword', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ clubId: currentClubId, newPassword: newPass })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    document.getElementById('detailPassword').value = newPass;
+                    toast('✅ تم تغيير كلمة المرور بنجاح', 'success');
+                }
+            }).catch(() => toast('حدث خطأ', 'error'));
+        }
+
+        function toggleMembership(id, currentStatus) {
+            if (currentStatus === 'مدفوع') {
+                if (!confirm('هل أنت متأكد من تغيير الحالة إلى غير مدفوع؟')) return;
+            }
+            fetch('/Admin/ToggleMembership', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ membershipId: id })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    const isPaid = data.status === 'مدفوع';
+                    const badge = document.getElementById('mem-badge-' + id);
+                    const btn = document.getElementById('mem-btn-' + id);
+                    const row = document.getElementById('mem-row-' + id);
+                    badge.textContent = data.status;
+                    badge.className = 'badge ' + (isPaid ? 'badge-active' : 'badge-inactive');
+                    btn.textContent = isPaid ? '↩️ إلغاء الدفع' : '✅ تحديد كمدفوع';
+                    btn.className = 'btn btn-sm ' + (isPaid ? 'btn-ghost' : 'btn-success');
+                    btn.setAttribute('onclick', `toggleMembership(${id}, '${data.status}')`);
+                    row.style.background = isPaid ? 'rgba(46,160,67,0.08)' : '';
+                    toast(isPaid ? '✅ تم تحديد العضوية كمدفوعة' : '⚠️ تم تغيير العضوية لغير مدفوعة', isPaid ? 'success' : 'info');
+                }
+            });
+        }
+
+        function showTournamentDetails(id) {
+            document.getElementById('tournamentDetailsContent').innerHTML = '<p style="color:var(--muted);text-align:center;">جاري التحميل...</p>';
+            document.getElementById('tournamentDetailsModal').classList.add('show');
+
+            fetch('/Admin/TournamentDetails?id=' + id)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        document.getElementById('tournamentDetailsContent').innerHTML = '<p style="color:var(--muted);text-align:center;">لا يوجد أندية مسجّلة في هذه البطولة</p>';
+                        return;
+                    }
+                    let html = '<table style="width:100%;border-collapse:collapse;">';
+                    html += '<thead><tr>';
+                    html += '<th style="padding:10px;background:var(--surface2);text-align:right;">النادي</th>';
+                    html += '<th style="padding:10px;background:var(--surface2);text-align:right;">اللاعبين</th>';
+                    html += '<th style="padding:10px;background:var(--surface2);text-align:right;">الحالة</th>';
+                    html += '<th style="padding:10px;background:var(--surface2);text-align:right;">إجراءات</th>';
+                    html += '</tr></thead><tbody>';
+
+                    data.forEach(r => {
+                        const statusColor = r.status === 'موافق' ? '#3fb950' : r.status === 'مرفوض' ? '#f85149' : '#e3b341';
+                        html += `<tr>
+                            <td style="padding:10px;border-bottom:1px solid var(--border);">${r.clubName}</td>
+                                    <td style="padding:10px;border-bottom:1px solid var(--border);">
+            ${r.approvedPlayers && r.approvedPlayers.length > 0
+                                ? r.approvedPlayers.join(' — ')
+                                : r.playersCount + ' لاعب'}
+        </td>
+                            <td style="padding:10px;border-bottom:1px solid var(--border);color:${statusColor};font-weight:bold;">${r.status}</td>
+                            <td style="padding:10px;border-bottom:1px solid var(--border);">
+                                ${r.status === 'بانتظار الموافقة' ? `
+                                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                                        <button class="btn btn-success btn-sm" onclick="approveReg(${r.id})">✅ موافقة</button>
+                                        <button class="btn btn-danger btn-sm" onclick="openRejectModal(${r.id})">❌ رفض</button>
+                                    </div>
+                                ` : r.status === 'مرفوض' && r.adminNote ? `<span style="font-size:11px;color:var(--muted);">📋 ${r.adminNote}</span>` : '—'}
+                            </td>
+                        </tr>`;
+                    });
+
+                    html += '</tbody></table>';
+                    document.getElementById('tournamentDetailsContent').innerHTML = html;
+                });
+        }
+
+        function approveReg(id) {
+            fetch('/Admin/ApproveTournamentRegistration', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ registrationId: id })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    toast('✅ تم قبول التسجيل', 'success');
+                    // إعادة تحميل التفاصيل
+                    document.querySelector('[onclick*="showTournamentDetails"]')?.click();
+                    location.reload();
+                }
+            });
+        }
+
+        function openRejectModal(id) {
+            const note = prompt('أدخل سبب الرفض (اختياري):');
+            if (note === null) return;
+
+            fetch('/Admin/RejectTournamentRegistration', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ registrationId: id, note: note })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    toast('تم رفض التسجيل', 'info');
+                    location.reload();
+                }
+            });
+        }
+
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function (e) {
+                if (e.target === this) this.classList.remove('show');
+            });
+        });
+
+        function toast(msg, type = 'info') {
+            const el = document.createElement('div');
+            el.className = `toast ${type}`;
+            el.innerHTML = `<span>${msg}</span>`;
+            document.getElementById('toast-container').appendChild(el);
+            setTimeout(() => el.remove(), 3500);
+        }
+        function toggleTournamentReg(id) {
+            fetch('/Admin/ToggleTournamentRegistration', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tournamentId: id })
+            }).then(r => r.json()).then(data => {
+                if (data.success) location.reload();
+            });
+        }
+        function showEditTournament(id, title, date, city, location, desc, fee, max, categories) {
+            document.getElementById('editTId').value = id;
+            document.getElementById('editTTitle').value = title;
+            document.getElementById('editTDate').value = date;
+            document.getElementById('editTCity').value = city;
+            document.getElementById('editTLocation').value = location;
+            document.getElementById('editTDesc').value = desc;
+            document.getElementById('editTFee').value = fee;
+            document.getElementById('editTMax').value = max;
+            document.getElementById('editTCategories').value = categories;
+            document.getElementById('editTournamentModal').classList.add('show');
+        }
+
+        function saveEditTournament() {
+            const id = parseInt(document.getElementById('editTId').value);
+            fetch('/Admin/UpdateTournament', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id: id,
+                    title: document.getElementById('editTTitle').value,
+                    date: document.getElementById('editTDate').value,
+                    city: document.getElementById('editTCity').value,
+                    location: document.getElementById('editTLocation').value,
+                    description: document.getElementById('editTDesc').value,
+                    registrationFee: parseFloat(document.getElementById('editTFee').value) || 0,
+                    maxPlayersPerClub: parseInt(document.getElementById('editTMax').value) || 0,
+                    categories: document.getElementById('editTCategories').value
+                })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    document.getElementById('editTournamentModal').classList.remove('show');
+                    location.reload();
+                    toast('✅ تم تعديل البطولة بنجاح', 'success');
+                }
+            });
+        }
+        const translations = {
+            ar: {
+                sidebar_title: "منصة الكاراتيه\nالفلسطينية", sidebar_sub: "لوحة الإدارة",
+                nav_dashboard: "لوحة التحكم", nav_profile: "معلوماتي", nav_clubs: "الأندية",
+                nav_players: "اللاعبون", nav_tournaments: "البطولات",
+                nav_participations: "المشاركات", nav_memberships: "العضويات",
+                logout: "🚪 خروج", last_login: "🕐 آخر تسجيل دخول",
+                stat1: "إجمالي الأندية", stat1s: "نادي مسجّل",
+                stat2: "إجمالي اللاعبين", stat2s: "في جميع الأندية",
+                stat3: "البطولات", stat3s: "بطولة مسجّلة",
+                stat4: "عضويات غير مدفوعة", stat4s: "بانتظار الدفع",
+                recent_clubs: "آخر الأندية المضافة",
+                th_club: "اسم النادي", th_manager: "المسؤول", th_city: "المدينة",
+                th_category: "التصنيف", th_status: "الحالة",
+                add_club: "➕ إضافة نادي", add_tournament: "➕ إضافة بطولة",
+                add_result: "➕ إضافة نتيجة",
+                mem_total: "إجمالي الأندية", mem_paid: "مدفوعة", mem_unpaid: "غير مدفوعة",
+                page_titles: { dashboard: "لوحة التحكم", clubs: "الأندية", players: "اللاعبون", tournaments: "البطولات", participations: "المشاركات", memberships: "العضويات" },
+                footer_title: "منصة الكاراتيه الفلسطينية",
+                copyright: "© 2025 منصة الكاراتيه الفلسطينية"
+            },
+            en: {
+                sidebar_title: "Palestinian\nKarate Platform", sidebar_sub: "Admin Panel",
+                nav_dashboard: "Dashboard", nav_profile: "My Profile", nav_clubs: "Clubs",
+                nav_players: "Players", nav_tournaments: "Tournaments",
+                nav_participations: "Participations", nav_memberships: "Memberships",
+                logout: "🚪 Logout", last_login: "🕐 Last Login",
+                stat1: "Total Clubs", stat1s: "registered clubs",
+                stat2: "Total Players", stat2s: "in all clubs",
+                stat3: "Tournaments", stat3s: "registered tournaments",
+                stat4: "Unpaid Memberships", stat4s: "pending payment",
+                recent_clubs: "Recently Added Clubs",
+                th_club: "Club Name", th_manager: "Manager", th_city: "City",
+                th_category: "Category", th_status: "Status",
+                add_club: "➕ Add Club", add_tournament: "➕ Add Tournament",
+                add_result: "➕ Add Result",
+                mem_total: "Total Clubs", mem_paid: "Paid", mem_unpaid: "Unpaid",
+                page_titles: { dashboard: "Dashboard", clubs: "Clubs", players: "Players", tournaments: "Tournaments", participations: "Participations", memberships: "Memberships" },
+                footer_title: "Palestinian Karate Platform",
+                copyright: "© 2025 Palestinian Karate Platform"
+            }
+        };
+
+        let currentLang = localStorage.getItem("lang") || "ar";
+
+        function applyLang(lang) {
+            const t = translations[lang];
+            const isAr = lang === "ar";
+            document.documentElement.lang = lang;
+            document.documentElement.dir = isAr ? "rtl" : "ltr";
+            document.getElementById("langBtn").textContent = isAr ? "EN" : "عر";
+
+            // Sidebar
+            document.querySelector(".sidebar-logo h2").textContent = isAr ? "منصة الكاراتيه الفلسطينية" : "Palestinian Karate Platform";
+            document.querySelector(".sidebar-logo span").textContent = t.sidebar_sub;
+
+            // Nav items
+            const navItems = document.querySelectorAll(".nav-item");
+            if (navItems[0]) navItems[0].innerHTML = `<span class="icon">⚙️</span> ${t.nav_profile}`;
+            if (navItems[1]) navItems[1].innerHTML = `<span class="icon">🏟️</span> ${t.nav_clubs}`;
+            if (navItems[2]) navItems[2].innerHTML = `<span class="icon">👥</span> ${t.nav_players}`;
+            if (navItems[3]) navItems[3].innerHTML = `<span class="icon">🏆</span> ${t.nav_tournaments}`;
+            if (navItems[4]) navItems[4].innerHTML = `<span class="icon">🏅</span> ${t.nav_participations}`;
+            if (navItems[5]) navItems[5].innerHTML = `<span class="icon">🪪</span> ${t.nav_memberships}`;
+
+            // Topbar
+            document.querySelector(".logout-btn").textContent = t.logout;
+            document.querySelector(".ll-title").textContent = t.last_login;
+
+            // Stats
+            const scLabels = document.querySelectorAll(".sc-label");
+            const scChanges = document.querySelectorAll(".sc-change");
+            if (scLabels[0]) scLabels[0].textContent = t.stat1;
+            if (scLabels[1]) scLabels[1].textContent = t.stat2;
+            if (scLabels[2]) scLabels[2].textContent = t.stat3;
+            if (scLabels[3]) scLabels[3].textContent = t.stat4;
+            if (scChanges[0]) scChanges[0].textContent = t.stat1s;
+            if (scChanges[1]) scChanges[1].textContent = t.stat2s;
+            if (scChanges[2]) scChanges[2].textContent = t.stat3s;
+            if (scChanges[3]) scChanges[3].textContent = t.stat4s;
+
+            // Section headers
+            const sectionHds = document.querySelectorAll(".section-hd h3");
+            if (sectionHds[0]) sectionHds[0].textContent = t.recent_clubs;
+
+            // Buttons
+            const btns = document.querySelectorAll(".btn-primary");
+            if (btns[0]) btns[0].textContent = t.add_club;
+            if (btns[1]) btns[1].textContent = t.add_tournament;
+
+            // Page titles map
+            pageTitles.dashboard = t.page_titles.dashboard;
+            pageTitles.clubs = t.page_titles.clubs;
+            pageTitles.players = t.page_titles.players;
+            pageTitles.tournaments = t.page_titles.tournaments;
+            pageTitles.participations = t.page_titles.participations;
+            pageTitles.memberships = t.page_titles.memberships;
+
+            // Mem cards
+            const mcLabels = document.querySelectorAll(".mc-label");
+            if (mcLabels[0]) mcLabels[0].textContent = t.mem_total;
+            if (mcLabels[1]) mcLabels[1].textContent = t.mem_paid;
+            if (mcLabels[2]) mcLabels[2].textContent = t.mem_unpaid;
+
+            localStorage.setItem("lang", lang);
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === "ar" ? "en" : "ar";
+            applyLang(currentLang);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
+    </script>
+</body>
+</html>

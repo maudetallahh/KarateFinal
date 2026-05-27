@@ -1,0 +1,59 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/image/www.png">
+    <title>إضافة بطولة</title>
+    <style>
+        body{font-family:'Segoe UI',sans-serif;background:#0d1117;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+        .card{background:#161b22;border:1px solid #30363d;border-radius:16px;padding:36px 32px;width:100%;max-width:500px;}
+        h2{color:white;margin-bottom:24px;font-size:1.4rem;}
+        .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+        label{color:#8b949e;font-size:13px;font-weight:600;}
+        input,select,textarea{padding:10px 14px;background:#0d1117;border:1.5px solid #30363d;border-radius:8px;color:white;font-size:14px;width:100%;}
+        input:focus,select:focus,textarea:focus{outline:none;border-color:#4a90e2;}
+        .btn{width:100%;padding:12px;background:#4a90e2;color:white;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;}
+        .btn:hover{background:#1e6fc4;}
+        .back{display:block;text-align:center;margin-top:16px;color:#4a90e2;text-decoration:none;font-size:13px;}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🏆 إضافة بطولة جديدة</h2>
+        <form method="post">
+            <div class="field">
+                <label>اسم البطولة</label>
+                <input type="text" name="Title" placeholder="أدخل اسم البطولة" required>
+            </div>
+            <div class="field">
+                <label>التاريخ</label>
+                <input type="date" name="Date" required>
+            </div>
+            <div class="field">
+                <label>المدينة</label>
+                <select name="City">
+                    <option value="">-- اختر المدينة --</option>
+                    <option>نابلس</option>
+                    <option>رام الله</option>
+                    <option>القدس</option>
+                    <option>الخليل</option>
+                    <option>جنين</option>
+                    <option>طولكرم</option>
+                    <option>بيت لحم</option>
+                    <option>غزة</option>
+                    <option>أريحا</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>الوصف</label>
+                <textarea name="Description" rows="3" placeholder="وصف مختصر للبطولة"></textarea>
+            </div>
+            <button type="submit" class="btn">✅ حفظ البطولة</button>
+        </form>
+        <a href="/Admin/Index" class="back">← العودة للوحة التحكم</a>
+    </div>
+</body>
+</html>

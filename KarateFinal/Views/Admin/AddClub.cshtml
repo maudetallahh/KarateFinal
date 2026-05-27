@@ -1,0 +1,67 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/image/www.png">
+    <title>إضافة نادي</title>
+    <style>
+        body{font-family:'Segoe UI',sans-serif;background:#0d1117;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+        .card{background:#161b22;border:1px solid #30363d;border-radius:16px;padding:36px 32px;width:100%;max-width:500px;}
+        h2{color:white;margin-bottom:24px;font-size:1.4rem;}
+        .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+        label{color:#8b949e;font-size:13px;font-weight:600;}
+        input,select{padding:10px 14px;background:#0d1117;border:1.5px solid #30363d;border-radius:8px;color:white;font-size:14px;width:100%;}
+        input:focus,select:focus{outline:none;border-color:#4a90e2;}
+        .btn{width:100%;padding:12px;background:#4a90e2;color:white;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;}
+        .btn:hover{background:#1e6fc4;}
+        .back{display:block;text-align:center;margin-top:16px;color:#4a90e2;text-decoration:none;font-size:13px;}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🏟️ إضافة نادي جديد</h2>
+        <form method="post">
+            <div class="field">
+                <label>اسم النادي</label>
+                <input type="text" name="Name" placeholder="أدخل اسم النادي" required>
+            </div>
+            <div class="field">
+                <label>المدينة</label>
+                <select name="City">
+                    <option value="">-- اختر المدينة --</option>
+                    <option>نابلس</option>
+                    <option>رام الله</option>
+                    <option>القدس</option>
+                    <option>الخليل</option>
+                    <option>جنين</option>
+                    <option>طولكرم</option>
+                    <option>قلقيلية</option>
+                    <option>بيت لحم</option>
+                    <option>أريحا</option>
+                    <option>سلفيت</option>
+                    <option>طوباس</option>
+                    <option>غزة</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>التصنيف</label>
+                <select name="Category">
+                    <option value="">-- اختر التصنيف --</option>
+                    <option value="A">A — الدرجة الأولى</option>
+                    <option value="B">B — الدرجة الثانية</option>
+                    <option value="C">C — الدرجة الثالثة</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>الوصف</label>
+                <input type="text" name="Description" placeholder="وصف مختصر للنادي">
+            </div>
+            <button type="submit" class="btn">✅ حفظ النادي</button>
+        </form>
+        <a href="/Admin/Index" class="back">← العودة للوحة التحكم</a>
+    </div>
+</body>
+</html>
