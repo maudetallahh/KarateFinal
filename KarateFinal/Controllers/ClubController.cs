@@ -346,6 +346,7 @@ namespace KarateFinal.Controllers
                     });
                 }
                 else { newMembership.PaidMonths = ""; newMembership.OldDebt = oldDebt; }
+
             }
             _context.SaveChanges();
             return Json(new { success = true });
@@ -409,7 +410,9 @@ namespace KarateFinal.Controllers
             });
             _context.SaveChanges();
             return Json(new { success = true });
+
         }
+
     }
 
     public class PlayerTournamentRequest { public int TournamentId { get; set; } public int PlayerId { get; set; } }
@@ -420,3 +423,5 @@ namespace KarateFinal.Controllers
     public class UpdatePlayerCountRequest { public int TournamentId { get; set; } public int ClubId { get; set; } }
     public class PayOldDebtRequest { public int MembershipId { get; set; } public decimal Amount { get; set; } }
 }
+
+

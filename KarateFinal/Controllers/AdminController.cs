@@ -149,7 +149,7 @@ namespace KarateFinal.Controllers
             if (tournamentId.HasValue)
             {
                 var registeredClubIds = _context.TournamentRegistrations
-                    .Where(r => r.TournamentId == tournamentId.Value && r.Status == "موافق")
+                   .Where(r => r.TournamentId == tournamentId.Value)
                     .Select(r => r.ClubId).ToList();
                 ViewBag.Clubs = _context.Clubs.Where(c => registeredClubIds.Contains(c.Id)).ToList();
             }
@@ -200,8 +200,8 @@ namespace KarateFinal.Controllers
         public IActionResult GetApprovedClubs(int tournamentId)
         {
             var clubIds = _context.TournamentRegistrations
-                .Where(r => r.TournamentId == tournamentId && r.Status == "موافق")
-                .Select(r => r.ClubId).ToList();
+.Where(r => r.TournamentId == tournamentId)
+.Select(r => r.ClubId).ToList();
             var clubs = _context.Clubs.Where(c => clubIds.Contains(c.Id)).Select(c => new { id = c.Id, name = c.Name }).ToList();
             return Json(clubs);
         }
