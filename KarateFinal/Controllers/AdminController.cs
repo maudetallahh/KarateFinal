@@ -3,6 +3,7 @@ using KarateFinal.Models;
 using KarateFinal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static KarateFinal.Controllers.UpdateTournamentRequest;
 
 namespace KarateFinal.Controllers
 {
@@ -59,7 +60,9 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             _context.Users.Add(new User { Username = club.Username, Password = BCrypt.Net.BCrypt.HashPassword(plainPassword), Role = "Club", ClubId = club.Id, MustChangePassword = true });
             _context.SaveChanges();
-            _context.Memberships.Add(new Membership { ClubId = club.Id, Year = DateTime.Now.Year, Fee = 600, Status = "غير مدفوع" });
+            var feeSetting = _context.Settings.FirstOrDefault(s => s.Key == "MembershipFee");
+            decimal fee = feeSetting != null ? decimal.Parse(feeSetting.Value) : 600;
+            _context.Memberships.Add(new Membership { ClubId = club.Id, Year = DateTime.Now.Year, Fee = fee, Status = "غير مدفوع" });
             _context.SaveChanges();
 
             if (!string.IsNullOrEmpty(club.Email))
@@ -275,6 +278,24 @@ namespace KarateFinal.Controllers
             TempData["Success"] = "تم تحديث المعلومات بنجاح";
             return RedirectToAction("Profile");
         }
+        [HttpPost]
+        public IActionResult UpdateMembershipFee([FromBody] UpdateFeeSettingRequest request)
+        {
+            var setting = _context.Settings.FirstOrDefault(s => s.Key == "MembershipFee");
+            if (setting == null)
+                _context.Settings.Add(new Setting { Key = "MembershipFee", Value = request.Fee.ToString() });
+            else
+                setting.Value = request.Fee.ToString();
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        public IActionResult GetMembershipFee()
+        {
+            var setting = _context.Settings.FirstOrDefault(s => s.Key == "MembershipFee");
+            decimal fee = setting != null ? decimal.Parse(setting.Value) : 600;
+            return Json(new { fee });
+        }
     }
 
     public class ResetPasswordRequest { public int ClubId { get; set; } public string NewPassword { get; set; } = ""; }
@@ -292,5 +313,6 @@ namespace KarateFinal.Controllers
         public decimal RegistrationFee { get; set; }
         public int MaxPlayersPerClub { get; set; }
         public string? Categories { get; set; }
+        public class UpdateFeeSettingRequest { public decimal Fee { get; set; } }
     }
 }

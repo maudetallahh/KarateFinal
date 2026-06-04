@@ -19,6 +19,7 @@ namespace KarateFinal.Data
         public DbSet<PlayerMembership> PlayerMemberships { get; set; }
         public DbSet<TournamentRegistration> TournamentRegistrations { get; set; }
         public DbSet<TournamentPlayerRequest> TournamentPlayerRequests { get; set; }
+        public DbSet<Setting> Settings { get; set; }
     }
 
 }

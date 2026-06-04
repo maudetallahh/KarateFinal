@@ -886,8 +886,10 @@
 
             <!-- MEMBERSHIPS -->
             <div class="page" id="page-memberships">
-                <div class="section-hd"><h3>العضويات</h3></div>
-                <div class="mem-summary">
+                <div class="section-hd">
+                    <h3>العضويات</h3>
+                    <button class="btn btn-info" onclick="openFeeModal()">⚙️ تعديل رسوم العضوية</button>
+                </div>                <div class="mem-summary">
                     <div class="mem-card"><div class="mc-label">إجمالي الأندية</div><div class="mc-value">@ViewBag.ClubsCount</div></div>
                     <div class="mem-card"><div class="mc-label">مدفوعة</div><div class="mc-value" style="color:var(--green)">@ViewBag.PaidCount</div></div>
                     <div class="mem-card"><div class="mc-label">غير مدفوعة</div><div class="mc-value" style="color:var(--amber)">@ViewBag.UnpaidCount</div></div>
@@ -1178,6 +1180,28 @@
             <div class="modal-footer">
                 <button class="btn btn-ghost" onclick="document.getElementById('editTournamentModal').classList.remove('show')">إلغاء</button>
                 <button class="btn btn-success" onclick="saveEditTournament()">💾 حفظ</button>
+            </div>
+        </div>
+    </div>
+    <!-- FEE MODAL -->
+    <div class="modal-overlay" id="feeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>⚙️ تعديل رسوم العضوية السنوية</h3>
+                <button class="modal-close" onclick="document.getElementById('feeModal').classList.remove('show')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>الرسوم الحالية (₪)</label>
+                    <input type="number" id="feeInput" min="0" placeholder="600">
+                </div>
+                <p style="font-size:12px;color:var(--muted);margin-top:10px;">
+                    ⚠️ هذه الرسوم ستُطبَّق على الأندية الجديدة فقط
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="document.getElementById('feeModal').classList.remove('show')">إلغاء</button>
+                <button class="btn btn-success" onclick="saveFee()">💾 حفظ</button>
             </div>
         </div>
     </div>
@@ -1506,6 +1530,29 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
+        function openFeeModal() {
+            fetch('/Admin/GetMembershipFee')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('feeInput').value = data.fee;
+                    document.getElementById('feeModal').classList.add('show');
+                });
+        }
+
+        function saveFee() {
+            const fee = parseFloat(document.getElementById('feeInput').value);
+            if (!fee || fee <= 0) { toast('أدخل قيمة صحيحة', 'error'); return; }
+            fetch('/Admin/UpdateMembershipFee', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fee: fee })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    document.getElementById('feeModal').classList.remove('show');
+                    toast('✅ تم تحديث الرسوم إلى ' + fee + '₪', 'success');
+                }
+            });
+        }
     </script>
 </body>
 </html>
