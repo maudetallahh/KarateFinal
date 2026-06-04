@@ -3,21 +3,17 @@ using KarateFinal.Models;
 using KarateFinal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static KarateFinal.Controllers.UpdateTournamentRequest;
-
 namespace KarateFinal.Controllers
 {
     public class AdminController : Controller
     {
         private readonly KarateContext _context;
         private readonly EmailService _emailService;
-
         public AdminController(KarateContext context, EmailService emailService)
         {
             _context = context;
             _emailService = emailService;
         }
-
         public IActionResult Index()
         {
             ViewBag.ClubsCount = _context.Clubs.Count();
@@ -37,9 +33,7 @@ namespace KarateFinal.Controllers
                 .FirstOrDefault();
             return View();
         }
-
         public IActionResult AddClub() => View();
-
         [HttpPost]
         public async Task<IActionResult> AddClub(Club club)
         {
@@ -64,7 +58,6 @@ namespace KarateFinal.Controllers
             decimal fee = feeSetting != null ? decimal.Parse(feeSetting.Value) : 600;
             _context.Memberships.Add(new Membership { ClubId = club.Id, Year = DateTime.Now.Year, Fee = fee, Status = "غير مدفوع" });
             _context.SaveChanges();
-
             if (!string.IsNullOrEmpty(club.Email))
             {
                 try
@@ -84,10 +77,8 @@ namespace KarateFinal.Controllers
                     Console.WriteLine("Email error: " + ex.Message);
                 }
             }
-
             return RedirectToAction("Index");
         }
-
         public IActionResult DeleteClub(int id)
         {
             var club = _context.Clubs.Find(id);
@@ -102,7 +93,6 @@ namespace KarateFinal.Controllers
             }
             return RedirectToAction("Index");
         }
-
         [HttpPost]
         public IActionResult ResetClubPassword([FromBody] ResetPasswordRequest request)
         {
@@ -113,21 +103,16 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
-
         public IActionResult AddPlayer() { ViewBag.Clubs = _context.Clubs.ToList(); return View(); }
-
         [HttpPost]
         public IActionResult AddPlayer(Player player) { _context.Players.Add(player); _context.SaveChanges(); return RedirectToAction("Index"); }
-
         public IActionResult DeletePlayer(int id)
         {
             var player = _context.Players.Find(id);
             if (player != null) { _context.Players.Remove(player); _context.SaveChanges(); }
             return RedirectToAction("Index");
         }
-
         public IActionResult AddTournament() => View();
-
         [HttpPost]
         public IActionResult AddTournament(Tournament tournament)
         {
@@ -137,14 +122,12 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
-
         public IActionResult DeleteTournament(int id)
         {
             var tournament = _context.Tournaments.Find(id);
             if (tournament != null) { _context.Tournaments.Remove(tournament); _context.SaveChanges(); }
             return RedirectToAction("Index");
         }
-
         public IActionResult AddParticipation(int? tournamentId)
         {
             ViewBag.Tournaments = _context.Tournaments.ToList();
@@ -159,17 +142,14 @@ namespace KarateFinal.Controllers
             else { ViewBag.Clubs = new List<Club>(); }
             return View();
         }
-
         [HttpPost]
         public IActionResult AddParticipation(Participation participation) { _context.Participations.Add(participation); _context.SaveChanges(); return RedirectToAction("Index"); }
-
         public IActionResult DeleteParticipation(int id)
         {
             var p = _context.Participations.Find(id);
             if (p != null) { _context.Participations.Remove(p); _context.SaveChanges(); }
             return RedirectToAction("Index");
         }
-
         [HttpPost]
         public IActionResult ToggleMembership([FromBody] ToggleMembershipRequest request)
         {
@@ -180,7 +160,6 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true, status = membership.Status });
         }
-
         public IActionResult TournamentDetails(int id)
         {
             var registrations = _context.TournamentRegistrations.Where(r => r.TournamentId == id).Include(r => r.Club).ToList();
@@ -199,16 +178,14 @@ namespace KarateFinal.Controllers
             });
             return Json(result);
         }
-
         public IActionResult GetApprovedClubs(int tournamentId)
         {
             var clubIds = _context.TournamentRegistrations
-.Where(r => r.TournamentId == tournamentId)
-.Select(r => r.ClubId).ToList();
+                .Where(r => r.TournamentId == tournamentId)
+                .Select(r => r.ClubId).ToList();
             var clubs = _context.Clubs.Where(c => clubIds.Contains(c.Id)).Select(c => new { id = c.Id, name = c.Name }).ToList();
             return Json(clubs);
         }
-
         [HttpPost]
         public IActionResult ApproveTournamentRegistration([FromBody] TournamentRegistrationActionRequest request)
         {
@@ -218,7 +195,6 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
-
         [HttpPost]
         public IActionResult RejectTournamentRegistration([FromBody] TournamentRegistrationActionRequest request)
         {
@@ -229,7 +205,6 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
-
         [HttpPost]
         public IActionResult ToggleTournamentRegistration([FromBody] ToggleTournamentRequest request)
         {
@@ -239,7 +214,6 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true, closed = tournament.RegistrationClosed });
         }
-
         [HttpPost]
         public IActionResult UpdateTournament([FromBody] UpdateTournamentRequest request)
         {
@@ -256,7 +230,6 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
-
         public IActionResult Profile()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -264,7 +237,6 @@ namespace KarateFinal.Controllers
             ViewBag.User = user;
             return View();
         }
-
         [HttpPost]
         public IActionResult UpdateProfile(string newUsername, string newPassword, string email)
         {
@@ -289,15 +261,22 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
-
         public IActionResult GetMembershipFee()
         {
             var setting = _context.Settings.FirstOrDefault(s => s.Key == "MembershipFee");
             decimal fee = setting != null ? decimal.Parse(setting.Value) : 600;
             return Json(new { fee });
         }
+        [HttpPost]
+        public IActionResult UpdateClubMembershipFee([FromBody] UpdateClubFeeRequest request)
+        {
+            var membership = _context.Memberships.Find(request.MembershipId);
+            if (membership == null) return Json(new { success = false });
+            membership.Fee = request.Fee;
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
     }
-
     public class ResetPasswordRequest { public int ClubId { get; set; } public string NewPassword { get; set; } = ""; }
     public class ToggleMembershipRequest { public int MembershipId { get; set; } }
     public class TournamentRegistrationActionRequest { public int RegistrationId { get; set; } public string? Note { get; set; } }
@@ -313,6 +292,7 @@ namespace KarateFinal.Controllers
         public decimal RegistrationFee { get; set; }
         public int MaxPlayersPerClub { get; set; }
         public string? Categories { get; set; }
-        public class UpdateFeeSettingRequest { public decimal Fee { get; set; } }
     }
+    public class UpdateFeeSettingRequest { public decimal Fee { get; set; } }
+    public class UpdateClubFeeRequest { public int MembershipId { get; set; } public decimal Fee { get; set; } }
 }

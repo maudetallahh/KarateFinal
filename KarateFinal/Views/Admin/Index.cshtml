@@ -911,9 +911,14 @@
                                         <td>@m.Fee ₪</td>
                                         <td><span class="badge @(isPaid ? "badge-active" : "badge-inactive")" id="mem-badge-@m.Id">@m.Status</span></td>
                                         <td>
-                                            <button class="btn btn-sm @(isPaid ? "btn-ghost" : "btn-success")" id="mem-btn-@m.Id" onclick="toggleMembership(@m.Id, '@m.Status')">
-                                                @(isPaid ? "↩️ إلغاء الدفع" : "✅ تحديد كمدفوع")
-                                            </button>
+                                            <<div style="display:flex;gap:6px;">
+                                                <button class="btn btn-sm @(isPaid ? "btn-ghost" : "btn-success")" id="mem-btn-@m.Id" onclick="toggleMembership(@m.Id, '@m.Status')">
+                                                    @(isPaid ? "↩️ إلغاء الدفع" : "✅ تحديد كمدفوع")
+                                                </button>
+                                                <button class="btn btn-sm btn-info" onclick="openClubFeeModal(@m.Id, @m.Fee)">
+                                                    💰 تعديل الرسوم
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                     i++;
@@ -1202,6 +1207,29 @@
             <div class="modal-footer">
                 <button class="btn btn-ghost" onclick="document.getElementById('feeModal').classList.remove('show')">إلغاء</button>
                 <button class="btn btn-success" onclick="saveFee()">💾 حفظ</button>
+            </div>
+        </div>
+    </div>
+    <!-- CLUB FEE MODAL -->
+    <div class="modal-overlay" id="clubFeeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>💰 تعديل رسوم العضوية</h3>
+                <button class="modal-close" onclick="document.getElementById('clubFeeModal').classList.remove('show')">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="clubFeeId">
+                <div class="form-group">
+                    <label>الرسوم الجديدة (₪)</label>
+                    <input type="number" id="clubFeeInput" min="0" placeholder="600">
+                </div>
+                <p style="font-size:12px;color:var(--muted);margin-top:10px;">
+                    ⚠️ هذه الرسوم ستُطبَّق على هذا النادي فقط
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="document.getElementById('clubFeeModal').classList.remove('show')">إلغاء</button>
+                <button class="btn btn-success" onclick="saveClubFee()">💾 حفظ</button>
             </div>
         </div>
     </div>
@@ -1523,7 +1551,28 @@
 
             localStorage.setItem("lang", lang);
         }
+        function openClubFeeModal(membershipId, currentFee) {
+            document.getElementById('clubFeeInput').value = currentFee;
+            document.getElementById('clubFeeId').value = membershipId;
+            document.getElementById('clubFeeModal').classList.add('show');
+        }
 
+        function saveClubFee() {
+            const id = parseInt(document.getElementById('clubFeeId').value);
+            const fee = parseFloat(document.getElementById('clubFeeInput').value);
+            if (!fee || fee <= 0) { toast('أدخل قيمة صحيحة', 'error'); return; }
+            fetch('/Admin/UpdateClubMembershipFee', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ membershipId: id, fee: fee })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    document.getElementById('clubFeeModal').classList.remove('show');
+                    toast('✅ تم تحديث الرسوم بنجاح', 'success');
+                    location.reload();
+                }
+            });
+        }
         function toggleLang() {
             currentLang = currentLang === "ar" ? "en" : "ar";
             applyLang(currentLang);
