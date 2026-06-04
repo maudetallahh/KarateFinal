@@ -911,7 +911,7 @@
                                         <td>@m.Fee ₪</td>
                                         <td><span class="badge @(isPaid ? "badge-active" : "badge-inactive")" id="mem-badge-@m.Id">@m.Status</span></td>
                                         <td>
-                                            <<div style="display:flex;gap:6px;">
+                                            <div style="display:flex;gap:6px;">
                                                 <button class="btn btn-sm @(isPaid ? "btn-ghost" : "btn-success")" id="mem-btn-@m.Id" onclick="toggleMembership(@m.Id, '@m.Status')">
                                                     @(isPaid ? "↩️ إلغاء الدفع" : "✅ تحديد كمدفوع")
                                                 </button>
