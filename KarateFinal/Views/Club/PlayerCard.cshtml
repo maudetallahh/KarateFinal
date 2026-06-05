@@ -9,68 +9,413 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="/image/www.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بطاقة اللاعب</title>
     <style>
-        * { box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI',Tahoma,sans-serif; }
-        body { background:#eef3f8; display:flex; flex-direction:column; min-height:100vh; }
-        nav { background-color:#1e2a38; color:white; padding:20px 50px; display:flex; justify-content:center; align-items:center; border-bottom:4px solid #4a90e2; position:sticky; top:0; z-index:1000; }
-        .nav-header { text-align:center; }
-        .nav-header h1 { font-size:26px; color:#ffffff; letter-spacing:1px; }
-        .nav-header h2 { font-size:14px; color:#d1d5db; font-weight:normal; margin-top:5px; }
-        nav ul { position:absolute; left:50px; display:flex; list-style:none; align-items:center; }
-        nav ul li { margin-left:25px; }
-        nav ul li a { text-decoration:none; color:white; font-weight:bold; transition:0.3s; font-size:15px; }
-        nav ul li a:hover { color:#81b3f7; }
-        .login-btn { background-color:#2c3e50; padding:8px 25px; border-radius:5px; border:2px solid transparent; }
-        .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; position:absolute; right:20px; }
-        .hamburger span { width:25px; height:2px; background:white; border-radius:2px; transition:0.3s; }
-        .mobile-menu { display:none; flex-direction:column; background:#1e2a38; padding:10px 20px; gap:10px; }
-        .mobile-menu a { color:white; text-decoration:none; font-size:15px; padding:8px 0; border-bottom:1px solid #2c3e50; }
-        .mobile-menu.show { display:flex; }
-        .card-wrapper { max-width:700px; margin:40px auto; padding:20px; display:flex; flex-direction:column; gap:24px; align-items:center; flex:1; }
-        .player-card { width:100%; max-width:280px; background:#0d1117; border-radius:14px; overflow:hidden; box-shadow:0 8px 20px rgba(0,0,0,0.15); }
-        .flag-bg { width:100%; height:160px; position:relative; }
-        .player-photo-circle { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#1e2a38,#4a90e2); position:absolute; bottom:-36px; left:20px; border:4px solid #0d1117; display:flex; align-items:center; justify-content:center; font-size:32px; color:white; }
-        .player-info { padding:50px 20px 20px; color:white; }
-        .player-name { font-size:22px; font-weight:700; line-height:1.3; margin-bottom:10px; }
-        .player-meta { font-size:12px; color:#bbb; line-height:1.8; }
-        .category-label { width:100%; max-width:600px; font-size:13px; font-weight:600; color:#555; text-transform:uppercase; border-bottom:1px solid #ddd; padding-bottom:6px; }
-        .stats-grid, .stats-row2, .stats-row3 { width:100%; max-width:600px; display:grid; gap:14px; }
-        .stats-grid { grid-template-columns:repeat(4,1fr); }
-        .stats-row2 { grid-template-columns:repeat(2,1fr); }
-        .stats-row3 { grid-template-columns:repeat(3,1fr); }
-        .stat-card { background:white; border:1px solid #e0e6ed; border-radius:10px; padding:14px; text-align:center; transition:0.2s; }
-        .stat-card:hover { transform:translateY(-2px); box-shadow:0 4px 10px rgba(0,0,0,0.08); }
-        .stat-value { font-size:22px; font-weight:600; color:#111; }
-        .stat-label { font-size:11px; color:#777; margin-top:5px; text-transform:uppercase; letter-spacing:0.5px; }
-        .highlight { border-color:#3b82f6; }
-        .highlight .stat-value { color:#3b82f6; }
-        .gold { border-color:#FFD700; }
-        .gold .stat-value { color:#b8860b; }
-        .silver { border-color:#C0C0C0; }
-        .silver .stat-value { color:#666; }
-        .bronze { border-color:#CD7F32; }
-        .bronze .stat-value { color:#8b4513; }
-        .footer-tag { font-size:13px; color:#888; border:1px solid #ddd; border-radius:20px; padding:6px 16px; background:white; }
-        .back-btn { display:inline-block; padding:10px 20px; background:#34495e; color:white; text-decoration:none; border-radius:20px; margin-top:10px; }
-        footer { background:#1e2a38; color:white; padding:50px 40px 0; direction:rtl; margin-top:40px; }
-        .footer-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:32px; padding-bottom:40px; border-bottom:1px solid rgba(255,255,255,0.1); }
-        .footer-col h3 { font-size:15px; font-weight:500; color:#e2e8f0; margin-bottom:14px; }
-        .footer-col.brand h3 { font-size:16px; color:#81b3f7; border-right:3px solid #4a90e2; padding-right:10px; }
-        .footer-col p { font-size:13px; color:#94a3b8; line-height:1.8; margin:0; }
-        .footer-col ul { list-style:none; display:flex; flex-direction:column; gap:10px; }
-        .footer-col ul li a { color:#94a3b8; text-decoration:none; font-size:13px; }
-        .footer-col ul li a:hover { color:#81b3f7; }
-        .social-links { display:flex; gap:10px; margin-top:16px; }
-        .social-links a { width:34px; height:34px; border-radius:50%; background:rgba(74,144,226,0.15); border:1px solid rgba(74,144,226,0.3); display:flex; align-items:center; justify-content:center; text-decoration:none; color:#81b3f7; font-size:14px; }
-        .contact-item { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-        .contact-icon { width:28px; height:28px; border-radius:6px; background:rgba(74,144,226,0.15); display:flex; align-items:center; justify-content:center; font-size:13px; }
-        .contact-item span { color:#94a3b8; font-size:13px; }
-        .footer-bottom { display:flex; justify-content:center; align-items:center; padding:20px 0; }
-        .footer-bottom p { color:#475569; font-size:12px; margin:0; }
-        @@media(max-width:768px) { nav ul { display:none; } .hamburger { display:flex; } .stats-grid { grid-template-columns:repeat(2,1fr); } }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI',Tahoma,sans-serif;
+        }
+
+        body {
+            background: #eef3f8;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        nav {
+            background-color: #1e2a38;
+            color: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 4px solid #4a90e2;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-header {
+            text-align: center;
+        }
+
+            .nav-header h1 {
+                font-size: 26px;
+                color: #ffffff;
+                letter-spacing: 1px;
+            }
+
+            .nav-header h2 {
+                font-size: 14px;
+                color: #d1d5db;
+                font-weight: normal;
+                margin-top: 5px;
+            }
+
+        nav ul {
+            position: absolute;
+            left: 50px;
+            display: flex;
+            list-style: none;
+            align-items: center;
+        }
+
+            nav ul li {
+                margin-left: 25px;
+            }
+
+                nav ul li a {
+                    text-decoration: none;
+                    color: white;
+                    font-weight: bold;
+                    transition: 0.3s;
+                    font-size: 15px;
+                }
+
+                    nav ul li a:hover {
+                        color: #81b3f7;
+                    }
+
+        .login-btn {
+            background-color: #2c3e50;
+            padding: 8px 25px;
+            border-radius: 5px;
+            border: 2px solid transparent;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+        }
+
+            .hamburger span {
+                width: 25px;
+                height: 2px;
+                background: white;
+                border-radius: 2px;
+                transition: 0.3s;
+            }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            background: #1e2a38;
+            padding: 10px 20px;
+            gap: 10px;
+        }
+
+            .mobile-menu a {
+                color: white;
+                text-decoration: none;
+                font-size: 15px;
+                padding: 8px 0;
+                border-bottom: 1px solid #2c3e50;
+            }
+
+            .mobile-menu.show {
+                display: flex;
+            }
+
+        .card-wrapper {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .player-card {
+            width: 100%;
+            max-width: 280px;
+            background: #0d1117;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .flag-bg {
+            width: 100%;
+            height: 160px;
+            position: relative;
+        }
+
+        .player-photo-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,#1e2a38,#4a90e2);
+            position: absolute;
+            bottom: -36px;
+            left: 20px;
+            border: 4px solid #0d1117;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+        }
+
+        .player-info {
+            padding: 50px 20px 20px;
+            color: white;
+        }
+
+        .player-name {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 10px;
+        }
+
+        .player-meta {
+            font-size: 12px;
+            color: #bbb;
+            line-height: 1.8;
+        }
+
+        .category-label {
+            width: 100%;
+            max-width: 600px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 6px;
+        }
+
+        .stats-grid, .stats-row2, .stats-row3 {
+            width: 100%;
+            max-width: 600px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(4,1fr);
+        }
+
+        .stats-row2 {
+            grid-template-columns: repeat(2,1fr);
+        }
+
+        .stats-row3 {
+            grid-template-columns: repeat(3,1fr);
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e0e6ed;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+            .stat-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #777;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .highlight {
+            border-color: #3b82f6;
+        }
+
+            .highlight .stat-value {
+                color: #3b82f6;
+            }
+
+        .gold {
+            border-color: #FFD700;
+        }
+
+            .gold .stat-value {
+                color: #b8860b;
+            }
+
+        .silver {
+            border-color: #C0C0C0;
+        }
+
+            .silver .stat-value {
+                color: #666;
+            }
+
+        .bronze {
+            border-color: #CD7F32;
+        }
+
+            .bronze .stat-value {
+                color: #8b4513;
+            }
+
+        .footer-tag {
+            font-size: 13px;
+            color: #888;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 6px 16px;
+            background: white;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #34495e;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+
+        footer {
+            background: #1e2a38;
+            color: white;
+            padding: 50px 40px 0;
+            direction: rtl;
+            margin-top: 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+            gap: 32px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-col h3 {
+            font-size: 15px;
+            font-weight: 500;
+            color: #e2e8f0;
+            margin-bottom: 14px;
+        }
+
+        .footer-col.brand h3 {
+            font-size: 16px;
+            color: #81b3f7;
+            border-right: 3px solid #4a90e2;
+            padding-right: 10px;
+        }
+
+        .footer-col p {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+            .footer-col ul li a {
+                color: #94a3b8;
+                text-decoration: none;
+                font-size: 13px;
+            }
+
+                .footer-col ul li a:hover {
+                    color: #81b3f7;
+                }
+
+        .social-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+            .social-links a {
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                background: rgba(74,144,226,0.15);
+                border: 1px solid rgba(74,144,226,0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                color: #81b3f7;
+                font-size: 14px;
+            }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .contact-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: rgba(74,144,226,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .contact-item span {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+            .footer-bottom p {
+                color: #475569;
+                font-size: 12px;
+                margin: 0;
+            }
+
+        @@media(max-width:768px) {
+            nav ul {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+        }
 
         .creds-box {
             background: #f8fafc;
@@ -115,6 +460,62 @@
             padding: 4px 10px;
             border-radius: 6px;
         }
+
+        .reset-btn {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px;
+            background: linear-gradient(135deg,#e74c3c,#c0392b);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.3s;
+            margin-top: 4px;
+        }
+
+            .reset-btn:hover {
+                background: linear-gradient(135deg,#c0392b,#a93226);
+                transform: translateY(-2px);
+            }
+
+        .new-pass-box {
+            width: 100%;
+            max-width: 600px;
+            background: #e8f5e9;
+            border: 1px solid #27ae60;
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            display: none;
+        }
+
+            .new-pass-box .np-title {
+                font-size: 13px;
+                color: #27ae60;
+                font-weight: 700;
+                margin-bottom: 8px;
+            }
+
+            .new-pass-box .np-val {
+                font-size: 20px;
+                font-weight: 700;
+                color: #1e2a38;
+                font-family: monospace;
+                background: white;
+                padding: 8px 16px;
+                border-radius: 8px;
+                display: inline-block;
+            }
+
+            .new-pass-box .np-hint {
+                font-size: 11px;
+                color: #888;
+                margin-top: 8px;
+            }
     </style>
 </head>
 <body>
@@ -123,25 +524,23 @@
             <h1>منصة الكاراتيه الفلسطينية</h1>
             <h2>اصنع تاريخك ...وكن بطلاً</h2>
         </div>
-        <img src="/images/test.jpg" alt="لوغو"
-             style="position:absolute;right:260px;height:55px;">
+        <img src="/images/test.jpg" alt="لوغو" style="position:absolute;right:260px;height:55px;">
         <ul>
-            <li><a href="/Club/PlayerCard">← الرئيسية</a></li>
-            <li><a href="#">← الأندية</a></li>
+            <li><a href="/Club/Dashboard">← الرئيسية</a></li>
+            <li><a href="/Tour/Index">← الأندية</a></li>
             <li><a href="/Tournament/Index">← البطولات</a></li>
             <li><a href="/Account/Logout" class="login-btn">تسجيل خروج</a></li>
         </ul>
         <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
     </nav>
     <div class="mobile-menu" id="mobileMenu">
-        <li><a href="/Club/PlayerCard">← الرئيسية</a></li>
-        <li><a href="#">← الأندية</a></li>
-        <li><a href="/Tournament/Index">← البطولات</a></li>
+        <a href="/Club/Dashboard">← الرئيسية</a>
+        <a href="/Tour/Index">← الأندية</a>
+        <a href="/Tournament/Index">← البطولات</a>
         <a href="/Account/Logout">تسجيل خروج</a>
     </div>
 
     <div class="card-wrapper">
-
         <!-- بطاقة اللاعب -->
         <div class="player-card">
             <div class="flag-bg">
@@ -162,12 +561,14 @@
                     العمر: @player?.Age سنة<br>
                     الحزام: @player?.Belt<br>
                     @if (player?.Weight != null && player.Weight > 0)
+
                     {
                         <text>الوزن: @player.Weight كغ</text>
                     }
                 </div>
             </div>
         </div>
+
         <!-- بيانات الدخول -->
         <div class="creds-box">
             <div class="creds-title">🔐 بيانات دخول اللاعب</div>
@@ -177,9 +578,22 @@
             </div>
             <div class="cred-row">
                 <span class="cred-label">كلمة المرور</span>
-                <span class="cred-value">@player?.Password</span>
+                <span class="cred-value" id="currentPass">@player?.Password</span>
             </div>
         </div>
+
+        <!-- زر إعادة تعيين كلمة المرور -->
+        <button class="reset-btn" onclick="resetPassword(@player?.Id)">
+            🔄 إعادة تعيين كلمة المرور تلقائياً
+        </button>
+
+        <!-- نتيجة كلمة المرور الجديدة -->
+        <div class="new-pass-box" id="newPassBox">
+            <div class="np-title">✅ تم توليد كلمة مرور جديدة</div>
+            <div class="np-val" id="newPassVal"></div>
+            <div class="np-hint">أعطِ هذه الكلمة للاعب — سيُطلب منه تغييرها عند أول دخول</div>
+        </div>
+
         <!-- الإحصائيات -->
         <div class="category-label">الإحصائيات الرئيسية</div>
         <div class="stats-grid">
@@ -214,10 +628,12 @@
         </div>
 
         @if (participations != null && participations.Any())
+
         {
             <div class="category-label">آخر المشاركات</div>
             <div class="stats-row3">
                 @foreach (var p in participations.Take(3))
+
                 {
 
                     var medal = p.Rank == 1 ? "🥇" : p.Rank == 2 ? "🥈" : p.Rank == 3 ? "🥉" : "🏅";
@@ -232,7 +648,6 @@
         <div class="footer-tag">
             @(player?.Gender == "أنثى" ? "Female" : "Male") Karate — @player?.Belt Belt
         </div>
-
         <a href="/Club/Best" class="back-btn">← العودة لأفضل اللاعبين</a>
     </div>
 
@@ -246,25 +661,14 @@
             <div class="footer-col">
                 <h3>روابط سريعة</h3>
                 <ul>
-                    <li><a href="/Club/PlayerCard">← الرئيسية</a></li>
-                    <li><a href="#">← الأندية</a></li>
+                    <li><a href="/Club/Dashboard">← الرئيسية</a></li>
+                    <li><a href="/Tour/Index">← الأندية</a></li>
                     <li><a href="/Tournament/Index">← البطولات</a></li>
-                    <li><a href="/Account/Login">← تسجيل دخول</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h3>خدماتنا</h3>
-                <ul>
-                    <li><a href="#">تسجيل اللاعبين</a></li>
-                    <li><a href="#">إدارة البطولات</a></li>
-                    <li><a href="#">متابعة النتائج</a></li>
-                    <li><a href="#">الاستحقاقات</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h3>تواصل معنا</h3>
                 <div class="contact-item"><div class="contact-icon">📍</div><span>فلسطين، الضفة الغربية</span></div>
-                <div class="contact-item"><div class="contact-icon">📞</div><span style="direction:ltr;">+970 59X XXX XXXX</span></div>
                 <div class="contact-item"><div class="contact-icon">✉️</div><span>info@karate-ps.com</span></div>
             </div>
         </div>
@@ -272,10 +676,27 @@
     </footer>
 
     <script>
-        document.getElementById('hamburger').addEventListener('click', function(){
+        document.getElementById('hamburger').addEventListener('click', function () {
             this.classList.toggle('open');
             document.getElementById('mobileMenu').classList.toggle('show');
         });
+
+        function resetPassword(playerId) {
+            if (!confirm('هل أنت متأكد من إعادة تعيين كلمة المرور؟')) return;
+            fetch('/Club/ResetPlayerPassword', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ playerId: playerId })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    document.getElementById('currentPass').textContent = data.newPassword;
+                    document.getElementById('newPassVal').textContent = data.newPassword;
+                    document.getElementById('newPassBox').style.display = 'block';
+                } else {
+                    alert('حدث خطأ أثناء إعادة التعيين');
+                }
+            });
+        }
     </script>
 </body>
 </html>

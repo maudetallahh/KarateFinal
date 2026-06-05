@@ -3,20 +3,17 @@ using KarateFinal.Models;
 using KarateFinal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 namespace KarateFinal.Controllers
 {
     public class ClubController : Controller
     {
         private readonly KarateContext _context;
         private readonly EmailService _emailService;
-
         public ClubController(KarateContext context, EmailService emailService)
         {
             _context = context;
             _emailService = emailService;
         }
-
         public IActionResult Dashboard()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -34,7 +31,6 @@ namespace KarateFinal.Controllers
             ViewBag.LastLogin = user?.LastLogin?.ToString("yyyy/MM/dd HH:mm") ?? "---";
             return View();
         }
-
         public IActionResult AddPlayer()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -43,7 +39,6 @@ namespace KarateFinal.Controllers
             ViewBag.ClubId = user?.ClubId;
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> AddPlayer(Player player)
         {
@@ -68,8 +63,6 @@ namespace KarateFinal.Controllers
                 MustChangePassword = true
             });
             _context.SaveChanges();
-
-            // ارسال ايميل للاعب
             if (!string.IsNullOrEmpty(player.Email))
             {
                 try
@@ -84,18 +77,13 @@ namespace KarateFinal.Controllers
                         "</div><p style='color:#888;font-size:12px;'>يرجى تغيير كلمة المرور عند أول تسجيل دخول.</p></div>";
                     await _emailService.SendAsync(player.Email, player.Name, subject, body);
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Email error: " + ex.Message);
-                }
+                catch (Exception ex) { Console.WriteLine("Email error: " + ex.Message); }
             }
-
             TempData["NewPlayerUsername"] = playerUsername;
             TempData["NewPlayerPassword"] = plainPassword;
             TempData["NewPlayerName"] = player.Name;
             return RedirectToAction("PlayerCreated");
         }
-
         public IActionResult PlayerCreated()
         {
             ViewBag.PlayerUsername = TempData["NewPlayerUsername"];
@@ -103,7 +91,6 @@ namespace KarateFinal.Controllers
             ViewBag.PlayerName = TempData["NewPlayerName"];
             return View();
         }
-
         public IActionResult Players()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -111,22 +98,16 @@ namespace KarateFinal.Controllers
             ViewBag.Players = _context.Players.Where(p => p.ClubId == user.ClubId).ToList();
             return View();
         }
-
         public IActionResult Best()
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.ClubId == null) return RedirectToAction("Login", "Account");
             int clubId = user.ClubId.Value;
-            var players = _context.Players
-                .Where(p => p.ClubId == clubId)
-                .ToList()
-                .OrderByDescending(p => p.Age)
-                .ToList();
+            var players = _context.Players.Where(p => p.ClubId == clubId).ToList().OrderByDescending(p => p.Age).ToList();
             ViewBag.Players = players;
             return View();
         }
-
         public IActionResult Participation()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -140,7 +121,6 @@ namespace KarateFinal.Controllers
             ViewBag.TotalPoints = participations.Sum(p => p.Points);
             return View();
         }
-
         public IActionResult Entitlements(int? year)
         {
             var username = HttpContext.Session.GetString("Username");
@@ -166,14 +146,11 @@ namespace KarateFinal.Controllers
                 }
             }
             _context.SaveChanges();
-            var memberships = _context.PlayerMemberships
-                .Where(m => m.ClubId == clubId && m.Year == selectedYear)
-                .Include(m => m.Player).ToList();
+            var memberships = _context.PlayerMemberships.Where(m => m.ClubId == clubId && m.Year == selectedYear).Include(m => m.Player).ToList();
             ViewBag.Memberships = memberships;
             ViewBag.Year = selectedYear;
             return View();
         }
-
         [HttpPost]
         public IActionResult ToggleMonth([FromBody] ToggleMonthRequest request)
         {
@@ -186,7 +163,6 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true, paidMonths = membership.PaidMonths });
         }
-
         [HttpPost]
         public IActionResult UpdateFee([FromBody] UpdateFeeRequest request)
         {
@@ -197,7 +173,6 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
-
         [HttpPost]
         public IActionResult PayOldDebt([FromBody] PayOldDebtRequest request)
         {
@@ -209,7 +184,6 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true, newOldDebt = membership.OldDebt });
         }
-
         public IActionResult PlayerCard(int id)
         {
             var player = _context.Players.Find(id);
@@ -222,6 +196,26 @@ namespace KarateFinal.Controllers
             ViewBag.Silver = participations.Count(p => p.Rank == 2);
             ViewBag.Bronze = participations.Count(p => p.Rank == 3);
             return View();
+        }
+
+        // ===== إعادة تعيين كلمة مرور اللاعب =====
+        [HttpPost]
+        public IActionResult ResetPlayerPassword([FromBody] ResetPlayerPasswordRequest request)
+        {
+            var player = _context.Players.Find(request.PlayerId);
+            var user = _context.Users.FirstOrDefault(u => u.PlayerId == request.PlayerId);
+            if (player == null || user == null) return Json(new { success = false });
+
+            var chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+            var rng = new Random();
+            var newPassword = "Kar@" + new string(Enumerable.Range(0, 6).Select(_ => chars[rng.Next(chars.Length)]).ToArray());
+
+            player.Password = newPassword;
+            user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            user.MustChangePassword = true;
+            _context.SaveChanges();
+
+            return Json(new { success = true, newPassword = newPassword });
         }
 
         [HttpPost]
@@ -238,7 +232,6 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
-
         public IActionResult DeletePlayer(int id)
         {
             var player = _context.Players.Find(id);
@@ -251,7 +244,6 @@ namespace KarateFinal.Controllers
             }
             return RedirectToAction("Best");
         }
-
         public IActionResult Tournaments()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -261,10 +253,7 @@ namespace KarateFinal.Controllers
             var tournaments = _context.Tournaments.ToList();
             var myRegistrations = _context.TournamentRegistrations.Where(r => r.ClubId == clubId).ToList();
             var clubPlayers = _context.Players.Where(p => p.ClubId == clubId).ToList();
-            var myRequests = _context.TournamentPlayerRequests
-                .Where(r => r.ClubId == clubId)
-                .Include(r => r.Player)
-                .ToList();
+            var myRequests = _context.TournamentPlayerRequests.Where(r => r.ClubId == clubId).Include(r => r.Player).ToList();
             ViewBag.Tournaments = tournaments;
             ViewBag.MyRegistrations = myRegistrations;
             ViewBag.ClubId = clubId;
@@ -272,7 +261,6 @@ namespace KarateFinal.Controllers
             ViewBag.MyRequests = myRequests;
             return View();
         }
-
         [HttpPost]
         public IActionResult RegisterTournament([FromBody] RegisterTournamentSimpleRequest request)
         {
@@ -294,12 +282,11 @@ namespace KarateFinal.Controllers
                 ClubId = user.ClubId.Value,
                 PlayersCount = approvedCount,
                 RegisteredAt = DateTime.Now,
-                Status = "بانتظار الموافقة"
+                Status = "موافق"
             });
             _context.SaveChanges();
             return Json(new { success = true });
         }
-
         [HttpPost]
         public IActionResult UpdatePlayerCount([FromBody] UpdatePlayerCountRequest request)
         {
@@ -311,7 +298,6 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true, count = approvedCount });
         }
-
         [HttpPost]
         public IActionResult NewYear()
         {
@@ -346,12 +332,10 @@ namespace KarateFinal.Controllers
                     });
                 }
                 else { newMembership.PaidMonths = ""; newMembership.OldDebt = oldDebt; }
-
             }
             _context.SaveChanges();
             return Json(new { success = true });
         }
-
         public IActionResult Profile()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -362,7 +346,6 @@ namespace KarateFinal.Controllers
             ViewBag.User = user;
             return View();
         }
-
         [HttpPost]
         public IActionResult UpdateProfile(string name, string email, string phone, string description, string newPassword, string newUsername)
         {
@@ -377,22 +360,12 @@ namespace KarateFinal.Controllers
                 if (!string.IsNullOrEmpty(phone)) club.Phone = phone;
                 if (!string.IsNullOrEmpty(description)) club.Description = description;
             }
-            if (!string.IsNullOrEmpty(newUsername))
-            {
-                user.Username = newUsername;
-                if (club != null) club.Username = newUsername;
-                HttpContext.Session.SetString("Username", newUsername);
-            }
-            if (!string.IsNullOrEmpty(newPassword))
-            {
-                user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
-                if (club != null) club.Password = newPassword;
-            }
+            if (!string.IsNullOrEmpty(newUsername)) { user.Username = newUsername; if (club != null) club.Username = newUsername; HttpContext.Session.SetString("Username", newUsername); }
+            if (!string.IsNullOrEmpty(newPassword)) { user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword); if (club != null) club.Password = newPassword; }
             _context.SaveChanges();
             TempData["Success"] = "تم تحديث المعلومات بنجاح";
             return RedirectToAction("Profile");
         }
-
         [HttpPost]
         public IActionResult RequestPlayerTournament([FromBody] PlayerTournamentRequest request)
         {
@@ -410,11 +383,8 @@ namespace KarateFinal.Controllers
             });
             _context.SaveChanges();
             return Json(new { success = true });
-
         }
-
     }
-
     public class PlayerTournamentRequest { public int TournamentId { get; set; } public int PlayerId { get; set; } }
     public class SaveImagesRequest { public string? LogoImage { get; set; } public string? MaleImage { get; set; } public string? FemaleImage { get; set; } }
     public class ToggleMonthRequest { public int MembershipId { get; set; } public int Month { get; set; } }
@@ -422,6 +392,5 @@ namespace KarateFinal.Controllers
     public class RegisterTournamentSimpleRequest { public int TournamentId { get; set; } }
     public class UpdatePlayerCountRequest { public int TournamentId { get; set; } public int ClubId { get; set; } }
     public class PayOldDebtRequest { public int MembershipId { get; set; } public decimal Amount { get; set; } }
+    public class ResetPlayerPasswordRequest { public int PlayerId { get; set; } }
 }
-
-

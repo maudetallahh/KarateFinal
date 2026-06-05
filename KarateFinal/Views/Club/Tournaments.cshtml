@@ -9,7 +9,6 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="/image/www.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>البطولات</title>
     <style>
@@ -129,11 +128,6 @@
                 background: #f0fff4;
             }
 
-            .tournament-card.pending {
-                border-color: #f39c12;
-                background: #fffbf0;
-            }
-
             .tournament-card.rejected {
                 border-color: #e74c3c;
                 background: #fff5f5;
@@ -182,65 +176,10 @@
                 color: white;
             }
 
-            .t-badge.pending {
-                background: #fff3cd;
-                color: #856404;
-            }
-
             .t-badge.rejected {
                 background: #fee2e2;
                 color: #991b1b;
             }
-
-        .reg-btn {
-            width: 100%;
-            padding: 10px;
-            background: #4a90e2;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-            transition: 0.3s;
-            margin-top: 8px;
-        }
-
-            .reg-btn:hover {
-                background: #1e6fc4;
-            }
-
-        .players-input {
-            width: 100%;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-bottom: 8px;
-            font-family: inherit;
-        }
-
-            .players-input:focus {
-                outline: none;
-                border-color: #4a90e2;
-            }
-
-        .file-input {
-            width: 100%;
-            padding: 6px;
-            border: 1px dashed #ddd;
-            border-radius: 8px;
-            font-size: 12px;
-            margin-bottom: 4px;
-            font-family: inherit;
-        }
-
-        .file-hint {
-            font-size: 11px;
-            color: #e74c3c;
-            margin-bottom: 8px;
-        }
 
         .reg-info {
             font-size: 13px;
@@ -253,11 +192,6 @@
             .reg-info.success {
                 background: #e8f5e9;
                 color: #27ae60;
-            }
-
-            .reg-info.warning {
-                background: #fff3cd;
-                color: #856404;
             }
 
             .reg-info.danger {
@@ -296,6 +230,45 @@
             padding: 2rem;
             font-size: 16px;
         }
+
+        .players-section {
+            margin-top: 10px;
+            border-top: 1px solid #e1e8ed;
+            padding-top: 12px;
+        }
+
+        .players-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .player-name {
+            font-size: 13px;
+        }
+
+        .pick-btn {
+            padding: 4px 12px;
+            background: #34495e;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+            .pick-btn:hover {
+                background: #4a90e2;
+            }
 
         footer {
             background: #1e2a38;
@@ -376,8 +349,7 @@
             <h2>اصنع تاريخك ...وكن بطلاً</h2>
         </div>
         <a href="/Home/Index">
-            <img src="/images/test.jpg" alt="لوغو"
-                 style="position:absolute;right:260px;height:55px;">
+            <img src="/images/test.jpg" alt="لوغو" style="position:absolute;right:260px;height:55px;">
         </a>
         <ul>
             <li><a href="/Home/Index">الرئيسية</a></li>
@@ -395,14 +367,16 @@
                 @foreach (var t in tournaments)
                 {
                     var myReg = myRegs?.FirstOrDefault(r => r.TournamentId == t.Id);
-                    var isRegistered = myReg != null;
                     var regStatus = myReg?.Status ?? "";
                     var isClosed = t.RegistrationClosed || (t.RegistrationDeadline.HasValue && t.RegistrationDeadline.Value < DateTime.Now);
 
+                    // مسجل = موافق أو بانتظار الموافقة (كلاهما يعني مسجل)
+                    bool isRegistered = regStatus == "موافق" || regStatus == "بانتظار الموافقة";
+                    bool isRejected = regStatus == "مرفوض";
+
                     string cardClass = "";
-                    if (regStatus == "موافق") cardClass = "registered";
-                    else if (regStatus == "بانتظار الموافقة") cardClass = "pending";
-                    else if (regStatus == "مرفوض") cardClass = "rejected";
+                    if (isRegistered) cardClass = "registered";
+                    else if (isRejected) cardClass = "rejected";
                     else if (isClosed) cardClass = "closed";
 
                     <div class="tournament-card @cardClass">
@@ -425,19 +399,16 @@
                         {
                             <div class="t-info">📝 @t.Description</div>
                         }
+
                         <br>
 
-                        @if (regStatus == "موافق")
+                        @* ===== STATUS BADGE ===== *@
+                        @if (isRegistered)
                         {
-                            <span class="t-badge registered">✅ تم قبول تسجيلك</span>
+                            <span class="t-badge registered">✅ أنت مسجل في هذه البطولة</span>
                             <div class="reg-info success">👥 عدد اللاعبين: @myReg?.PlayersCount لاعب</div>
                         }
-                        else if (regStatus == "بانتظار الموافقة")
-                        {
-                            <span class="t-badge pending">⏳ بانتظار موافقة الإدارة</span>
-                            <div class="reg-info warning">👥 عدد اللاعبين المقدم: @myReg?.PlayersCount لاعب</div>
-                        }
-                        else if (regStatus == "مرفوض")
+                        else if (isRejected)
                         {
                             <span class="t-badge rejected">❌ تم رفض تسجيلك</span>
                             @if (!string.IsNullOrEmpty(myReg?.AdminNote))
@@ -449,34 +420,42 @@
                         {
                             <span class="t-badge closed-reg">🔒 أُغلق باب التسجيل</span>
                         }
-                  else
-{
-    <span class="t-badge open">🟢 مفتوح للتسجيل</span>
+                        else
+                        {
+                            <span class="t-badge open">🟢 مفتوح للتسجيل</span>
+                        }
 
-    @if(clubPlayers != null && clubPlayers.Any()){
-        <div style="margin-top:10px;border-top:1px solid #e1e8ed;padding-top:12px;">
-            <div style="font-size:12px;font-weight:700;color:#2c3e50;margin-bottom:8px;">👥 اختر اللاعبين المشاركين:</div>
-            @foreach(var p in clubPlayers){
-                var playerReq = myRequests?.FirstOrDefault(r => r.PlayerId == p.Id && r.TournamentId == t.Id);
-                <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f5f5f5;">
-                    <span style="font-size:13px;">@p.Name — @p.Belt</span>
-                    @if(playerReq == null){
-                        <button style="padding:4px 12px;background:#34495e;color:white;border:none;border-radius:15px;font-size:11px;cursor:pointer;"
-                                onclick="requestPlayer(@t.Id, @p.Id, this)">📝 اختيار</button>
-                    } else if(playerReq.Status == "بانتظار الموافقة"){
-                        <span style="font-size:11px;color:#f39c12;font-weight:bold;">⏳ بانتظار موافقة اللاعب</span>
-                    } else if(playerReq.Status == "موافق"){
-                        <span style="font-size:11px;color:#27ae60;font-weight:bold;">✅ موافق</span>
-                    } else {
-                        <span style="font-size:11px;color:#e74c3c;font-weight:bold;">❌ مرفوض</span>
-                    }
-                </div>
-            }
-        </div>
-    }
-}
- 
-</div>
+                        @* ===== PLAYERS LIST ===== *@
+                        @if (!isClosed && !isRejected && clubPlayers != null && clubPlayers.Any())
+                        {
+                            <div class="players-section">
+                                <div class="players-title">👥 اختر اللاعبين المشاركين:</div>
+                                @foreach (var p in clubPlayers)
+                                {
+                                    var playerReq = myRequests?.FirstOrDefault(r => r.PlayerId == p.Id && r.TournamentId == t.Id);
+                                    <div class="player-row">
+                                        <span class="player-name">@p.Name — @p.Belt</span>
+                                        @if (playerReq == null)
+                                        {
+                                            <button class="pick-btn" onclick="requestPlayer(@t.Id, @p.Id, this)">📝 اختيار</button>
+                                        }
+                                        else if (playerReq.Status == "بانتظار الموافقة")
+                                        {
+                                            <span style="font-size:11px;color:#f39c12;font-weight:bold;">⏳ بانتظار موافقة اللاعب</span>
+                                        }
+                                        else if (playerReq.Status == "موافق")
+                                        {
+                                            <span style="font-size:11px;color:#27ae60;font-weight:bold;">✅ موافق</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="font-size:11px;color:#e74c3c;font-weight:bold;">❌ مرفوض</span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
                 }
             </div>
         }
@@ -507,8 +486,6 @@
     </footer>
 
     <script>
-        
-
         function requestPlayer(tournamentId, playerId, btn) {
             fetch('/Club/RequestPlayerTournament', {
                 method: 'POST',
@@ -516,7 +493,6 @@
                 body: JSON.stringify({ tournamentId: tournamentId, playerId: playerId })
             }).then(r => r.json()).then(data => {
                 if (data.success) {
-                    // تحديث الزر مباشرة بدون reload
                     btn.parentElement.innerHTML = '<span style="font-size:11px;color:#f39c12;font-weight:bold;">⏳ بانتظار موافقة اللاعب</span>';
                 } else {
                     alert(data.message || 'حدث خطأ');
