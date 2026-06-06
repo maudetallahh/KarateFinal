@@ -723,7 +723,74 @@
                     <div class="stat-card"><div class="sc-label">البطولات</div><div class="sc-value">@ViewBag.TournamentsCount</div><div class="sc-change">بطولة مسجّلة</div></div>
                     <div class="stat-card"><div class="sc-label">عضويات غير مدفوعة</div><div class="sc-value">@ViewBag.UnpaidCount</div><div class="sc-change" style="color:var(--amber)">بانتظار الدفع</div></div>
                 </div>
-                <div class="section-hd"><h3>آخر الأندية المضافة</h3></div>
+
+                <!-- أفضل الأندية -->
+                <div class="section-hd" style="margin-top:24px;">
+                    <h3 id="topClubsTitle">🏆 أفضل الأندية</h3>
+                </div>
+                <div class="table-wrap" style="margin-bottom:24px;">
+                    <table>
+                        <thead><tr><th>#</th><th>النادي</th><th>مجموع النقاط</th><th>🥇 ذهب</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.TopClubs != null)
+                            {
+                                int r = 1;
+                                foreach (var c in ViewBag.TopClubs)
+                                {
+                                    var medal = r == 1 ? "🥇" : r == 2 ? "🥈" : r == 3 ? "🥉" : "🏅";
+                                    <tr>
+                                        <td>@medal @r</td>
+                                        <td>@c.ClubName</td>
+                                        <td><strong>@c.TotalPoints ⭐</strong></td>
+                                        <td>@c.GoldCount</td>
+                                    </tr>
+                                    r++;
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="4" style="text-align:center;color:var(--muted);">لا توجد بيانات بعد</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- أكثر اللاعبين نقاطاً -->
+                <div class="section-hd">
+                    <h3 id="topPlayersTitle">🥋 أكثر اللاعبين نقاطاً</h3>
+                </div>
+                <div class="table-wrap" style="margin-bottom:24px;">
+                    <table>
+                        <thead><tr><th>#</th><th>اللاعب</th><th>النادي</th><th>الحزام</th><th>النقاط</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.TopPlayers != null)
+                            {
+                                int r = 1;
+                                foreach (var p in ViewBag.TopPlayers)
+                                {
+                                    var medal = r == 1 ? "🥇" : r == 2 ? "🥈" : r == 3 ? "🥉" : "🏅";
+                                    <tr>
+                                        <td>@medal @r</td>
+                                        <td>@p.PlayerName</td>
+                                        <td>@p.ClubName</td>
+                                        <td>@p.Belt</td>
+                                        <td><strong>@p.TotalPoints ⭐</strong></td>
+                                    </tr>
+                                    r++;
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="5" style="text-align:center;color:var(--muted);">لا توجد بيانات بعد</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- آخر الأندية المضافة -->
+                <div class="section-hd">
+                    <h3 id="recentClubsTitle">آخر الأندية المضافة</h3>
+                </div>
                 <div class="table-wrap">
                     <table>
                         <thead><tr><th>اسم النادي</th><th>المسؤول</th><th>المدينة</th><th>التصنيف</th><th>الحالة</th></tr></thead>
@@ -1301,11 +1368,26 @@
                     const row = document.getElementById('mem-row-' + id);
                     badge.textContent = data.status;
                     badge.className = 'badge ' + (isPaid ? 'badge-active' : 'badge-inactive');
-                    btn.textContent = isPaid ? '↩️ إلغاء الدفع' : '✅ تحديد كمدفوع';
-                    btn.className = 'btn btn-sm ' + (isPaid ? 'btn-ghost' : 'btn-success');
+                    if (isPaid) {
+                        btn.style.display = 'none';
+                    } else {
+                        btn.textContent = '✅ تحديد كمدفوع';
+                        btn.className = 'btn btn-sm btn-success';
+                    }
                     btn.setAttribute('onclick', `toggleMembership(${id}, '${data.status}')`);
                     row.style.background = isPaid ? 'rgba(46,160,67,0.08)' : '';
                     toast(isPaid ? '✅ تم تحديد العضوية كمدفوعة' : '⚠️ تم تغيير العضوية لغير مدفوعة', isPaid ? 'success' : 'info');
+
+                    // ===== تحديث الأرقام فوق =====
+                    const allBadges = document.querySelectorAll('[id^="mem-badge-"]');
+                    let paidCount = 0, unpaidCount = 0;
+                    allBadges.forEach(b => {
+                        if (b.textContent === 'مدفوع') paidCount++;
+                        else unpaidCount++;
+                    });
+                    const mcValues = document.querySelectorAll('.mc-value');
+                    if (mcValues[1]) mcValues[1].textContent = paidCount;
+                    if (mcValues[2]) mcValues[2].textContent = unpaidCount;
                 }
             });
         }
@@ -1527,9 +1609,14 @@
             if (scChanges[3]) scChanges[3].textContent = t.stat4s;
 
             // Section headers
-            const sectionHds = document.querySelectorAll(".section-hd h3");
-            if (sectionHds[0]) sectionHds[0].textContent = t.recent_clubs;
+            document.getElementById("topClubsTitle").textContent =
+                lang === "ar" ? "🏆 أفضل الأندية" : "🏆 Top Clubs";
 
+            document.getElementById("topPlayersTitle").textContent =
+                lang === "ar" ? "🥋 أكثر اللاعبين نقاطاً" : "🥋 Top Players";
+
+            document.getElementById("recentClubsTitle").textContent =
+                lang === "ar" ? "آخر الأندية المضافة" : "Recently Added Clubs";
             // Buttons
             const btns = document.querySelectorAll(".btn-primary");
             if (btns[0]) btns[0].textContent = t.add_club;

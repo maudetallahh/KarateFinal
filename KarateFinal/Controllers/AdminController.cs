@@ -31,6 +31,41 @@ namespace KarateFinal.Controllers
                 .OrderByDescending(u => u.LastLogin)
                 .Select(u => u.LastLogin)
                 .FirstOrDefault();
+
+            // ===== إحصائيات: أفضل الأندية حسب النقاط =====
+            ViewBag.TopClubs = _context.Participations
+                .GroupBy(p => p.ClubId)
+                .Select(g => new {
+                    ClubId = g.Key,
+                    TotalPoints = g.Sum(p => p.Points),
+                    GoldCount = g.Count(p => p.Rank == 1)
+                })
+                .OrderByDescending(x => x.TotalPoints)
+                .Take(5)
+                .ToList()
+                .Select(x => new {
+                    ClubName = _context.Clubs.FirstOrDefault(c => c.Id == x.ClubId)?.Name ?? "—",
+                    x.TotalPoints,
+                    x.GoldCount
+                })
+                .ToList();
+
+            // ===== إحصائيات: أكثر اللاعبين نقاطاً =====
+            ViewBag.TopPlayers = _context.Players
+                .Where(p => _context.Participations.Any(par => par.ClubId == p.ClubId))
+                .ToList()
+                .Select(p => new {
+                    PlayerName = p.Name,
+                    Belt = p.Belt,
+                    ClubName = _context.Clubs.FirstOrDefault(c => c.Id == p.ClubId)?.Name ?? "—",
+                    TotalPoints = _context.Participations
+                        .Where(par => par.ClubId == p.ClubId)
+                        .Sum(par => par.Points)
+                })
+                .OrderByDescending(x => x.TotalPoints)
+                .Take(5)
+                .ToList();
+
             return View();
         }
         public IActionResult AddClub() => View();
@@ -72,10 +107,7 @@ namespace KarateFinal.Controllers
                         "</div><p style='color:#888;font-size:12px;'>يرجى تغيير كلمة المرور عند أول تسجيل دخول.</p></div>";
                     await _emailService.SendAsync(club.Email, club.Name, subject, body);
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Email error: " + ex.Message);
-                }
+                catch (Exception ex) { Console.WriteLine("Email error: " + ex.Message); }
             }
             return RedirectToAction("Index");
         }
@@ -238,13 +270,21 @@ namespace KarateFinal.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult UpdateProfile(string newUsername, string newPassword, string email)
+        public IActionResult UpdateProfile(string newUsername, string newPassword, string oldPassword, string email)
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user == null) return RedirectToAction("Login", "Account");
+            if (!string.IsNullOrEmpty(newPassword))
+            {
+                if (string.IsNullOrEmpty(oldPassword) || !BCrypt.Net.BCrypt.Verify(oldPassword, user.Password))
+                {
+                    TempData["Error"] = "كلمة المرور القديمة غير صحيحة!";
+                    return RedirectToAction("Profile");
+                }
+                user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            }
             if (!string.IsNullOrEmpty(newUsername)) { user.Username = newUsername; HttpContext.Session.SetString("Username", newUsername); }
-            if (!string.IsNullOrEmpty(newPassword)) user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
             if (!string.IsNullOrEmpty(email)) user.Email = email;
             _context.SaveChanges();
             TempData["Success"] = "تم تحديث المعلومات بنجاح";
@@ -273,6 +313,25 @@ namespace KarateFinal.Controllers
             var membership = _context.Memberships.Find(request.MembershipId);
             if (membership == null) return Json(new { success = false });
             membership.Fee = request.Fee;
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+        [HttpPost]
+        public IActionResult ResetAllMemberships()
+        {
+            var currentYear = DateTime.Now.Year;
+            var newYear = currentYear + 1;
+            var memberships = _context.Memberships.Where(m => m.Year == currentYear).ToList();
+            foreach (var m in memberships)
+            {
+                _context.Memberships.Add(new Membership
+                {
+                    ClubId = m.ClubId,
+                    Year = newYear,
+                    Fee = m.Fee,
+                    Status = "غير مدفوع"
+                });
+            }
             _context.SaveChanges();
             return Json(new { success = true });
         }
