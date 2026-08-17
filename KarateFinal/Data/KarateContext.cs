@@ -23,6 +23,7 @@ namespace KarateFinal.Data
         public DbSet<PlayerResult> PlayerResults { get; set; }
         public DbSet<InjuryRecord> InjuryRecords { get; set; }
         public DbSet<SiteSetting> SiteSettings { get; set; }
+        public DbSet<AppNotification> Notifications { get; set; }
     }
 
 }
