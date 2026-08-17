@@ -380,6 +380,59 @@ namespace KarateFinal.Controllers
             var exists = _context.Clubs.Any(c => c.Phone == request.Phone);
             return Json(new { exists });
         }
+        public IActionResult SiteSettings()
+        {
+            var settings = _context.SiteSettings.FirstOrDefault() ?? new SiteSetting();
+            return View(settings);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SiteSettings(SiteSetting model, IFormFile? logoFile, IFormFile? faviconFile)
+        {
+            var settings = _context.SiteSettings.FirstOrDefault();
+            if (settings == null) { settings = new SiteSetting(); _context.SiteSettings.Add(settings); }
+
+            settings.SiteName = model.SiteName;
+            settings.TabName = model.TabName;
+            settings.Slogan = model.Slogan;
+
+            if (logoFile != null && logoFile.Length > 0)
+            {
+                var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "site");
+                Directory.CreateDirectory(dir);
+                var fileName = "logo" + Path.GetExtension(logoFile.FileName);
+                using var stream = new FileStream(Path.Combine(dir, fileName), FileMode.Create);
+                await logoFile.CopyToAsync(stream);
+                settings.LogoPath = "/uploads/site/" + fileName;
+            }
+
+            if (faviconFile != null && faviconFile.Length > 0)
+            {
+                var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "site");
+                Directory.CreateDirectory(dir);
+                var fileName = "favicon" + Path.GetExtension(faviconFile.FileName);
+                using var stream = new FileStream(Path.Combine(dir, fileName), FileMode.Create);
+                await faviconFile.CopyToAsync(stream);
+                settings.FaviconPath = "/uploads/site/" + fileName;
+            }
+
+            _context.SaveChanges();
+            TempData["Success"] = "تم حفظ معلومات الموقع بنجاح ✅";
+            return RedirectToAction("SiteSettings");
+        }
+
+        public IActionResult GetSiteSettings()
+        {
+            var settings = _context.SiteSettings.FirstOrDefault() ?? new SiteSetting();
+            return Json(new
+            {
+                siteName = settings.SiteName,
+                tabName = settings.TabName,
+                slogan = settings.Slogan,
+                logoPath = settings.LogoPath ?? "/images/test.jpg",
+                faviconPath = settings.FaviconPath ?? "/images/test.jpg"
+            });
+        }
     }
     public class ResetPasswordRequest { public int ClubId { get; set; } public string NewPassword { get; set; } = ""; }
     public class ToggleMembershipRequest { public int MembershipId { get; set; } }
@@ -401,4 +454,5 @@ namespace KarateFinal.Controllers
     public class CheckPhoneRequest { public string Phone { get; set; } = ""; }
     public class UpdateFeeSettingRequest { public decimal Fee { get; set; } }
     public class UpdateClubFeeRequest { public int MembershipId { get; set; } public decimal Fee { get; set; } }
+
 }
