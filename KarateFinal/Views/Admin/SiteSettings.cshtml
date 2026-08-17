@@ -1,5 +1,168 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model KarateFinal.Models.SiteSetting
 @{
+    Layout = null;
 }
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معلومات الموقع</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+        body { background:#0d1117; min-height:100vh; display:flex; flex-direction:column; color:#e6edf3; }
+        nav { background:#161b22; color:white; padding:16px 24px; display:flex; justify-content:center; align-items:center; border-bottom:4px solid #4a90e2; position:sticky; top:0; z-index:100; }
+        .nav-header { text-align:center; }
+        .nav-header h1 { font-size:22px; font-weight:700; }
+        .nav-header h2 { font-size:13px; color:#8b949e; font-weight:normal; margin-top:4px; }
+        nav ul { position:absolute; left:24px; display:flex; list-style:none; gap:16px; align-items:center; }
+        nav ul li a { text-decoration:none; color:white; font-weight:bold; font-size:14px; transition:0.3s; }
+        nav ul li a:hover { color:#81b3f7; }
+        .logout-btn { background:rgba(218,54,51,0.15); color:#f85149; border:1px solid rgba(218,54,51,0.3); padding:6px 14px; border-radius:8px; font-size:13px; }
+        .container { max-width:680px; margin:40px auto; padding:20px; flex:1; }
+        .card { background:#161b22; border:1px solid #30363d; border-radius:16px; padding:32px; box-shadow:0 4px 20px rgba(0,0,0,0.3); }
+        .card-title { font-size:20px; font-weight:700; margin-bottom:8px; }
+        .card-sub { font-size:13px; color:#8b949e; margin-bottom:28px; }
+        .section-title { font-size:11px; font-weight:700; color:#4a90e2; margin:24px 0 14px; border-bottom:1px solid #30363d; padding-bottom:6px; text-transform:uppercase; letter-spacing:0.08em; }
+        .field { display:flex; flex-direction:column; gap:6px; margin-bottom:18px; }
+        label { font-size:12px; font-weight:700; color:#8b949e; }
+        input[type="text"], input[type="file"] { padding:10px 14px; border:1px solid #30363d; border-radius:8px; font-size:14px; font-family:inherit; background:#0d1117; color:#e6edf3; transition:0.2s; width:100%; }
+        input[type="text"]:focus { outline:none; border-color:#4a90e2; box-shadow:0 0 0 3px rgba(74,144,226,0.15); }
+        input[type="file"] { padding:8px; cursor:pointer; }
+        .hint { font-size:11px; color:#8b949e; margin-top:3px; }
+        .preview-box { display:flex; align-items:center; gap:12px; margin-top:10px; }
+        .preview-img { width:60px; height:60px; border-radius:8px; object-fit:contain; background:#0d1117; border:1px solid #30363d; padding:4px; }
+        .preview-favicon { width:32px; height:32px; border-radius:6px; object-fit:contain; background:#0d1117; border:1px solid #30363d; padding:2px; }
+        .preview-label { font-size:12px; color:#8b949e; }
+        .btn-save { padding:12px 32px; background:#4a90e2; color:white; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer; transition:0.3s; font-family:inherit; }
+        .btn-save:hover { background:#1e6fc4; }
+        .back-btn { display:inline-block; padding:12px 20px; background:#1c2333; color:#8b949e; text-decoration:none; border-radius:8px; font-size:14px; transition:0.3s; border:1px solid #30363d; }
+        .back-btn:hover { background:#30363d; color:#e6edf3; }
+        .alert-success { background:rgba(46,160,67,0.15); color:#3fb950; border:1px solid rgba(46,160,67,0.3); border-radius:8px; padding:12px 16px; margin-bottom:20px; font-weight:600; }
+        .alert-error { background:rgba(218,54,51,0.15); color:#f85149; border:1px solid rgba(218,54,51,0.3); border-radius:8px; padding:12px 16px; margin-bottom:20px; font-weight:600; }
+        .live-preview { background:#0d1117; border:1px solid #30363d; border-radius:12px; padding:16px; margin-top:24px; }
+        .live-preview-title { font-size:11px; color:#4a90e2; font-weight:700; margin-bottom:12px; text-transform:uppercase; }
+        .preview-nav { background:#161b22; border-radius:8px; padding:12px 16px; display:flex; justify-content:center; align-items:center; border-bottom:3px solid #4a90e2; position:relative; }
+        .preview-nav-text h1 { font-size:16px; color:white; font-weight:700; }
+        .preview-nav-text h2 { font-size:11px; color:#8b949e; font-weight:normal; }
+        .preview-logo { position:absolute; right:16px; height:36px; border-radius:4px; object-fit:contain; }
+        footer { background:#161b22; padding:16px; margin-top:40px; text-align:center; border-top:1px solid #30363d; }
+        footer p { color:#475569; font-size:12px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header">
+            <h1>منصة الكاراتيه الفلسطينية</h1>
+            <h2>لوحة الإدارة</h2>
+        </div>
+        <ul>
+            <li><a href="/Admin/Index">لوحة التحكم</a></li>
+            <li><a href="/Admin/Profile">معلوماتي</a></li>
+            <li><a href="/Account/Logout" class="logout-btn">🚪 خروج</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-title">🌐 معلومات الموقع</div>
+            <div class="card-sub">تحكم في اسم الموقع واللوغو والـ Favicon من هنا — ستظهر التغييرات في جميع الصفحات</div>
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert-success">✅ @TempData["Success"]</div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert-error">❌ @TempData["Error"]</div>
+            }
+
+            <form method="post" action="/Admin/SiteSettings" enctype="multipart/form-data">
+
+                <div class="section-title">النصوص</div>
+
+                <div class="field">
+                    <label>اسم الموقع (يظهر في الهيدر)</label>
+                    <input type="text" name="SiteName" value="@Model.SiteName" placeholder="منصة الكاراتيه الفلسطينية">
+                    <span class="hint">يظهر كعنوان رئيسي في أعلى كل الصفحات</span>
+                </div>
+
+                <div class="field">
+                    <label>اسم التاب (Tab Title)</label>
+                    <input type="text" name="TabName" value="@Model.TabName" placeholder="منصة الكاراتيه">
+                    <span class="hint">يظهر في عنوان المتصفح وتاب الصفحة</span>
+                </div>
+
+                <div class="field">
+                    <label>الشعار (Slogan)</label>
+                    <input type="text" name="Slogan" value="@Model.Slogan" placeholder="اصنع تاريخك ...وكن بطلاً">
+                    <span class="hint">يظهر أسفل اسم الموقع في الهيدر</span>
+                </div>
+
+                <div class="section-title">الصور</div>
+
+                <div class="field">
+                    <label>لوغو الموقع (يظهر في الهيدر)</label>
+                    <input type="file" name="logoFile" accept="image/*" onchange="previewImage(this,'logoPreview')">
+                    <span class="hint">PNG أو JPG — يُفضل خلفية شفافة</span>
+                    <div class="preview-box">
+                        <img id="logoPreview" src="@(Model.LogoPath ?? "/images/test.jpg")" class="preview-img" alt="Logo">
+                        <span class="preview-label">اللوغو الحالي</span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Favicon (أيقونة التاب)</label>
+                    <input type="file" name="faviconFile" accept="image/*,.ico" onchange="previewImage(this,'faviconPreview')">
+                    <span class="hint">ICO أو PNG بحجم 32×32 أو 64×64</span>
+                    <div class="preview-box">
+                        <img id="faviconPreview" src="@(Model.FaviconPath ?? "/images/test.jpg")" class="preview-favicon" alt="Favicon">
+                        <span class="preview-label">الـ Favicon الحالي</span>
+                    </div>
+                </div>
+
+                <!-- معاينة حية -->
+                <div class="live-preview">
+                    <div class="live-preview-title">👁️ معاينة مباشرة</div>
+                    <div class="preview-nav">
+                        <div class="preview-nav-text" style="text-align:center;">
+                            <h1 id="previewSiteName">@Model.SiteName</h1>
+                            <h2 id="previewSlogan">@Model.Slogan</h2>
+                        </div>
+                        <img id="previewLogo" src="@(Model.LogoPath ?? "/images/test.jpg")" class="preview-logo" alt="logo">
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:12px;margin-top:28px;">
+                    <button type="submit" class="btn-save">💾 حفظ التغييرات</button>
+                    <a href="/Admin/Index" class="back-btn">← العودة</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer><p>© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة</p></footer>
+
+    <script>
+        function previewImage(input, previewId) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById(previewId).src = e.target.result;
+                if (previewId === 'logoPreview')
+                    document.getElementById('previewLogo').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // معاينة النصوص مباشرة
+        document.querySelector('[name="SiteName"]').addEventListener('input', function() {
+            document.getElementById('previewSiteName').textContent = this.value;
+        });
+        document.querySelector('[name="Slogan"]').addEventListener('input', function() {
+            document.getElementById('previewSlogan').textContent = this.value;
+        });
+    </script>
+</body>
+</html>

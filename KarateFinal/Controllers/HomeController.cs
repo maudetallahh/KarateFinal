@@ -1,4 +1,4 @@
-using KarateFinal.Data;
+﻿using KarateFinal.Data;
 using KarateFinal.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -18,7 +18,25 @@ namespace KarateFinal.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.Tournaments = _context.Tournaments.ToList();
+            var site = _context.SiteSettings.FirstOrDefault();
+            ViewBag.SiteName = site?.SiteName ?? "منصة الكاراتيه الفلسطينية";
+            ViewBag.Slogan = site?.Slogan ?? "اصنع تاريخك ...وكن بطلاً";
+            ViewBag.LogoPath = site?.LogoPath ?? "/images/test.jpg";
+            ViewBag.TabName = site?.TabName ?? "منصة الكاراتيه";
+            ViewBag.ClubsCount = _context.Clubs.Count();
+            ViewBag.PlayersCount = _context.Players.Count();
+            ViewBag.TournamentsCount = _context.Tournaments.Count();
+            ViewBag.Tournaments = _context.Tournaments
+                .Where(t => t.Date >= DateTime.Today)
+                .OrderBy(t => t.Date).Take(6).ToList();
+            ViewBag.TopClubs = _context.Participations
+                .GroupBy(p => p.ClubId)
+                .Select(g => new { ClubId = g.Key, TotalPoints = g.Sum(p => p.Points) })
+                .OrderByDescending(x => x.TotalPoints).Take(5).ToList()
+                .Select(x => new {
+                    ClubName = _context.Clubs.FirstOrDefault(c => c.Id == x.ClubId)?.Name ?? "—",
+                    x.TotalPoints
+                }).ToList();
             return View();
         }
 
