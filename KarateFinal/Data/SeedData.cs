@@ -15,8 +15,8 @@ namespace KarateFinal.Data
 
             context.Users.Add(new User
             {
-                Username = "AdminKarate",
-                Password = BCrypt.Net.BCrypt.HashPassword("KarateAdmin"),
+                Username = "AdminKarate2",
+                Password = BCrypt.Net.BCrypt.HashPassword("KaratePALESTINE"),
                 Role = "Admin",
                 MustChangePassword = false
             });

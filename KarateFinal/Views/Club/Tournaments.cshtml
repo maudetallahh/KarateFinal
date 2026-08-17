@@ -26,10 +26,11 @@
             flex-direction: column;
         }
 
+        /* ===== NAV ===== */
         nav {
             background: #1e2a38;
             color: white;
-            padding: 20px 50px;
+            padding: 14px 24px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -37,6 +38,7 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            min-height: 70px;
         }
 
         .nav-header {
@@ -44,75 +46,134 @@
         }
 
             .nav-header h1 {
-                font-size: 26px;
+                font-size: 22px;
                 color: #fff;
                 letter-spacing: 1px;
             }
 
             .nav-header h2 {
-                font-size: 14px;
+                font-size: 13px;
                 color: #d1d5db;
                 font-weight: normal;
-                margin-top: 5px;
+                margin-top: 4px;
             }
 
         nav ul {
             position: absolute;
-            left: 50px;
+            left: 24px;
             display: flex;
             list-style: none;
             align-items: center;
+            gap: 16px;
         }
 
-            nav ul li {
-                margin-left: 25px;
+            nav ul li a {
+                text-decoration: none;
+                color: white;
+                font-weight: bold;
+                font-size: 14px;
+                transition: 0.3s;
             }
 
-                nav ul li a {
-                    text-decoration: none;
-                    color: white;
-                    font-weight: bold;
-                    font-size: 15px;
-                    transition: 0.3s;
+                nav ul li a:hover {
+                    color: #81b3f7;
                 }
-
-                    nav ul li a:hover {
-                        color: #81b3f7;
-                    }
 
         .logout-btn {
             background: #2c3e50;
-            padding: 8px 25px;
+            padding: 7px 18px;
             border-radius: 5px;
             border: 2px solid transparent;
+            font-size: 13px;
         }
 
+        .nav-logo {
+            position: absolute;
+            right: 24px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            position: absolute;
+            left: 16px;
+            z-index: 10;
+        }
+
+            .hamburger span {
+                width: 25px;
+                height: 2px;
+                background: white;
+                border-radius: 2px;
+                transition: 0.3s;
+            }
+
+            .hamburger.open span:nth-child(1) {
+                transform: rotate(45deg) translate(5px,5px);
+            }
+
+            .hamburger.open span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.open span:nth-child(3) {
+                transform: rotate(-45deg) translate(5px,-5px);
+            }
+
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            background: #1e2a38;
+            padding: 10px 20px;
+            gap: 8px;
+            border-bottom: 2px solid #4a90e2;
+        }
+
+            .mobile-menu a {
+                color: white;
+                text-decoration: none;
+                font-size: 14px;
+                padding: 10px 0;
+                border-bottom: 1px solid #2c3e50;
+            }
+
+            .mobile-menu.show {
+                display: flex;
+            }
+
+        /* ===== CONTENT ===== */
         .content {
-            padding: 40px 20px;
+            padding: 32px 20px;
             flex: 1;
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
             width: 100%;
         }
 
         .page-title {
             text-align: center;
-            font-size: 28px;
+            font-size: 26px;
             color: #2c3e50;
-            margin-bottom: 30px;
+            margin-bottom: 28px;
             font-weight: 700;
         }
 
+        /* ===== GRID ===== */
         .tournaments-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill,minmax(300px,1fr));
             gap: 20px;
         }
 
+        /* ===== CARDS ===== */
         .tournament-card {
             background: white;
             border-radius: 12px;
-            padding: 24px;
+            padding: 22px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             border: 2px solid #e1e8ed;
             transition: 0.3s;
@@ -140,7 +201,7 @@
             }
 
         .t-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 700;
             color: #2c3e50;
             margin-bottom: 10px;
@@ -149,7 +210,7 @@
         .t-info {
             font-size: 13px;
             color: #888;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
 
         .t-badge {
@@ -158,7 +219,7 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
             .t-badge.open {
@@ -209,30 +270,30 @@
             border-right: 3px solid #e74c3c;
         }
 
-        .back-btn {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 10px 24px;
-            background: #34495e;
+        /* ===== REGISTER BTN ===== */
+        .register-btn {
+            width: 100%;
+            margin-top: 12px;
+            padding: 10px;
+            background: linear-gradient(135deg,#34495e,#2c3e50);
             color: white;
-            text-decoration: none;
-            border-radius: 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
             transition: 0.3s;
         }
 
-            .back-btn:hover {
-                background: #4a90e2;
+            .register-btn:hover {
+                background: linear-gradient(135deg,#4a90e2,#1e6fc4);
+                transform: translateY(-1px);
             }
 
-        .empty-msg {
-            text-align: center;
-            color: #888;
-            padding: 2rem;
-            font-size: 16px;
-        }
-
+        /* ===== PLAYERS ===== */
         .players-section {
-            margin-top: 10px;
+            margin-top: 12px;
             border-top: 1px solid #e1e8ed;
             padding-top: 12px;
         }
@@ -248,12 +309,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 0;
+            padding: 7px 0;
             border-bottom: 1px solid #f5f5f5;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .player-name {
             font-size: 13px;
+            flex: 1;
+        }
+
+        .player-status {
+            font-size: 11px;
+            color: #e74c3c;
+            margin-right: 6px;
         }
 
         .pick-btn {
@@ -264,59 +334,83 @@
             border-radius: 15px;
             font-size: 11px;
             cursor: pointer;
+            white-space: nowrap;
         }
 
             .pick-btn:hover {
                 background: #4a90e2;
             }
 
+        /* ===== BACK BTN ===== */
+        .back-btn {
+            display: inline-block;
+            margin-top: 28px;
+            padding: 10px 24px;
+            background: #34495e;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+            .back-btn:hover {
+                background: #4a90e2;
+            }
+
+        .empty-msg {
+            text-align: center;
+            color: #888;
+            padding: 2rem;
+            font-size: 16px;
+        }
+
+        /* ===== FOOTER ===== */
         footer {
             background: #1e2a38;
             color: white;
-            padding: 30px 40px;
+            padding: 32px 24px 0;
             margin-top: 40px;
         }
 
         .footer-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
-            gap: 32px;
-            padding-bottom: 30px;
+            grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
+            gap: 24px;
+            padding-bottom: 24px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
         .footer-col h3 {
-            font-size: 15px;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 600;
             color: #e2e8f0;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .footer-col.brand h3 {
-            font-size: 16px;
             color: #81b3f7;
             border-right: 3px solid #4a90e2;
             padding-right: 10px;
         }
 
         .footer-col p {
-            font-size: 13px;
+            font-size: 12px;
             color: #94a3b8;
             line-height: 1.8;
-            margin: 0;
         }
 
         .footer-col ul {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
         }
 
             .footer-col ul li a {
                 color: #94a3b8;
                 text-decoration: none;
-                font-size: 13px;
+                font-size: 12px;
             }
 
                 .footer-col ul li a:hover {
@@ -326,18 +420,64 @@
         .footer-bottom {
             display: flex;
             justify-content: center;
-            padding: 20px 0;
+            padding: 16px 0;
         }
 
             .footer-bottom p {
                 color: #475569;
-                font-size: 12px;
-                margin: 0;
+                font-size: 11px;
             }
 
+        /* ===== RESPONSIVE ===== */
         @@media(max-width:768px) {
             nav ul {
                 display: none;
+            }
+
+            .nav-logo {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .tournaments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 20px 14px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            footer {
+                padding: 24px 16px 0;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @@media(max-width:480px) {
+            .nav-header h1 {
+                font-size: 17px;
+            }
+
+            .nav-header h2 {
+                display: none;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tournament-card {
+                padding: 16px;
             }
         }
     </style>
@@ -349,18 +489,23 @@
             <h2>اصنع تاريخك ...وكن بطلاً</h2>
         </div>
         <a href="/Home/Index">
-            <img src="/images/test.jpg" alt="لوغو" style="position:absolute;right:260px;height:55px;">
+            <img src="/images/test.jpg" alt="لوغو" class="nav-logo">
         </a>
         <ul>
             <li><a href="/Home/Index">الرئيسية</a></li>
             <li><a href="/Club/Dashboard">لوحة النادي</a></li>
             <li><a href="/Account/Logout" class="logout-btn">تسجيل خروج</a></li>
         </ul>
+        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
     </nav>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="/Home/Index">الرئيسية</a>
+        <a href="/Club/Dashboard">لوحة النادي</a>
+        <a href="/Account/Logout">تسجيل خروج</a>
+    </div>
 
     <div class="content">
         <h1 class="page-title">🏆 البطولات المتاحة</h1>
-
         @if (tournaments != null && tournaments.Any())
         {
             <div class="tournaments-grid">
@@ -369,16 +514,9 @@
                     var myReg = myRegs?.FirstOrDefault(r => r.TournamentId == t.Id);
                     var regStatus = myReg?.Status ?? "";
                     var isClosed = t.RegistrationClosed || (t.RegistrationDeadline.HasValue && t.RegistrationDeadline.Value < DateTime.Now);
-
-                    // مسجل = موافق أو بانتظار الموافقة (كلاهما يعني مسجل)
                     bool isRegistered = regStatus == "موافق" || regStatus == "بانتظار الموافقة";
                     bool isRejected = regStatus == "مرفوض";
-
-                    string cardClass = "";
-                    if (isRegistered) cardClass = "registered";
-                    else if (isRejected) cardClass = "rejected";
-                    else if (isClosed) cardClass = "closed";
-
+                    string cardClass = isRegistered ? "registered" : isRejected ? "rejected" : isClosed ? "closed" : "";
                     <div class="tournament-card @cardClass">
                         <div class="t-title">🏆 @t.Title</div>
                         <div class="t-info">📅 @t.Date.ToString("yyyy/MM/dd")</div>
@@ -399,10 +537,7 @@
                         {
                             <div class="t-info">📝 @t.Description</div>
                         }
-
                         <br>
-
-                        @* ===== STATUS BADGE ===== *@
                         @if (isRegistered)
                         {
                             <span class="t-badge registered">✅ أنت مسجل في هذه البطولة</span>
@@ -423,9 +558,10 @@
                         else
                         {
                             <span class="t-badge open">🟢 مفتوح للتسجيل</span>
+                            <button class="register-btn" onclick="registerTournament(@t.Id, this)">
+                                📝 تسجيل النادي في البطولة
+                            </button>
                         }
-
-                        @* ===== PLAYERS LIST ===== *@
                         @if (!isClosed && !isRejected && clubPlayers != null && clubPlayers.Any())
                         {
                             <div class="players-section">
@@ -433,15 +569,33 @@
                                 @foreach (var p in clubPlayers)
                                 {
                                     var playerReq = myRequests?.FirstOrDefault(r => r.PlayerId == p.Id && r.TournamentId == t.Id);
+                                    bool injured = p.HealthStatus == "مصاب";
+                                    bool suspended = p.PlayerStatus == "موقوف";
                                     <div class="player-row">
-                                        <span class="player-name">@p.Name — @p.Belt</span>
-                                        @if (playerReq == null)
+                                        <span class="player-name">
+                                            @p.Name — @p.Belt
+                                            @if (injured)
+                                            {
+                                                <text> 🤕</text>
+                                            }
+                                            @if (suspended)
+                                            {
+                                                <text> 🚫</text>
+                                            }
+                                        </span>
+                                        @if (injured || suspended)
+                                        {
+                                            <span class="player-status">
+                                                @(injured ? "مصاب" : "موقوف")
+                                            </span>
+                                        }
+                                        else if (playerReq == null)
                                         {
                                             <button class="pick-btn" onclick="requestPlayer(@t.Id, @p.Id, this)">📝 اختيار</button>
                                         }
                                         else if (playerReq.Status == "بانتظار الموافقة")
                                         {
-                                            <span style="font-size:11px;color:#f39c12;font-weight:bold;">⏳ بانتظار موافقة اللاعب</span>
+                                            <span style="font-size:11px;color:#f39c12;font-weight:bold;">⏳ بانتظار الموافقة</span>
                                         }
                                         else if (playerReq.Status == "موافق")
                                         {
@@ -463,7 +617,6 @@
         {
             <div class="empty-msg">لا توجد بطولات متاحة حالياً 🏆</div>
         }
-
         <a href="/Club/Dashboard" class="back-btn">← العودة للوحة النادي</a>
     </div>
 
@@ -486,6 +639,27 @@
     </footer>
 
     <script>
+        document.getElementById('hamburger').addEventListener('click', function () {
+            this.classList.toggle('open');
+            document.getElementById('mobileMenu').classList.toggle('show');
+        });
+
+        function registerTournament(tournamentId, btn) {
+            if (!confirm('هل تريد تسجيل ناديك في هذه البطولة؟')) return;
+            fetch('/Club/RegisterTournament', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ tournamentId: tournamentId })
+            }).then(r => r.json()).then(data => {
+                if (data.success) {
+                    toast('✅ تم تسجيل ناديك في البطولة بنجاح', 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    toast('⚠️ ' + (data.message || 'حدث خطأ'), 'error');
+                }
+            });
+        }
+
         function requestPlayer(tournamentId, playerId, btn) {
             fetch('/Club/RequestPlayerTournament', {
                 method: 'POST',
@@ -494,10 +668,34 @@
             }).then(r => r.json()).then(data => {
                 if (data.success) {
                     btn.parentElement.innerHTML = '<span style="font-size:11px;color:#f39c12;font-weight:bold;">⏳ بانتظار موافقة اللاعب</span>';
+                    toast('✅ تم إرسال الطلب للاعب', 'success');
                 } else {
-                    alert(data.message || 'حدث خطأ');
+                    toast('⚠️ ' + (data.message || 'حدث خطأ'), 'error');
                 }
             });
+        }
+
+        function toast(msg, type = 'info') {
+            const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
+            const colors = {
+                success: { bg: '#f0fdf4', border: '#2ea043', text: '#166534' },
+                error: { bg: '#fef2f2', border: '#da3633', text: '#991b1b' },
+                info: { bg: '#eff6ff', border: '#4a90e2', text: '#1e40af' },
+                warning: { bg: '#fffbeb', border: '#d29922', text: '#92400e' }
+            };
+            const c = colors[type] || colors.info;
+            const el = document.createElement('div');
+            el.style.cssText = `position:fixed;top:24px;left:50%;transform:translateX(-50%);background:${c.bg};border:2px solid ${c.border};color:${c.text};border-radius:12px;padding:14px 22px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:10px;z-index:99999;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:280px;max-width:90vw;font-family:inherit;direction:rtl;`;
+            el.innerHTML = `<span style="font-size:20px;">${icons[type] || 'ℹ️'}</span><span style="flex:1;">${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:18px;color:${c.text};">×</button>`;
+            if (!document.getElementById('toast-style')) {
+                const s = document.createElement('style');
+                s.id = 'toast-style';
+                s.textContent = '@@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
+                document.head.appendChild(s);
+            }
+            el.style.animation = 'slideDown 0.3s ease';
+            document.body.appendChild(el);
+            setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 4000);
         }
     </script>
 </body>

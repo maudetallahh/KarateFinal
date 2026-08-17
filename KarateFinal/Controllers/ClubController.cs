@@ -45,6 +45,16 @@ namespace KarateFinal.Controllers
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.ClubId != null) player.ClubId = user.ClubId.Value;
+            if (!string.IsNullOrEmpty(player.Email))
+            {
+                var emailExists = _context.Players.Any(p => p.Email == player.Email)
+                               || _context.Clubs.Any(c => c.Email == player.Email);
+                if (emailExists)
+                {
+                    TempData["Error"] = "البريد الإلكتروني مسجّل مسبقاً!";
+                    return RedirectToAction("Dashboard");
+                }
+            }
             _context.Players.Add(player);
             _context.SaveChanges();
             var chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
@@ -188,13 +198,23 @@ namespace KarateFinal.Controllers
         {
             var player = _context.Players.Find(id);
             if (player == null) return RedirectToAction("Best");
-            var participations = _context.Participations.Where(p => p.ClubId == player.ClubId).Include(p => p.Tournament).ToList();
+            var participations = _context.Participations
+                .Where(p => p.ClubId == player.ClubId)
+                .Include(p => p.Tournament).ToList();
+            var playerResults = _context.PlayerResults
+                .Where(r => r.PlayerId == id).ToList();
+
             ViewBag.Player = player;
             ViewBag.Participations = participations;
-            ViewBag.TotalPoints = participations.Sum(p => p.Points);
-            ViewBag.Gold = participations.Count(p => p.Rank == 1);
-            ViewBag.Silver = participations.Count(p => p.Rank == 2);
-            ViewBag.Bronze = participations.Count(p => p.Rank == 3);
+            ViewBag.PlayerResults = playerResults;
+            ViewBag.InjuryRecords = _context.InjuryRecords
+    .Where(r => r.PlayerId == id)
+    .OrderByDescending(r => r.CreatedAt)
+    .ToList();
+            ViewBag.TotalPoints = playerResults.Sum(r => r.Points);
+            ViewBag.Gold = playerResults.Count(r => r.Rank == 1);
+            ViewBag.Silver = playerResults.Count(r => r.Rank == 2);
+            ViewBag.Bronze = playerResults.Count(r => r.Rank == 3);
             return View();
         }
 
@@ -367,11 +387,42 @@ namespace KarateFinal.Controllers
             return RedirectToAction("Profile");
         }
         [HttpPost]
+        public IActionResult AddPlayerResult([FromBody] AddPlayerResultRequest request)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return Json(new { success = false });
+
+            _context.PlayerResults.Add(new PlayerResult
+            {
+                PlayerId = request.PlayerId,
+                ClubId = user.ClubId.Value,
+                TournamentName = request.TournamentName,
+                Rank = request.Rank,
+                Points = request.Points,
+                Date = DateTime.Now
+            });
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        public IActionResult DeletePlayerResult(int id)
+        {
+            var result = _context.PlayerResults.Find(id);
+            if (result != null) { _context.PlayerResults.Remove(result); _context.SaveChanges(); }
+            return Json(new { success = true });
+        }
+        [HttpPost]
         public IActionResult RequestPlayerTournament([FromBody] PlayerTournamentRequest request)
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.ClubId == null) return Json(new { success = false });
+            var playerCheck = _context.Players.Find(request.PlayerId);
+            if (playerCheck?.HealthStatus == "مصاب")
+                return Json(new { success = false, message = "⚠️ لا يمكن تسجيل اللاعب — حالته الصحية: مصاب" });
+            if (playerCheck?.PlayerStatus == "موقوف")
+                return Json(new { success = false, message = "⚠️ لا يمكن تسجيل اللاعب — اللاعب موقوف حالياً" });
             var exists = _context.TournamentPlayerRequests.Any(r => r.PlayerId == request.PlayerId && r.TournamentId == request.TournamentId);
             if (exists) return Json(new { success = false, message = "تم إرسال الطلب مسبقاً" });
             _context.TournamentPlayerRequests.Add(new TournamentPlayerRequest
@@ -384,6 +435,82 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+        // ===== تحديث حالة اللاعب (موقوف/ملتزم) =====
+        [HttpPost]
+        public IActionResult UpdatePlayerStatus([FromBody] UpdatePlayerStatusRequest request)
+        {
+            var player = _context.Players.Find(request.PlayerId);
+            if (player == null) return Json(new { success = false });
+            player.PlayerStatus = request.PlayerStatus;
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        // ===== إضافة إصابة =====
+        [HttpPost]
+        public async Task<IActionResult> AddInjury([FromForm] AddInjuryRequest request)
+        {
+            var player = _context.Players.Find(request.PlayerId);
+            if (player == null) return Json(new { success = false });
+
+            string? attachmentPath = null;
+            if (request.Attachment != null && request.Attachment.Length > 0)
+            {
+                var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "injuries");
+                Directory.CreateDirectory(uploadsDir);
+                var fileName = Guid.NewGuid() + Path.GetExtension(request.Attachment.FileName);
+                var filePath = Path.Combine(uploadsDir, fileName);
+                using var stream = new FileStream(filePath, FileMode.Create);
+                await request.Attachment.CopyToAsync(stream);
+                attachmentPath = "/uploads/injuries/" + fileName;
+            }
+
+            _context.InjuryRecords.Add(new InjuryRecord
+            {
+                PlayerId = request.PlayerId,
+                InjuryNote = request.InjuryNote,
+                InjuryStart = request.InjuryStart,
+                InjuryEnd = request.InjuryEnd,
+                AttachmentPath = attachmentPath,
+                CreatedAt = DateTime.Now
+            });
+
+            player.HealthStatus = "مصاب";
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        // ===== حذف إصابة =====
+        [HttpPost]
+        public IActionResult DeleteInjury(int id)
+        {
+            var injury = _context.InjuryRecords.Find(id);
+            if (injury == null) return Json(new { success = false });
+            _context.InjuryRecords.Remove(injury);
+            // لو ما في إصابات ثانية → رجّع الحالة لسليم
+            var remaining = _context.InjuryRecords.Any(r => r.PlayerId == injury.PlayerId && r.Id != id);
+            if (!remaining)
+            {
+                var player = _context.Players.Find(injury.PlayerId);
+                if (player != null) player.HealthStatus = "سليم";
+            }
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+        [HttpPost]
+        public IActionResult CheckPlayerEmail([FromBody] CheckEmailRequest request)
+        {
+            var exists = _context.Players.Any(p => p.Email == request.Email)
+                      || _context.Clubs.Any(c => c.Email == request.Email);
+            return Json(new { exists });
+        }
+    }
+    public class AddPlayerResultRequest
+    {
+        public int PlayerId { get; set; }
+        public string TournamentName { get; set; } = "";
+        public int Rank { get; set; }
+        public int Points { get; set; }
     }
     public class PlayerTournamentRequest { public int TournamentId { get; set; } public int PlayerId { get; set; } }
     public class SaveImagesRequest { public string? LogoImage { get; set; } public string? MaleImage { get; set; } public string? FemaleImage { get; set; } }
@@ -393,4 +520,13 @@ namespace KarateFinal.Controllers
     public class UpdatePlayerCountRequest { public int TournamentId { get; set; } public int ClubId { get; set; } }
     public class PayOldDebtRequest { public int MembershipId { get; set; } public decimal Amount { get; set; } }
     public class ResetPlayerPasswordRequest { public int PlayerId { get; set; } }
+    public class UpdatePlayerStatusRequest { public int PlayerId { get; set; } public string PlayerStatus { get; set; } = "ملتزم"; }
+    public class AddInjuryRequest
+    {
+        public int PlayerId { get; set; }
+        public string InjuryNote { get; set; } = "";
+        public DateTime InjuryStart { get; set; }
+        public DateTime? InjuryEnd { get; set; }
+        public IFormFile? Attachment { get; set; }
+    }
 }

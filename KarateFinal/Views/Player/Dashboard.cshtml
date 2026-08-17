@@ -506,7 +506,13 @@
             </div>
             <div class="cred-row">
                 <span class="cred-label">كلمة المرور</span>
-                <span class="cred-value">@player?.Password</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="cred-value" id="playerPass" data-pass="@player?.Password">••••••••</span>
+                    <button onclick="togglePassView('playerPass')"
+                            style="background:none;border:1px solid #ddd;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:12px;">
+                        👁️
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -557,6 +563,151 @@
                 }
             </div>
         }
+        <!-- حالة اللاعب -->
+        <div style="width:100%;max-width:600px;display:flex;gap:12px;">
+            <div style="flex:1;background:@(player?.HealthStatus == "مصاب" ? "#fee2e2" : "#e8f5e9");border:1px solid @(player?.HealthStatus == "مصاب" ? "#da3633" : "#27ae60");border-radius:12px;padding:16px;text-align:center;">
+                <div style="font-size:22px;">@(player?.HealthStatus == "مصاب" ? "🤕" : "💪")</div>
+                <div style="font-size:13px;font-weight:700;color:@(player?.HealthStatus == "مصاب" ? "#da3633" : "#27ae60");margin:6px 0;">@player?.HealthStatus</div>
+                <div style="font-size:11px;color:#888;">الحالة الصحية</div>
+            </div>
+            <div style="flex:1;background:@(player?.PlayerStatus == "موقوف" ? "#fff3cd" : "#e8f5e9");border:1px solid @(player?.PlayerStatus == "موقوف" ? "#d29922" : "#27ae60");border-radius:12px;padding:16px;text-align:center;">
+                <div style="font-size:22px;">@(player?.PlayerStatus == "موقوف" ? "🚫" : "✅")</div>
+                <div style="font-size:13px;font-weight:700;color:@(player?.PlayerStatus == "موقوف" ? "#d29922" : "#27ae60");margin:6px 0;">@player?.PlayerStatus</div>
+                <div style="font-size:11px;color:#888;">حالة الانضباط</div>
+            </div>
+        </div>
+
+        <!-- سجل الإصابات -->
+        <div class="category-label">🤕 سجل إصاباتي</div>
+        <div style="width:100%;max-width:600px;background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <form id="injuryForm" onsubmit="addInjury(event)" enctype="multipart/form-data">
+                <div style="display:grid;gap:10px;margin-bottom:16px;">
+                    <div>
+                        <div style="font-size:11px;color:#888;margin-bottom:4px;">وصف الإصابة *</div>
+                        <input type="text" name="InjuryNote" placeholder="مثال: كسر في الرسغ الأيمن" required
+                               style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div>
+                            <div style="font-size:11px;color:#888;margin-bottom:4px;">تاريخ البداية *</div>
+                            <input type="date" name="InjuryStart" required
+                                   style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                        </div>
+                        <div>
+                            <div style="font-size:11px;color:#888;margin-bottom:4px;">تاريخ العودة المتوقع</div>
+                            <input type="date" name="InjuryEnd"
+                                   style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:#888;margin-bottom:4px;">إرفاق تقرير طبي (صورة/PDF)</div>
+                        <input type="file" name="Attachment" accept="image/*,.pdf"
+                               style="width:100%;padding:8px;border:1px dashed #ddd;border-radius:8px;font-size:12px;">
+                    </div>
+                    <button type="submit"
+                            style="padding:10px;background:#e74c3c;color:white;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;">
+                        ➕ تسجيل إصابة
+                    </button>
+                </div>
+            </form>
+
+            @if (ViewBag.InjuryRecords != null)
+            {
+                foreach (var inj in ViewBag.InjuryRecords)
+                {
+                    <div style="background:#fff5f5;border:1px solid #fca5a5;border-radius:10px;padding:14px;margin-bottom:10px;" id="injury-@inj.Id">
+                        <div style="display:flex;justify-content:space-between;align-items:start;">
+                            <div>
+                                <div style="font-size:13px;font-weight:700;color:#da3633;">🤕 @inj.InjuryNote</div>
+                                <div style="font-size:11px;color:#888;margin-top:4px;">
+                                    من: @inj.InjuryStart.ToString("yyyy/MM/dd")
+                                    @if (inj.InjuryEnd != null)
+                                    {
+                                        <text> — حتى: @inj.InjuryEnd.Value.ToString("yyyy/MM/dd")</text>
+                                    }
+                                </div>
+                                @if (!string.IsNullOrEmpty(inj.AttachmentPath))
+                                {
+                                    <a href="@inj.AttachmentPath" target="_blank"
+                                       style="font-size:11px;color:#4a90e2;text-decoration:none;margin-top:4px;display:inline-block;">
+                                        📎 عرض التقرير الطبي
+                                    </a>
+                                }
+                            </div>
+                            <button onclick="deleteInjury(@inj.Id)"
+                                    style="padding:4px 10px;background:#fee2e2;color:#da3633;border:none;border-radius:6px;cursor:pointer;font-size:11px;">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="text-align:center;color:#888;font-size:13px;padding:10px;">لا توجد إصابات مسجلة ✅</div>
+            }
+        </div>
+        <!-- سجل الاستحقاقات -->
+        <div class="category-label">💰 سجل استحقاقاتي</div>
+        <div style="width:100%;max-width:600px;background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            @{
+                var membership = ViewBag.PlayerMembership as KarateFinal.Models.PlayerMembership;
+                var months = new[] { "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر" };
+                var paidList = membership?.PaidMonths?.Split(',').Where(x => !string.IsNullOrEmpty(x)).Select(int.Parse).ToList() ?? new List<int>();
+            }
+            @if (membership != null)
+            {
+                <!-- ملخص -->
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+                    <div style="background:#f8fafc;border-radius:10px;padding:14px;text-align:center;border:1px solid #e2e8f0;">
+                        <div style="font-size:20px;font-weight:700;color:#2c3e50;">@membership.MonthlyFee ₪</div>
+                        <div style="font-size:11px;color:#888;margin-top:4px;">الرسوم الشهرية</div>
+                    </div>
+                    <div style="background:#e8f5e9;border-radius:10px;padding:14px;text-align:center;border:1px solid #27ae60;">
+                        <div style="font-size:20px;font-weight:700;color:#27ae60;">@paidList.Count</div>
+                        <div style="font-size:11px;color:#888;margin-top:4px;">أشهر مدفوعة</div>
+                    </div>
+                    <div style="background:#fff3cd;border-radius:10px;padding:14px;text-align:center;border:1px solid #d29922;">
+                        <div style="font-size:20px;font-weight:700;color:#d29922;">@(12 - paidList.Count)</div>
+                        <div style="font-size:11px;color:#888;margin-top:4px;">أشهر متبقية</div>
+                    </div>
+                </div>
+
+                @if (membership.OldDebt > 0)
+                {
+                    <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#da3633;font-weight:600;">
+                        ⚠️ ديون سابقة: @membership.OldDebt ₪
+                    </div>
+                }
+
+                <!-- الشبكة الشهرية -->
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+                    @for (int m = 1; m <= 12; m++)
+                    {
+                        var isPaid = paidList.Contains(m);
+                        <div style="border-radius:8px;padding:10px 6px;text-align:center;font-size:12px;font-weight:600;
+                            background:@(isPaid ? "#e8f5e9" : "#f8fafc");
+                            border:1px solid @(isPaid ? "#27ae60" : "#e2e8f0");
+                            color:@(isPaid ? "#27ae60" : "#888");">
+                            @months[m - 1]
+                            <div style="font-size:16px;margin-top:2px;">@(isPaid ? "✅" : "○")</div>
+                        </div>
+                    }
+                </div>
+
+                <div style="margin-top:14px;text-align:center;font-size:12px;color:#888;">
+                    إجمالي المدفوع: <strong style="color:#27ae60;">@(paidList.Count * membership.MonthlyFee) ₪</strong>
+                    &nbsp;|&nbsp;
+                    المتبقي: <strong style="color:#da3633;">@((12 - paidList.Count) * membership.MonthlyFee + membership.OldDebt) ₪</strong>
+                </div>
+            }
+            else
+            {
+                <div style="text-align:center;color:#888;font-size:13px;padding:20px;">
+                    لا توجد سجلات استحقاقات لهذا العام
+                </div>
+            }
+        </div>
 
         <div class="footer-tag">
             @(player?.Gender == "أنثى" ? "Female" : "Male") Karate — @player?.Belt Belt
@@ -671,6 +822,29 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
+        function addInjury(e) {
+            e.preventDefault();
+            const form = document.getElementById('injuryForm');
+            const formData = new FormData(form);
+            fetch('/Player/AddInjury', { method: 'POST', body: formData })
+                .then(r => r.json()).then(data => {
+                    if (data.success) location.reload();
+                    else alert('حدث خطأ');
+                });
+        }
+
+        function deleteInjury(id) {
+            if (!confirm('هل أنت متأكد من حذف سجل الإصابة؟')) return;
+            fetch('/Player/DeleteInjury?id=' + id, { method: 'POST' })
+                .then(r => r.json()).then(data => {
+                    if (data.success) location.reload();
+                });
+        }
+        function togglePassView(id) {
+            const el = document.getElementById(id);
+            const isHidden = el.textContent === '••••••••';
+            el.textContent = isHidden ? el.dataset.pass : '••••••••';
+        }
     </script>
 </body>
 </html>

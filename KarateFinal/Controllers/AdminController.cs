@@ -78,6 +78,25 @@ namespace KarateFinal.Controllers
                 {"قلقيلية","qalqilya"},{"بيت لحم","bethlehem"},{"أريحا","jericho"},
                 {"سلفيت","salfit"},{"طوباس","tubas"},{"غزة","gaza"}
             };
+            // ===== التحقق من تكرار الإيميل والهاتف =====
+            if (!string.IsNullOrEmpty(club.Email))
+            {
+                var emailExists = _context.Clubs.Any(c => c.Email == club.Email);
+                if (emailExists)
+                {
+                    TempData["Error"] = "البريد الإلكتروني مسجّل مسبقاً لنادٍ آخر!";
+                    return RedirectToAction("Index");
+                }
+            }
+            if (!string.IsNullOrEmpty(club.Phone))
+            {
+                var phoneExists = _context.Clubs.Any(c => c.Phone == club.Phone);
+                if (phoneExists)
+                {
+                    TempData["Error"] = "رقم الهاتف مسجّل مسبقاً لنادٍ آخر!";
+                    return RedirectToAction("Index");
+                }
+            }
             var slug = citySlug.ContainsKey(club.City) ? citySlug[club.City] : "club";
             var count = _context.Clubs.Count() + 1;
             club.Username = slug + count;
@@ -186,11 +205,30 @@ namespace KarateFinal.Controllers
         public IActionResult ToggleMembership([FromBody] ToggleMembershipRequest request)
         {
             var membership = _context.Memberships.Find(request.MembershipId);
-            if (membership == null) return Json(new { success = false });
-            membership.Status = membership.Status == "مدفوع" ? "غير مدفوع" : "مدفوع";
-            if (membership.Status == "مدفوع") membership.PaidDate = DateTime.Now;
+
+            if (membership == null)
+                return Json(new { success = false });
+
+            // إذا كانت العضوية مدفوعة مسبقاً لا نسمح بإرجاعها
+            if (membership.Status == "مدفوع")
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "لا يمكن إلغاء العضوية بعد الدفع"
+                });
+            }
+
+            membership.Status = "مدفوع";
+            membership.PaidDate = DateTime.Now;
+
             _context.SaveChanges();
-            return Json(new { success = true, status = membership.Status });
+
+            return Json(new
+            {
+                success = true,
+                status = membership.Status
+            });
         }
         public IActionResult TournamentDetails(int id)
         {
@@ -320,20 +358,27 @@ namespace KarateFinal.Controllers
         public IActionResult ResetAllMemberships()
         {
             var currentYear = DateTime.Now.Year;
-            var newYear = currentYear + 1;
             var memberships = _context.Memberships.Where(m => m.Year == currentYear).ToList();
             foreach (var m in memberships)
             {
-                _context.Memberships.Add(new Membership
-                {
-                    ClubId = m.ClubId,
-                    Year = newYear,
-                    Fee = m.Fee,
-                    Status = "غير مدفوع"
-                });
+                m.Status = "غير مدفوع";
+                m.PaidDate = null;
             }
             _context.SaveChanges();
             return Json(new { success = true });
+        }
+        [HttpPost]
+        public IActionResult CheckClubEmail([FromBody] CheckEmailRequest request)
+        {
+            var exists = _context.Clubs.Any(c => c.Email == request.Email);
+            return Json(new { exists });
+        }
+
+        [HttpPost]
+        public IActionResult CheckClubPhone([FromBody] CheckPhoneRequest request)
+        {
+            var exists = _context.Clubs.Any(c => c.Phone == request.Phone);
+            return Json(new { exists });
         }
     }
     public class ResetPasswordRequest { public int ClubId { get; set; } public string NewPassword { get; set; } = ""; }
@@ -352,6 +397,8 @@ namespace KarateFinal.Controllers
         public int MaxPlayersPerClub { get; set; }
         public string? Categories { get; set; }
     }
+    public class CheckEmailRequest { public string Email { get; set; } = ""; }
+    public class CheckPhoneRequest { public string Phone { get; set; } = ""; }
     public class UpdateFeeSettingRequest { public decimal Fee { get; set; } }
     public class UpdateClubFeeRequest { public int MembershipId { get; set; } public decimal Fee { get; set; } }
 }

@@ -45,6 +45,12 @@ namespace KarateFinal.Controllers
     .Include(r => r.Tournament)
     .ToList();
             ViewBag.PendingRequests = pendingRequests;
+            ViewBag.InjuryRecords = _context.InjuryRecords
+                .Where(r => r.PlayerId == player.Id)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToList();
+            ViewBag.PlayerMembership = _context.PlayerMemberships
+                .FirstOrDefault(m => m.PlayerId == player.Id && m.Year == DateTime.Now.Year);
             return View();
         }
 
@@ -131,12 +137,70 @@ namespace KarateFinal.Controllers
 
             return Json(new { success = true });
         }
+        [HttpPost]
+        public async Task<IActionResult> AddInjury([FromForm] PlayerInjuryRequest request)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.PlayerId == null) return Json(new { success = false });
+
+            string? attachmentPath = null;
+            if (request.Attachment != null && request.Attachment.Length > 0)
+            {
+                var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "injuries");
+                Directory.CreateDirectory(uploadsDir);
+                var fileName = Guid.NewGuid() + Path.GetExtension(request.Attachment.FileName);
+                using var stream = new FileStream(Path.Combine(uploadsDir, fileName), FileMode.Create);
+                await request.Attachment.CopyToAsync(stream);
+                attachmentPath = "/uploads/injuries/" + fileName;
+            }
+
+            _context.InjuryRecords.Add(new InjuryRecord
+            {
+                PlayerId = user.PlayerId.Value,
+                InjuryNote = request.InjuryNote,
+                InjuryStart = request.InjuryStart,
+                InjuryEnd = request.InjuryEnd,
+                AttachmentPath = attachmentPath,
+                CreatedAt = DateTime.Now
+            });
+
+            var player = _context.Players.Find(user.PlayerId.Value);
+            if (player != null) player.HealthStatus = "مصاب";
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public IActionResult DeleteInjury(int id)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            var injury = _context.InjuryRecords.Find(id);
+            if (injury == null || injury.PlayerId != user?.PlayerId) return Json(new { success = false });
+            _context.InjuryRecords.Remove(injury);
+            var remaining = _context.InjuryRecords.Any(r => r.PlayerId == injury.PlayerId && r.Id != id);
+            if (!remaining)
+            {
+                var player = _context.Players.Find(injury.PlayerId);
+                if (player != null) player.HealthStatus = "سليم";
+            }
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
 
         public class RespondRequestModel
         {
             public int RequestId { get; set; }
             public string Status { get; set; } = "";
         }
+    }
+    public class PlayerInjuryRequest
+    {
+        public string InjuryNote { get; set; } = "";
+        public DateTime InjuryStart { get; set; }
+        public DateTime? InjuryEnd { get; set; }
+        public IFormFile? Attachment { get; set; }
     }
 
 }

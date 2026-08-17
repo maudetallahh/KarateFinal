@@ -4,6 +4,7 @@ using KarateFinal.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KarateFinal.Migrations
 {
     [DbContext(typeof(KarateContext))]
-    partial class KarateContextModelSnapshot : ModelSnapshot
+    [Migration("20260607192754_AddPlayerResults")]
+    partial class AddPlayerResults
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,40 +83,6 @@ namespace KarateFinal.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Clubs");
-                });
-
-            modelBuilder.Entity("KarateFinal.Models.InjuryRecord", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AttachmentPath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("InjuryEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InjuryNote")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("InjuryStart")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlayerId");
-
-                    b.ToTable("InjuryRecords");
                 });
 
             modelBuilder.Entity("KarateFinal.Models.Membership", b =>
@@ -205,19 +174,11 @@ namespace KarateFinal.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("HealthStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlayerStatus")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -493,17 +454,6 @@ namespace KarateFinal.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("KarateFinal.Models.InjuryRecord", b =>
-                {
-                    b.HasOne("KarateFinal.Models.Player", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Player");
                 });
 
             modelBuilder.Entity("KarateFinal.Models.Membership", b =>

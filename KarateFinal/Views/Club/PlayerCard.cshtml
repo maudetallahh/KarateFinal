@@ -568,7 +568,31 @@
                 </div>
             </div>
         </div>
+        <!-- حالة اللاعب -->
+        <div style="width:100%;max-width:600px;display:flex;gap:12px;">
 
+            <!-- الحالة الصحية -->
+            <div style="flex:1;background:@(player?.HealthStatus == "مصاب" ? "#fee2e2" : "#e8f5e9");border:1px solid @(player?.HealthStatus == "مصاب" ? "#da3633" : "#27ae60");border-radius:12px;padding:16px;text-align:center;">
+                <div style="font-size:22px;">@(player?.HealthStatus == "مصاب" ? "🤕" : "💪")</div>
+                <div style="font-size:13px;font-weight:700;color:@(player?.HealthStatus == "مصاب" ? "#da3633" : "#27ae60");margin:6px 0;">@player?.HealthStatus</div>
+                <div style="font-size:11px;color:#888;">الحالة الصحية</div>
+            </div>
+
+            <!-- حالة الإيقاف -->
+            <div style="flex:1;background:@(player?.PlayerStatus == "موقوف" ? "#fff3cd" : "#e8f5e9");border:1px solid @(player?.PlayerStatus == "موقوف" ? "#d29922" : "#27ae60");border-radius:12px;padding:16px;text-align:center;">
+                <div style="font-size:22px;">@(player?.PlayerStatus == "موقوف" ? "🚫" : "✅")</div>
+                <div style="font-size:13px;font-weight:700;color:@(player?.PlayerStatus == "موقوف" ? "#d29922" : "#27ae60");margin:6px 0;">@player?.PlayerStatus</div>
+                <div style="font-size:11px;color:#888;">حالة الانضباط</div>
+            </div>
+        </div>
+
+        <!-- أزرار التحكم بالحالة -->
+        <div style="width:100%;max-width:600px;display:flex;gap:10px;">
+            <button onclick="toggleSuspend(@player?.Id, '@player?.PlayerStatus')"
+                    style="flex:1;padding:10px;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;background:@(player?.PlayerStatus == "موقوف" ? "#e8f5e9" : "#fff3cd");color:@(player?.PlayerStatus == "موقوف" ? "#27ae60" : "#d29922");">
+                @(player?.PlayerStatus == "موقوف" ? "✅ رفع الإيقاف" : "🚫 إيقاف اللاعب")
+            </button>
+        </div>
         <!-- بيانات الدخول -->
         <div class="creds-box">
             <div class="creds-title">🔐 بيانات دخول اللاعب</div>
@@ -578,7 +602,13 @@
             </div>
             <div class="cred-row">
                 <span class="cred-label">كلمة المرور</span>
-                <span class="cred-value" id="currentPass">@player?.Password</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="cred-value" id="currentPass" data-pass="@player?.Password">••••••••</span>
+                    <button onclick="togglePassView('currentPass')"
+                            style="background:none;border:1px solid #ddd;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:12px;">
+                        👁️
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -644,7 +674,133 @@
                 }
             </div>
         }
+        <!-- سجل الإصابات -->
+        <div class="category-label">🤕 سجل الإصابات</div>
+        <div style="width:100%;max-width:600px;background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
 
+            <!-- إضافة إصابة -->
+            <form id="injuryForm" onsubmit="addInjury(event)">
+                <input type="hidden" name="PlayerId" value="@player?.Id">
+                <div style="display:grid;gap:10px;margin-bottom:16px;">
+                    <div>
+                        <div style="font-size:11px;color:#888;margin-bottom:4px;">وصف الإصابة *</div>
+                        <input type="text" name="InjuryNote" placeholder="مثال: كسر في الرسغ الأيمن" required
+                               style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                        <div>
+                            <div style="font-size:11px;color:#888;margin-bottom:4px;">تاريخ البداية *</div>
+                            <input type="date" name="InjuryStart" required
+                                   style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                        </div>
+                        <div>
+                            <div style="font-size:11px;color:#888;margin-bottom:4px;">تاريخ العودة المتوقع</div>
+                            <input type="date" name="InjuryEnd"
+                                   style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:#888;margin-bottom:4px;">إرفاق تقرير طبي (صورة/PDF)</div>
+                        <input type="file" name="Attachment" accept="image/*,.pdf"
+                               style="width:100%;padding:8px 10px;border:1px dashed #ddd;border-radius:8px;font-family:inherit;font-size:12px;">
+                    </div>
+                    <button type="submit"
+                            style="padding:10px;background:#e74c3c;color:white;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;">
+                        ➕ تسجيل إصابة
+                    </button>
+                </div>
+            </form>
+
+            <!-- قائمة الإصابات -->
+            @if (ViewBag.InjuryRecords != null)
+            {
+
+                foreach (var inj in ViewBag.InjuryRecords)
+
+                {
+                    <div style="background:#fff5f5;border:1px solid #fca5a5;border-radius:10px;padding:14px;margin-bottom:10px;" id="injury-@inj.Id">
+                        <div style="display:flex;justify-content:space-between;align-items:start;">
+                            <div>
+                                <div style="font-size:13px;font-weight:700;color:#da3633;">🤕 @inj.InjuryNote</div>
+                                <div style="font-size:11px;color:#888;margin-top:4px;">
+                                    من: @inj.InjuryStart.ToString("yyyy/MM/dd")
+                                    @if (inj.InjuryEnd != null)
+
+                                    {
+                                        <text> — حتى: @inj.InjuryEnd.Value.ToString("yyyy/MM/dd")</text>
+                                    }
+                                </div>
+                                @if (!string.IsNullOrEmpty(inj.AttachmentPath))
+
+                                {
+                                    <a href="@inj.AttachmentPath" target="_blank"
+                                       style="font-size:11px;color:#4a90e2;text-decoration:none;margin-top:4px;display:inline-block;">
+                                        📎 عرض التقرير الطبي
+                                    </a>
+                                }
+                            </div>
+                            <button onclick="deleteInjury(@inj.Id)"
+                                    style="padding:4px 10px;background:#fee2e2;color:#da3633;border:none;border-radius:6px;cursor:pointer;font-size:11px;">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="text-align:center;color:#888;font-size:13px;padding:10px;">لا توجد إصابات مسجلة ✅</div>
+            }
+        </div>
+        <!-- نتائج اللاعب في البطولات -->
+        <div class="category-label">🏆 نتائج البطولات</div>
+        <div style="width:100%;max-width:600px;background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+
+            <!-- إضافة نتيجة جديدة -->
+            <div style="display:grid;grid-template-columns:1fr 80px 80px auto;gap:8px;margin-bottom:16px;align-items:end;">
+                <div>
+                    <div style="font-size:11px;color:#888;margin-bottom:4px;">اسم البطولة</div>
+                    <input type="text" id="tournamentNameInput" placeholder="مثال: بطولة نابلس 2025"
+                           style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#888;margin-bottom:4px;">المركز</div>
+                    <input type="number" id="rankInput" min="1" max="100" placeholder="1"
+                           style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#888;margin-bottom:4px;">النقاط</div>
+                    <input type="number" id="pointsInput" min="0" placeholder="10"
+                           style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                </div>
+                <button onclick="addPlayerResult(@player?.Id)"
+                        style="padding:8px 16px;background:#34495e;color:white;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;">
+                    ➕ إضافة
+                </button>
+            </div>
+
+            <!-- قائمة النتائج -->
+            <div id="resultsTable">
+                @if (ViewBag.PlayerResults != null)
+
+                {
+                    foreach (var r in ViewBag.PlayerResults)
+                    {
+
+                        var medal = r.Rank == 1 ? "🥇" : r.Rank == 2 ? "🥈" : r.Rank == 3 ? "🥉" : "🏅";
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;" id="result-@r.Id">
+                            <span style="font-size:13px;">@medal @r.TournamentName</span>
+                            <span style="font-size:12px;color:#888;">المركز @r.Rank · @r.Points ⭐</span>
+                            <button onclick="deleteResult(@r.Id)"
+                                    style="padding:3px 10px;background:#fee2e2;color:#da3633;border:none;border-radius:6px;cursor:pointer;font-size:11px;">
+                                🗑️
+                            </button>
+                        </div>
+                    }
+
+                }
+            </div>
+        </div>
         <div class="footer-tag">
             @(player?.Gender == "أنثى" ? "Female" : "Male") Karate — @player?.Belt Belt
         </div>
@@ -696,6 +852,66 @@
                     alert('حدث خطأ أثناء إعادة التعيين');
                 }
             });
+        }
+        function addPlayerResult(playerId) {
+            const name = document.getElementById('tournamentNameInput').value.trim();
+            const rank = parseInt(document.getElementById('rankInput').value);
+            const points = parseInt(document.getElementById('pointsInput').value);
+            if (!name || !rank || isNaN(points)) { alert('أدخل جميع البيانات'); return; }
+            fetch('/Club/AddPlayerResult', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ playerId, tournamentName: name, rank, points })
+            }).then(r => r.json()).then(data => {
+                if (data.success) location.reload();
+                else alert('حدث خطأ');
+            });
+        }
+
+        function deleteResult(id) {
+            if (!confirm('هل أنت متأكد من الحذف؟')) return;
+            fetch('/Club/DeletePlayerResult?id=' + id)
+                .then(r => r.json()).then(data => {
+                    if (data.success) document.getElementById('result-' + id).remove();
+                });
+        }
+        function toggleSuspend(playerId, currentStatus) {
+            const newStatus = currentStatus === 'موقوف' ? 'ملتزم' : 'موقوف';
+            const msg = newStatus === 'موقوف' ? 'هل أنت متأكد من إيقاف اللاعب؟' : 'هل تريد رفع الإيقاف عن اللاعب؟';
+            if (!confirm(msg)) return;
+            fetch('/Club/UpdatePlayerStatus', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ playerId, playerStatus: newStatus })
+            }).then(r => r.json()).then(data => {
+                if (data.success) location.reload();
+            });
+        }
+
+        function addInjury(e) {
+            e.preventDefault();
+            const form = document.getElementById('injuryForm');
+            const formData = new FormData(form);
+            fetch('/Club/AddInjury', {
+                method: 'POST',
+                body: formData
+            }).then(r => r.json()).then(data => {
+                if (data.success) location.reload();
+                else alert('حدث خطأ');
+            });
+        }
+
+        function deleteInjury(id) {
+            if (!confirm('هل أنت متأكد من حذف سجل الإصابة؟')) return;
+            fetch('/Club/DeleteInjury?id=' + id, { method: 'POST' })
+                .then(r => r.json()).then(data => {
+                    if (data.success) location.reload();
+                });
+        }
+        function togglePassView(id) {
+            const el = document.getElementById(id);
+            const isHidden = el.textContent === '••••••••';
+            el.textContent = isHidden ? el.dataset.pass : '••••••••';
         }
     </script>
 </body>
