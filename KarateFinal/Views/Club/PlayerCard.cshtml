@@ -759,9 +759,22 @@
             <!-- إضافة نتيجة جديدة -->
             <div style="display:grid;grid-template-columns:1fr 80px 80px auto;gap:8px;margin-bottom:16px;align-items:end;">
                 <div>
-                    <div style="font-size:11px;color:#888;margin-bottom:4px;">اسم البطولة</div>
-                    <input type="text" id="tournamentNameInput" placeholder="مثال: بطولة نابلس 2025"
-                           style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                    <div style="font-size:11px;color:#888;margin-bottom:4px;">البطولة</div>
+                    <select id="tournamentNameInput"
+                            style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                        <option value="">-- اختر البطولة --</option>
+                        @if (ViewBag.PlayerTournaments != null)
+
+                        {
+
+                            foreach (var t in ViewBag.PlayerTournaments)
+
+                            {
+                                <option value="@t.Title">@t.Title</option>
+                            }
+
+                        }
+                    </select>
                 </div>
                 <div>
                     <div style="font-size:11px;color:#888;margin-bottom:4px;">المركز</div>
@@ -803,6 +816,17 @@
         </div>
         <div class="footer-tag">
             @(player?.Gender == "أنثى" ? "Female" : "Male") Karate — @player?.Belt Belt
+        </div>
+        <!-- ملاحظات اللاعب -->
+        <div class="category-label">📝 ملاحظات</div>
+        <div style="width:100%;max-width:600px;background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <textarea id="playerNotes" rows="4"
+                      placeholder="أضف ملاحظاتك حول هذا اللاعب..."
+                      style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;resize:vertical;">@player?.Notes</textarea>
+            <button onclick="saveNotes(@player?.Id)"
+                    style="margin-top:10px;padding:8px 20px;background:#34495e;color:white;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;">
+                💾 حفظ الملاحظات
+            </button>
         </div>
         <a href="/Club/Best" class="back-btn">← العودة لأفضل اللاعبين</a>
     </div>
@@ -857,7 +881,7 @@
             const name = document.getElementById('tournamentNameInput').value.trim();
             const rank = parseInt(document.getElementById('rankInput').value);
             const points = parseInt(document.getElementById('pointsInput').value);
-            if (!name || !rank || isNaN(points)) { alert('أدخل جميع البيانات'); return; }
+            if (!name || !rank || isNaN(points)) { toast('⚠️ أدخل جميع البيانات', 'warning'); return; }
             fetch('/Club/AddPlayerResult', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -912,6 +936,17 @@
             const el = document.getElementById(id);
             const isHidden = el.textContent === '••••••••';
             el.textContent = isHidden ? el.dataset.pass : '••••••••';
+        }
+        function saveNotes(playerId) {
+            const notes = document.getElementById('playerNotes').value;
+            fetch('/Club/UpdatePlayerNotes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ playerId, notes })
+            }).then(r => r.json()).then(data => {
+                if (data.success) toast('✅ تم حفظ الملاحظات', 'success');
+                else toast('حدث خطأ', 'error');
+            });
         }
     </script>
 </body>

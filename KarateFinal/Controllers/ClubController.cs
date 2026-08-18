@@ -215,7 +215,13 @@ namespace KarateFinal.Controllers
             ViewBag.Gold = playerResults.Count(r => r.Rank == 1);
             ViewBag.Silver = playerResults.Count(r => r.Rank == 2);
             ViewBag.Bronze = playerResults.Count(r => r.Rank == 3);
+            ViewBag.PlayerTournaments = _context.TournamentPlayerRequests
+    .Where(r => r.PlayerId == id && r.Status == "موافق")
+    .Include(r => r.Tournament)
+    .Select(r => new { r.TournamentId, r.Tournament.Title })
+    .ToList();
             return View();
+
         }
 
         // ===== إعادة تعيين كلمة مرور اللاعب =====
@@ -504,6 +510,15 @@ namespace KarateFinal.Controllers
                       || _context.Clubs.Any(c => c.Email == request.Email);
             return Json(new { exists });
         }
+        [HttpPost]
+        public IActionResult UpdatePlayerNotes([FromBody] UpdateNotesRequest request)
+        {
+            var player = _context.Players.Find(request.PlayerId);
+            if (player == null) return Json(new { success = false });
+            player.Notes = request.Notes;
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
     }
     public class AddPlayerResultRequest
     {
@@ -521,6 +536,7 @@ namespace KarateFinal.Controllers
     public class PayOldDebtRequest { public int MembershipId { get; set; } public decimal Amount { get; set; } }
     public class ResetPlayerPasswordRequest { public int PlayerId { get; set; } }
     public class UpdatePlayerStatusRequest { public int PlayerId { get; set; } public string PlayerStatus { get; set; } = "ملتزم"; }
+    public class UpdateNotesRequest { public int PlayerId { get; set; } public string? Notes { get; set; } }
     public class AddInjuryRequest
     {
         public int PlayerId { get; set; }
@@ -528,5 +544,7 @@ namespace KarateFinal.Controllers
         public DateTime InjuryStart { get; set; }
         public DateTime? InjuryEnd { get; set; }
         public IFormFile? Attachment { get; set; }
+
     }
+
 }

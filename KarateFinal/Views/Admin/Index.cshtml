@@ -9,20 +9,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة تحكم الإدارة - منصة الكاراتيه</title>
     <style>
-        :root {
-            --bg: #0d1117;
-            --surface: #161b22;
-            --surface2: #1c2333;
-            --border: #30363d;
-            --accent: #4a90e2;
-            --accent2: #1e6fc4;
-            --green: #2ea043;
-            --red: #da3633;
-            --amber: #d29922;
-            --text: #e6edf3;
-            --muted: #8b949e;
-            --sidebar-w: 240px;
-        }
+       :root {
+    --bg: #0f1923;
+    --surface: #1a2535;
+    --surface2: #223044;
+    --border: #2d3f55;
+    --accent: #3b82f6;
+    --accent2: #2563eb;
+    --green: #10b981;
+    --red: #ef4444;
+    --amber: #f59e0b;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --sidebar-w: 240px;
+    --sidebar-active-bg: rgba(59,130,246,0.12);
+    --card-hover: rgba(255,255,255,0.04);
+}
 
         *, *::before, *::after {
             box-sizing: border-box;
@@ -108,11 +110,12 @@
                 background: rgba(255,255,255,0.04);
             }
 
-            .nav-item.active {
-                color: var(--accent);
-                background: rgba(74,144,226,0.1);
-                border-right-color: var(--accent);
-            }
+           .nav-item.active {
+    color: var(--accent);
+    background: var(--sidebar-active-bg);
+    border-right-color: var(--accent);
+    border-radius: 0 8px 8px 0;
+}
 
             .nav-item .icon {
                 font-size: 16px;
@@ -324,15 +327,21 @@
             margin-bottom: 24px;
         }
 
-        .stat-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px 18px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+      .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: 0.2s;
+    border-top: 3px solid var(--accent);
+}
+.stat-card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+}
 
             .stat-card .sc-label {
                 font-size: 11px;
@@ -679,6 +688,7 @@
         @@media(max-width:768px) {
             .sidebar {
                 transform: translateX(100%);
+                background: linear-gradient(180deg, #1a2535 0%, #0f1923 100%);
             }
 
                 .sidebar.open {
@@ -710,6 +720,8 @@
 
             .topbar {
                 padding: 8px 14px;
+                background: linear-gradient(90deg, #1a2535, #223044);
+border-bottom: 2px solid var(--accent);
             }
 
             .form-grid {

@@ -26,9 +26,13 @@ namespace KarateFinal.Controllers
             ViewBag.ClubsCount = _context.Clubs.Count();
             ViewBag.PlayersCount = _context.Players.Count();
             ViewBag.TournamentsCount = _context.Tournaments.Count();
-            ViewBag.Tournaments = _context.Tournaments
-                .Where(t => t.Date >= DateTime.Today)
-                .OrderBy(t => t.Date).Take(6).ToList();
+            ViewBag.UpcomingTournaments = _context.Tournaments
+     .Where(t => t.Date >= DateTime.Today)
+     .OrderBy(t => t.Date).Take(6).ToList();
+
+            ViewBag.PastTournaments = _context.Tournaments
+                .Where(t => t.Date < DateTime.Today)
+                .OrderByDescending(t => t.Date).Take(6).ToList();
             ViewBag.TopClubs = _context.Participations
                 .GroupBy(p => p.ClubId)
                 .Select(g => new { ClubId = g.Key, TotalPoints = g.Sum(p => p.Points) })
@@ -39,7 +43,16 @@ namespace KarateFinal.Controllers
                 }).ToList();
             return View();
         }
-
+        public IActionResult About()
+        {
+            var site = _context.SiteSettings.FirstOrDefault();
+            ViewBag.SiteName = site?.SiteName ?? "منصة الكاراتيه الفلسطينية";
+            ViewBag.LogoPath = site?.LogoPath ?? "/images/test.jpg";
+            ViewBag.ClubsCount = _context.Clubs.Count();
+            ViewBag.PlayersCount = _context.Players.Count();
+            ViewBag.TournamentsCount = _context.Tournaments.Count();
+            return View();
+        }
         public IActionResult Privacy()
         {
             return View();
