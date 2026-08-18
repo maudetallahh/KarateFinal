@@ -504,7 +504,7 @@ namespace KarateFinal.Controllers
             return Json(new { success = true });
         }
         [HttpPost]
-        public IActionResult CheckPlayerEmail([FromBody] CheckEmailRequest request)
+        public IActionResult CheckPlayerEmail([FromBody] CheckPlayerEmailRequest request)
         {
             var exists = _context.Players.Any(p => p.Email == request.Email)
                       || _context.Clubs.Any(c => c.Email == request.Email);
@@ -537,6 +537,7 @@ namespace KarateFinal.Controllers
     public class ResetPlayerPasswordRequest { public int PlayerId { get; set; } }
     public class UpdatePlayerStatusRequest { public int PlayerId { get; set; } public string PlayerStatus { get; set; } = "ملتزم"; }
     public class UpdateNotesRequest { public int PlayerId { get; set; } public string? Notes { get; set; } }
+    public class CheckPlayerEmailRequest { public string Email { get; set; } = ""; }
     public class AddInjuryRequest
     {
         public int PlayerId { get; set; }

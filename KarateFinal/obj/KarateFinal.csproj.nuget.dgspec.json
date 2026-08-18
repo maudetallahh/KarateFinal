@@ -50,6 +50,10 @@
               "target": "Package",
               "version": "[4.2.0, )"
             },
+            "ClosedXML": {
+              "target": "Package",
+              "version": "[0.105.1, )"
+            },
             "MailKit": {
               "target": "Package",
               "version": "[4.16.0, )"

@@ -78,25 +78,6 @@ namespace KarateFinal.Controllers
                 {"قلقيلية","qalqilya"},{"بيت لحم","bethlehem"},{"أريحا","jericho"},
                 {"سلفيت","salfit"},{"طوباس","tubas"},{"غزة","gaza"}
             };
-            // ===== التحقق من تكرار الإيميل والهاتف =====
-            if (!string.IsNullOrEmpty(club.Email))
-            {
-                var emailExists = _context.Clubs.Any(c => c.Email == club.Email);
-                if (emailExists)
-                {
-                    TempData["Error"] = "البريد الإلكتروني مسجّل مسبقاً لنادٍ آخر!";
-                    return RedirectToAction("Index");
-                }
-            }
-            if (!string.IsNullOrEmpty(club.Phone))
-            {
-                var phoneExists = _context.Clubs.Any(c => c.Phone == club.Phone);
-                if (phoneExists)
-                {
-                    TempData["Error"] = "رقم الهاتف مسجّل مسبقاً لنادٍ آخر!";
-                    return RedirectToAction("Index");
-                }
-            }
             var slug = citySlug.ContainsKey(club.City) ? citySlug[club.City] : "club";
             var count = _context.Clubs.Count() + 1;
             club.Username = slug + count;
@@ -205,30 +186,11 @@ namespace KarateFinal.Controllers
         public IActionResult ToggleMembership([FromBody] ToggleMembershipRequest request)
         {
             var membership = _context.Memberships.Find(request.MembershipId);
-
-            if (membership == null)
-                return Json(new { success = false });
-
-            // إذا كانت العضوية مدفوعة مسبقاً لا نسمح بإرجاعها
-            if (membership.Status == "مدفوع")
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "لا يمكن إلغاء العضوية بعد الدفع"
-                });
-            }
-
-            membership.Status = "مدفوع";
-            membership.PaidDate = DateTime.Now;
-
+            if (membership == null) return Json(new { success = false });
+            membership.Status = membership.Status == "مدفوع" ? "غير مدفوع" : "مدفوع";
+            if (membership.Status == "مدفوع") membership.PaidDate = DateTime.Now;
             _context.SaveChanges();
-
-            return Json(new
-            {
-                success = true,
-                status = membership.Status
-            });
+            return Json(new { success = true, status = membership.Status });
         }
         public IActionResult TournamentDetails(int id)
         {
@@ -308,21 +270,13 @@ namespace KarateFinal.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult UpdateProfile(string newUsername, string newPassword, string oldPassword, string email)
+        public IActionResult UpdateProfile(string newUsername, string newPassword, string email)
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user == null) return RedirectToAction("Login", "Account");
-            if (!string.IsNullOrEmpty(newPassword))
-            {
-                if (string.IsNullOrEmpty(oldPassword) || !BCrypt.Net.BCrypt.Verify(oldPassword, user.Password))
-                {
-                    TempData["Error"] = "كلمة المرور القديمة غير صحيحة!";
-                    return RedirectToAction("Profile");
-                }
-                user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
-            }
             if (!string.IsNullOrEmpty(newUsername)) { user.Username = newUsername; HttpContext.Session.SetString("Username", newUsername); }
+            if (!string.IsNullOrEmpty(newPassword)) user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
             if (!string.IsNullOrEmpty(email)) user.Email = email;
             _context.SaveChanges();
             TempData["Success"] = "تم تحديث المعلومات بنجاح";
@@ -354,85 +308,6 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
-        [HttpPost]
-        public IActionResult ResetAllMemberships()
-        {
-            var currentYear = DateTime.Now.Year;
-            var memberships = _context.Memberships.Where(m => m.Year == currentYear).ToList();
-            foreach (var m in memberships)
-            {
-                m.Status = "غير مدفوع";
-                m.PaidDate = null;
-            }
-            _context.SaveChanges();
-            return Json(new { success = true });
-        }
-        [HttpPost]
-        public IActionResult CheckClubEmail([FromBody] CheckEmailRequest request)
-        {
-            var exists = _context.Clubs.Any(c => c.Email == request.Email);
-            return Json(new { exists });
-        }
-
-        [HttpPost]
-        public IActionResult CheckClubPhone([FromBody] CheckPhoneRequest request)
-        {
-            var exists = _context.Clubs.Any(c => c.Phone == request.Phone);
-            return Json(new { exists });
-        }
-        public IActionResult SiteSettings()
-        {
-            var settings = _context.SiteSettings.FirstOrDefault() ?? new SiteSetting();
-            return View(settings);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> SiteSettings(SiteSetting model, IFormFile? logoFile, IFormFile? faviconFile)
-        {
-            var settings = _context.SiteSettings.FirstOrDefault();
-            if (settings == null) { settings = new SiteSetting(); _context.SiteSettings.Add(settings); }
-
-            settings.SiteName = model.SiteName;
-            settings.TabName = model.TabName;
-            settings.Slogan = model.Slogan;
-
-            if (logoFile != null && logoFile.Length > 0)
-            {
-                var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "site");
-                Directory.CreateDirectory(dir);
-                var fileName = "logo" + Path.GetExtension(logoFile.FileName);
-                using var stream = new FileStream(Path.Combine(dir, fileName), FileMode.Create);
-                await logoFile.CopyToAsync(stream);
-                settings.LogoPath = "/uploads/site/" + fileName;
-            }
-
-            if (faviconFile != null && faviconFile.Length > 0)
-            {
-                var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "site");
-                Directory.CreateDirectory(dir);
-                var fileName = "favicon" + Path.GetExtension(faviconFile.FileName);
-                using var stream = new FileStream(Path.Combine(dir, fileName), FileMode.Create);
-                await faviconFile.CopyToAsync(stream);
-                settings.FaviconPath = "/uploads/site/" + fileName;
-            }
-
-            _context.SaveChanges();
-            TempData["Success"] = "تم حفظ معلومات الموقع بنجاح ✅";
-            return RedirectToAction("SiteSettings");
-        }
-
-        public IActionResult GetSiteSettings()
-        {
-            var settings = _context.SiteSettings.FirstOrDefault() ?? new SiteSetting();
-            return Json(new
-            {
-                siteName = settings.SiteName,
-                tabName = settings.TabName,
-                slogan = settings.Slogan,
-                logoPath = settings.LogoPath ?? "/images/test.jpg",
-                faviconPath = settings.FaviconPath ?? "/images/test.jpg"
-            });
-        }
     }
     public class ResetPasswordRequest { public int ClubId { get; set; } public string NewPassword { get; set; } = ""; }
     public class ToggleMembershipRequest { public int MembershipId { get; set; } }
@@ -450,9 +325,6 @@ namespace KarateFinal.Controllers
         public int MaxPlayersPerClub { get; set; }
         public string? Categories { get; set; }
     }
-    public class CheckEmailRequest { public string Email { get; set; } = ""; }
-    public class CheckPhoneRequest { public string Phone { get; set; } = ""; }
     public class UpdateFeeSettingRequest { public decimal Fee { get; set; } }
     public class UpdateClubFeeRequest { public int MembershipId { get; set; } public decimal Fee { get; set; } }
-
 }
