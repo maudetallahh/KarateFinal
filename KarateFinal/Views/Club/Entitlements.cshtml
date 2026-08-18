@@ -7,7 +7,6 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" type="image/png" href="/image/www.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>استحقاقات اللاعبين</title>
     <style>
@@ -26,7 +25,7 @@
         }
 
         nav {
-            background-color: #1e2a38;
+            background: #1e2a38;
             color: white;
             padding: 20px 50px;
             display: flex;
@@ -44,7 +43,7 @@
 
             .nav-header h1 {
                 font-size: 26px;
-                color: #ffffff;
+                color: #fff;
                 letter-spacing: 1px;
             }
 
@@ -80,10 +79,9 @@
                     }
 
         .login-btn {
-            background-color: #2c3e50;
+            background: #2c3e50;
             padding: 8px 25px;
             border-radius: 5px;
-            border: 2px solid transparent;
         }
 
         .hamburger {
@@ -407,6 +405,7 @@
             .btn-pay-old:hover {
                 background: #fee2e2;
             }
+
         .empty-msg {
             text-align: center;
             padding: 2rem;
@@ -506,6 +505,68 @@
             .back-btn:hover {
                 background: #4a90e2;
             }
+        /* Payment Modal */
+        .pay-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+            .pay-overlay.show {
+                display: flex;
+            }
+
+        .pay-box {
+            background: white;
+            border-radius: 16px;
+            width: 480px;
+            max-width: 100%;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .pay-header {
+            background: linear-gradient(135deg,#1e2a38,#2c3e50);
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pay-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+        }
+
+        .pay-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+            .pay-tab.active {
+                background: #4a90e2;
+                color: white;
+            }
+
+            .pay-tab:not(.active) {
+                background: #f8f9fa;
+                color: #555;
+            }
+
+        .pay-body {
+            padding: 24px;
+        }
 
         footer {
             background: #1e2a38;
@@ -561,53 +622,9 @@
                     color: #81b3f7;
                 }
 
-        .social-links {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-        }
-
-            .social-links a {
-                width: 34px;
-                height: 34px;
-                border-radius: 50%;
-                background: rgba(74,144,226,0.15);
-                border: 1px solid rgba(74,144,226,0.3);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                text-decoration: none;
-                color: #81b3f7;
-                font-size: 14px;
-            }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .contact-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            background: rgba(74,144,226,0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-        }
-
-        .contact-item span {
-            color: #94a3b8;
-            font-size: 13px;
-        }
-
         .footer-bottom {
             display: flex;
             justify-content: center;
-            align-items: center;
             padding: 20px 0;
         }
 
@@ -643,8 +660,7 @@
             <h2>اصنع تاريخك ...وكن بطلاً</h2>
         </div>
         <a href="/Home/Index">
-            <img src="/images/test.jpg" alt="لوغو"
-                 style="position:absolute;right:260px;height:55px;">
+            <img src="/images/test.jpg" alt="لوغو" style="position:absolute;right:260px;height:55px;">
         </a>
         <ul>
             <li><a href="/Home/Index">الرئيسية</a></li>
@@ -665,12 +681,30 @@
         <a href="/Account/Logout">تسجيل خروج</a>
     </div>
 
+    <!-- بنر عضوية النادي -->
+    @if (ViewBag.ClubMembership != null)
+    {
+        var mem = ViewBag.ClubMembership as KarateFinal.Models.Membership;
+        if (mem?.Status == "غير مدفوع")
+        {
+            <div style="background:#fff3cd;border:2px solid #d29922;border-radius:12px;padding:20px 24px;margin:20px auto;max-width:1200px;width:95%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                <div>
+                    <div style="font-size:15px;font-weight:700;color:#92400e;">⚠️ عضوية النادي غير مدفوعة لهذا العام</div>
+                    <div style="font-size:13px;color:#78350f;margin-top:4px;">المبلغ المطلوب: <strong>@mem?.Fee ₪</strong> — سنة @mem?.Year</div>
+                </div>
+                <button onclick="document.getElementById('paymentModal').classList.add('show')"
+                        style="padding:10px 24px;background:#4a90e2;color:white;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;">
+                    💳 دفع الآن
+                </button>
+            </div>
+        }
+    }
+
     <div class="container">
         <div class="header">
             <h2>📋 استحقاقات اللاعبين — @year</h2>
             <p>اضغط على أي شهر لتبديل حالة الدفع</p>
         </div>
-
         @{
             var mList = memberships?.ToList() ?? new List<KarateFinal.Models.PlayerMembership>();
             int total = mList.Count;
@@ -678,23 +712,11 @@
             int notPaid = total - allPaid;
             string[] monthNames = { "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر" };
         }
-
         <div class="stats-row">
-            <div class="stat-card">
-                <div class="stat-n">@total</div>
-                <div class="stat-l">لاعب</div>
-            </div>
-            <div class="stat-card stat-paid">
-                <div class="stat-n">@allPaid</div>
-                <div class="stat-l">مدفوع كامل</div>
-            </div>
-            <div class="stat-card stat-unpaid">
-                <div class="stat-n">@notPaid</div>
-                <div class="stat-l">غير مكتمل</div>
-            </div>
+            <div class="stat-card"><div class="stat-n">@total</div><div class="stat-l">لاعب</div></div>
+            <div class="stat-card stat-paid"><div class="stat-n">@allPaid</div><div class="stat-l">مدفوع كامل</div></div>
+            <div class="stat-card stat-unpaid"><div class="stat-n">@notPaid</div><div class="stat-l">غير مكتمل</div></div>
         </div>
-
-        <!-- شريط البحث وزر السنة الجديدة -->
         <div class="actions-row">
             <div class="search-wrap">
                 <input type="text" id="searchInput" placeholder="🔍 ابحث باسم اللاعب...">
@@ -705,11 +727,8 @@
                     <option value="unpaid">غير مدفوع</option>
                 </select>
             </div>
-            <button class="btn-new-year" onclick="startNewYear()">
-                🗓️ بدء سنة جديدة @(DateTime.Now.Year + 1)
-            </button>
+            <button class="btn-new-year" onclick="startNewYear()">🗓️ بدء سنة جديدة @(DateTime.Now.Year + 1)</button>
         </div>
-
         @if (mList.Any())
         {
             <div class="players-grid" id="playersGrid">
@@ -745,11 +764,7 @@
                                 @for (int i = 1; i <= 12; i++)
                                 {
                                     var isPaid = paidList.Contains(i.ToString());
-                                    <button class="month-btn @(isPaid ? "paid" : "")"
-                                            onclick="toggleMonth(@m.Id, @i, this)"
-                                            title="@monthNames[i-1]">
-                                        @i
-                                    </button>
+                                    <button class="month-btn @(isPaid ? "paid" : "")" onclick="toggleMonth(@m.Id, @i, this)" title="@monthNames[i-1]">@i</button>
                                 }
                             </div>
                         </div>
@@ -771,7 +786,6 @@
         {
             <div class="empty-msg">لا يوجد لاعبون مسجّلون في النادي</div>
         }
-
         <a href="/Club/Dashboard" class="back-btn">🏠 العودة للوحة النادي</a>
     </div>
 
@@ -808,12 +822,76 @@
         </div>
     </div>
 
+    <!-- Modal شاشة الدفع بالفيزا/كاش -->
+    <div class="pay-overlay" id="paymentModal">
+        <div class="pay-box">
+            <div class="pay-header">
+                <div>
+                    <div style="color:white;font-size:16px;font-weight:700;">💳 دفع عضوية النادي</div>
+                    <div style="color:#94a3b8;font-size:12px;margin-top:2px;">الدفع الإلكتروني الآمن</div>
+                </div>
+                <button onclick="document.getElementById('paymentModal').classList.remove('show')" style="background:none;border:none;color:white;font-size:22px;cursor:pointer;">×</button>
+            </div>
+            <div class="pay-tabs">
+                <button class="pay-tab active" id="tab-visa" onclick="switchPayTab('visa')">💳 فيزا / ماستركارد</button>
+                <button class="pay-tab" id="tab-cash" onclick="switchPayTab('cash')">💵 دفع كاش</button>
+            </div>
+            <!-- Visa -->
+            <div class="pay-body" id="pay-visa">
+                <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px;margin-bottom:20px;font-size:13px;color:#0369a1;text-align:center;">🔒 هذه الصفحة آمنة ومشفرة بتقنية SSL</div>
+                <div style="margin-bottom:14px;">
+                    <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:6px;">رقم البطاقة</label>
+                    <input type="text" placeholder="XXXX  XXXX  XXXX  XXXX" maxlength="19" oninput="formatCard(this)" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:15px;font-family:monospace;letter-spacing:2px;">
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+                    <div>
+                        <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:6px;">تاريخ الانتهاء</label>
+                        <input type="text" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:monospace;">
+                    </div>
+                    <div>
+                        <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:6px;">CVV</label>
+                        <input type="password" placeholder="•••" maxlength="3" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;font-family:monospace;">
+                    </div>
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="font-size:12px;font-weight:700;color:#555;display:block;margin-bottom:6px;">اسم صاحب البطاقة</label>
+                    <input type="text" placeholder="الاسم كما يظهر على البطاقة" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:8px;font-size:14px;">
+                </div>
+                <div style="background:#f8fafc;border-radius:8px;padding:12px;margin-bottom:16px;display:flex;justify-content:space-between;font-size:13px;">
+                    <span style="color:#888;">المبلغ المطلوب:</span>
+                    <strong style="color:#2c3e50;">@ViewBag.ClubMembershipFee ₪</strong>
+                </div>
+                <button id="payBtn" onclick="simulatePayment(this)" style="width:100%;padding:13px;background:linear-gradient(135deg,#4a90e2,#1e6fc4);color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">✅ تأكيد الدفع</button>
+                <div style="display:flex;justify-content:center;gap:12px;margin-top:12px;opacity:0.5;">
+                    <span style="font-size:20px;">💳</span><span style="font-size:11px;color:#888;margin-top:6px;">Visa / Mastercard / SSL</span>
+                </div>
+            </div>
+            <!-- Cash -->
+            <div class="pay-body" id="pay-cash" style="display:none;">
+                <div style="text-align:center;margin-bottom:20px;">
+                    <div style="font-size:48px;margin-bottom:12px;">💵</div>
+                    <div style="font-size:16px;font-weight:700;color:#2c3e50;margin-bottom:8px;">الدفع النقدي</div>
+                    <div style="font-size:13px;color:#888;line-height:1.7;">يمكنك دفع رسوم العضوية نقداً في مقر الاتحاد أو عبر التواصل مع مسؤول الاتحاد</div>
+                </div>
+                <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:16px;margin-bottom:20px;">
+                    <div style="font-size:12px;font-weight:700;color:#4a90e2;margin-bottom:10px;">معلومات الدفع</div>
+                    <div style="font-size:13px;color:#555;line-height:2;">
+                        📍 العنوان: فلسطين، الضفة الغربية<br>
+                        📞 الهاتف: <span dir="ltr">+970 59X XXX XXXX</span><br>
+                        ✉️ البريد: info@karate-ps.com<br>
+                        💰 المبلغ: <strong>@ViewBag.ClubMembershipFee ₪</strong>
+                    </div>
+                </div>
+                <div style="background:#e8f5e9;border:1px solid #a5d6a7;border-radius:8px;padding:12px;font-size:12px;color:#2e7d32;">✅ بعد الدفع، سيقوم مسؤول الاتحاد بتحديث حالة عضويتك في النظام</div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-grid">
             <div class="footer-col brand">
                 <h3>منصة الكاراتيه الفلسطينية</h3>
                 <p>بناء أبطال المستقبل وتطوير رياضة الكاراتيه في فلسطين من خلال التدريب والمنافسة.</p>
-                <div class="social-links"><a href="#">f</a><a href="#">in</a><a href="#">ig</a></div>
             </div>
             <div class="footer-col">
                 <h3>روابط سريعة</h3>
@@ -834,9 +912,9 @@
             </div>
             <div class="footer-col">
                 <h3>تواصل معنا</h3>
-                <div class="contact-item"><div class="contact-icon">📍</div><span>فلسطين، الضفة الغربية</span></div>
-                <div class="contact-item"><div class="contact-icon">📞</div><span style="direction:ltr;">+970 59X XXX XXXX</span></div>
-                <div class="contact-item"><div class="contact-icon">✉️</div><span>info@karate-ps.com</span></div>
+                <p>📍 فلسطين، الضفة الغربية</p>
+                <p style="margin-top:8px;" dir="ltr">📞 +970 59X XXX XXXX</p>
+                <p style="margin-top:8px;">✉️ info@karate-ps.com</p>
             </div>
         </div>
         <div class="footer-bottom"><p>© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة</p></div>
@@ -847,89 +925,57 @@
             this.classList.toggle('open');
             document.getElementById('mobileMenu').classList.toggle('show');
         });
-
         function toggleMonth(membershipId, month, btn) {
             fetch('/Club/ToggleMonth', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ membershipId: membershipId, month: month })
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ membershipId, month })
             }).then(r => r.json()).then(data => {
-                if (data.success) {
-                    btn.classList.toggle('paid');
-                    updateTag(membershipId, data.paidMonths);
-                }
+                if (data.success) { btn.classList.toggle('paid'); updateTag(membershipId, data.paidMonths); }
             });
         }
-
         function updateTag(membershipId, paidMonths) {
             const paid = paidMonths.split(',').filter(x => x !== '');
             const count = paid.length;
             const tag = document.getElementById('tag-' + membershipId);
             if (!tag) return;
-            tag.className = 'paid-tag ';
-            if (count === 12) {
-                tag.className += 'allpaid';
-                tag.textContent = 'مدفوع كامل ✓';
-            } else if (count === 0) {
-                tag.className += 'unpaid';
-                tag.textContent = 'غير مدفوع';
-            } else {
-                tag.className += 'partial';
-                tag.textContent = `مدفوع ${count}/12 شهر`;
-            }
+            if (count === 12) { tag.className = 'paid-tag allpaid'; tag.textContent = 'مدفوع كامل ✓'; }
+            else if (count === 0) { tag.className = 'paid-tag unpaid'; tag.textContent = 'غير مدفوع'; }
+            else { tag.className = 'paid-tag partial'; tag.textContent = `مدفوع ${count}/12 شهر`; }
         }
-
         function openEdit(membershipId, monthly, old) {
             document.getElementById('editMembershipId').value = membershipId;
             document.getElementById('editMonthly').value = monthly;
             document.getElementById('editOld').value = old;
             document.getElementById('modalBg').classList.add('show');
         }
-
         function saveFee() {
             const id = document.getElementById('editMembershipId').value;
             const monthly = parseFloat(document.getElementById('editMonthly').value);
             const old = parseFloat(document.getElementById('editOld').value);
             fetch('/Club/UpdateFee', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ membershipId: parseInt(id), monthlyFee: monthly, oldDebt: old })
             }).then(r => r.json()).then(data => {
-                if (data.success) {
-                    document.getElementById('modalBg').classList.remove('show');
-                    location.reload();
-                }
+                if (data.success) { document.getElementById('modalBg').classList.remove('show'); location.reload(); }
             });
         }
-
-        document.getElementById('modalBg').addEventListener('click', function (e) {
-            if (e.target === this) this.classList.remove('show');
-        });
-
+        document.getElementById('modalBg').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('show'); });
         document.getElementById('searchInput').addEventListener('input', filterCards);
         document.getElementById('statusFilter').addEventListener('change', filterCards);
-
         function filterCards() {
             const q = document.getElementById('searchInput').value.toLowerCase();
             const s = document.getElementById('statusFilter').value;
             document.querySelectorAll('.player-card').forEach(card => {
                 const name = card.dataset.name?.toLowerCase() || '';
                 const status = card.dataset.status || '';
-                const show = (!q || name.includes(q)) && (!s || status === s);
-                card.style.display = show ? '' : 'none';
+                card.style.display = (!q || name.includes(q)) && (!s || status === s) ? '' : 'none';
             });
         }
-
         function startNewYear() {
             if (!confirm('هل أنت متأكد من بدء سنة جديدة؟\nسيتم إعادة ضبط الأشهر مع الاحتفاظ بالاستحقاقات القديمة')) return;
-            fetch('/Club/NewYear', { method: 'POST' })
-                .then(r => r.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('✅ تم بدء السنة الجديدة بنجاح!');
-                        window.location.href = '/Club/Entitlements?year=' + (new Date().getFullYear() + 1);
-                    }
-                });
+            fetch('/Club/NewYear', { method: 'POST' }).then(r => r.json()).then(data => {
+                if (data.success) { alert('✅ تم بدء السنة الجديدة!'); window.location.href = '/Club/Entitlements?year=' + (new Date().getFullYear() + 1); }
+            });
         }
         function openPayOldDebt(membershipId, oldDebt) {
             document.getElementById('payMembershipId').value = membershipId;
@@ -938,59 +984,57 @@
             document.getElementById('payError').style.display = 'none';
             document.getElementById('payOldDebtModal').classList.add('show');
         }
-
         function submitPayOldDebt() {
             const id = parseInt(document.getElementById('payMembershipId').value);
             const amount = parseFloat(document.getElementById('payAmount').value);
             const errorEl = document.getElementById('payError');
-
-            if (!amount || amount <= 0) {
-                errorEl.textContent = 'يرجى إدخال مبلغ صحيح';
-                errorEl.style.display = 'block';
-                return;
-            }
-
+            if (!amount || amount <= 0) { errorEl.textContent = 'يرجى إدخال مبلغ صحيح'; errorEl.style.display = 'block'; return; }
             fetch('/Club/PayOldDebt', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ membershipId: id, amount: amount })
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ membershipId: id, amount })
             }).then(r => r.json()).then(data => {
-                if (data.success) {
-                    document.getElementById('payOldDebtModal').classList.remove('show');
-                    location.reload();
-                } else {
-                    errorEl.textContent = data.message;
-                    errorEl.style.display = 'block';
-                }
+                if (data.success) { document.getElementById('payOldDebtModal').classList.remove('show'); location.reload(); }
+                else { errorEl.textContent = data.message; errorEl.style.display = 'block'; }
             });
         }
-
-        document.getElementById('payOldDebtModal').addEventListener('click', function (e) {
-            if (e.target === this) this.classList.remove('show');
-        });
+        document.getElementById('payOldDebtModal').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('show'); });
+        // Payment Modal
+        function switchPayTab(tab) {
+            document.getElementById('pay-visa').style.display = tab === 'visa' ? 'block' : 'none';
+            document.getElementById('pay-cash').style.display = tab === 'cash' ? 'block' : 'none';
+            document.getElementById('tab-visa').className = 'pay-tab ' + (tab === 'visa' ? 'active' : '');
+            document.getElementById('tab-cash').className = 'pay-tab ' + (tab === 'cash' ? 'active' : '');
+        }
+        function formatCard(input) {
+            let v = input.value.replace(/\D/g, '').substring(0, 16);
+            input.value = v.replace(/(.{4})/g, '$1  ').trim();
+        }
+        function formatExpiry(input) {
+            let v = input.value.replace(/\D/g, '').substring(0, 4);
+            if (v.length >= 2) v = v.substring(0, 2) + '/' + v.substring(2);
+            input.value = v;
+        }
+        function simulatePayment(btn) {
+            btn.textContent = '⏳ جاري المعالجة...';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.textContent = '✅ تم الدفع بنجاح!';
+                btn.style.background = '#27ae60';
+                setTimeout(() => {
+                    document.getElementById('paymentModal').classList.remove('show');
+                    btn.textContent = '✅ تأكيد الدفع';
+                    btn.style.background = '';
+                    btn.disabled = false;
+                }, 1500);
+            }, 2000);
+        }
+        document.getElementById('paymentModal').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('show'); });
+        // Lang
         const translations = {
-            ar: {
-                nav_home: "الرئيسية", nav_clubs: "الاندية", nav_tournaments: "البطولات", nav_logout: "تسجيل خروج",
-                title: "منصة الكاراتيه الفلسطينية", slogan: "اصنع تاريخك ...وكن بطلاً",
-                page_title: "📋 استحقاقات اللاعبين", back_btn: "🏠 العودة للوحة النادي",
-                search_placeholder: "🔍 ابحث باسم اللاعب...", new_year_btn: "🗓️ بدء سنة جديدة",
-                stat_player: "لاعب", stat_paid: "مدفوع كامل", stat_unpaid: "غير مكتمل",
-                footer_title: "منصة الكاراتيه الفلسطينية",
-                copyright: "© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة"
-            },
-            en: {
-                nav_home: "Home", nav_clubs: "Clubs", nav_tournaments: "Tournaments", nav_logout: "Logout",
-                title: "Palestinian Karate Platform", slogan: "Make your history... Be a champion",
-                page_title: "📋 Player Entitlements", back_btn: "🏠 Back to Dashboard",
-                search_placeholder: "🔍 Search by player name...", new_year_btn: "🗓️ Start New Year",
-                stat_player: "Players", stat_paid: "Fully Paid", stat_unpaid: "Incomplete",
-                footer_title: "Palestinian Karate Platform",
-                copyright: "© 2025 Palestinian Karate Platform — All Rights Reserved"
-            }
+            ar: { nav_home: "الرئيسية", nav_clubs: "الاندية", nav_tournaments: "البطولات", nav_logout: "تسجيل خروج", title: "منصة الكاراتيه الفلسطينية", slogan: "اصنع تاريخك ...وكن بطلاً", page_title: "📋 استحقاقات اللاعبين", back_btn: "🏠 العودة للوحة النادي", search_placeholder: "🔍 ابحث باسم اللاعب...", new_year_btn: "🗓️ بدء سنة جديدة", stat_player: "لاعب", stat_paid: "مدفوع كامل", stat_unpaid: "غير مكتمل", footer_title: "منصة الكاراتيه الفلسطينية", copyright: "© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة" },
+            en: { nav_home: "Home", nav_clubs: "Clubs", nav_tournaments: "Tournaments", nav_logout: "Logout", title: "Palestinian Karate Platform", slogan: "Make your history... Be a champion", page_title: "📋 Player Entitlements", back_btn: "🏠 Back to Dashboard", search_placeholder: "🔍 Search by player name...", new_year_btn: "🗓️ Start New Year", stat_player: "Players", stat_paid: "Fully Paid", stat_unpaid: "Incomplete", footer_title: "Palestinian Karate Platform", copyright: "© 2025 Palestinian Karate Platform — All Rights Reserved" }
         };
-
         let currentLang = localStorage.getItem("lang") || "ar";
-
         function applyLang(lang) {
             const t = translations[lang];
             const isAr = lang === "ar";
@@ -999,10 +1043,11 @@
             document.getElementById("langBtn").textContent = isAr ? "EN" : "عر";
             document.querySelector(".nav-header h1").textContent = t.title;
             document.querySelector(".nav-header h2").textContent = t.slogan;
-            document.querySelectorAll("nav ul li a")[0].textContent = t.nav_home;
-            document.querySelectorAll("nav ul li a")[1].textContent = t.nav_clubs;
-            document.querySelectorAll("nav ul li a")[2].textContent = t.nav_tournaments;
-            document.querySelectorAll("nav ul li a")[3].textContent = t.nav_logout;
+            const navLinks = document.querySelectorAll("nav ul li a");
+            if (navLinks[0]) navLinks[0].textContent = t.nav_home;
+            if (navLinks[1]) navLinks[1].textContent = t.nav_clubs;
+            if (navLinks[2]) navLinks[2].textContent = t.nav_tournaments;
+            if (navLinks[3]) navLinks[3].textContent = t.nav_logout;
             document.querySelector(".header h2").textContent = t.page_title;
             document.querySelector(".back-btn").textContent = t.back_btn;
             document.querySelector("#searchInput").placeholder = t.search_placeholder;
@@ -1015,12 +1060,7 @@
             document.querySelector(".footer-bottom p").textContent = t.copyright;
             localStorage.setItem("lang", lang);
         }
-
-        function toggleLang() {
-            currentLang = currentLang === "ar" ? "en" : "ar";
-            applyLang(currentLang);
-        }
-
+        function toggleLang() { currentLang = currentLang === "ar" ? "en" : "ar"; applyLang(currentLang); }
         document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
     </script>
 </body>

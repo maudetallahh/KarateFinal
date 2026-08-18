@@ -1,5 +1,175 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    Layout = null;
+    var siteName = ViewBag.SiteName as string ?? "منصة الكاراتيه الفلسطينية";
+    var logoPath = ViewBag.LogoPath as string ?? "/images/test.jpg";
 }
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>من نحن — @siteName</title>
+    <link rel="icon" type="image/png" href="@logoPath">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#0d1117; color:#e6edf3; min-height:100vh; }
+        nav { background:#161b22; border-bottom:3px solid #4a90e2; padding:14px 40px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; }
+        .nav-logo { display:flex; align-items:center; gap:12px; }
+        .nav-logo img { height:44px; object-fit:contain; }
+        .nav-logo-text h1 { font-size:18px; font-weight:700; color:white; }
+        .nav-logo-text p { font-size:11px; color:#8b949e; }
+        .nav-links { display:flex; align-items:center; gap:16px; }
+        .nav-links a { color:#8b949e; text-decoration:none; font-size:14px; font-weight:600; transition:0.2s; }
+        .nav-links a:hover { color:white; }
+        .login-btn { background:#4a90e2; color:white !important; padding:8px 20px; border-radius:8px; font-weight:700 !important; }
+        /* HERO */
+        .hero { background:linear-gradient(135deg,#0d1117,#1a2332); padding:80px 40px; text-align:center; position:relative; overflow:hidden; }
+        .hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at center, rgba(74,144,226,0.12) 0%, transparent 70%); }
+        .hero-content { position:relative; z-index:1; max-width:700px; margin:0 auto; }
+        .hero-badge { display:inline-block; background:rgba(74,144,226,0.15); border:1px solid rgba(74,144,226,0.4); color:#4a90e2; padding:6px 18px; border-radius:20px; font-size:13px; font-weight:700; margin-bottom:20px; }
+        .hero h1 { font-size:42px; font-weight:900; color:white; margin-bottom:16px; }
+        .hero h1 span { color:#4a90e2; }
+        .hero p { font-size:16px; color:#8b949e; line-height:1.8; }
+        /* CONTENT */
+        .container { max-width:900px; margin:0 auto; padding:60px 40px; }
+        .section { margin-bottom:60px; }
+        .section-tag { display:inline-block; background:rgba(74,144,226,0.15); color:#4a90e2; font-size:12px; font-weight:700; padding:4px 14px; border-radius:20px; margin-bottom:12px; }
+        .section h2 { font-size:26px; font-weight:800; color:white; margin-bottom:16px; }
+        .section p { font-size:15px; color:#8b949e; line-height:1.9; margin-bottom:12px; }
+        /* MISSION CARDS */
+        .mission-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; margin-top:24px; }
+        .mission-card { background:#161b22; border:1px solid #30363d; border-radius:14px; padding:24px; text-align:center; transition:0.3s; }
+        .mission-card:hover { border-color:#4a90e2; transform:translateY(-3px); }
+        .mission-card .icon { font-size:36px; margin-bottom:12px; }
+        .mission-card h3 { font-size:15px; font-weight:700; color:white; margin-bottom:8px; }
+        .mission-card p { font-size:13px; color:#8b949e; line-height:1.6; }
+        /* TEAM */
+        .team-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; margin-top:24px; }
+        .team-card { background:#161b22; border:1px solid #30363d; border-radius:14px; padding:24px; text-align:center; }
+        .team-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#4a90e2,#1e6fc4); display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 12px; }
+        .team-name { font-size:14px; font-weight:700; color:white; margin-bottom:4px; }
+        .team-role { font-size:12px; color:#4a90e2; }
+        /* STATS */
+        .stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:16px; margin-top:24px; }
+        .stat-item { background:#161b22; border:1px solid #30363d; border-radius:12px; padding:20px; text-align:center; border-top:3px solid #4a90e2; }
+        .stat-num { font-size:32px; font-weight:900; color:#4a90e2; }
+        .stat-lbl { font-size:12px; color:#8b949e; margin-top:4px; }
+        /* CONTACT */
+        .contact-box { background:#161b22; border:1px solid #30363d; border-radius:14px; padding:32px; }
+        .contact-item { display:flex; align-items:center; gap:16px; margin-bottom:20px; }
+        .contact-icon { width:44px; height:44px; border-radius:10px; background:rgba(74,144,226,0.15); border:1px solid rgba(74,144,226,0.3); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+        .contact-text { font-size:14px; color:#e6edf3; }
+        .contact-text span { display:block; font-size:11px; color:#8b949e; margin-bottom:2px; }
+        /* FOOTER */
+        footer { background:#161b22; border-top:1px solid #30363d; padding:24px 40px; text-align:center; }
+        footer p { color:#475569; font-size:12px; }
+        @@media(max-width:768px) {
+            nav { padding:12px 20px; }
+            .nav-links { display:none; }
+            .hero { padding:60px 20px; }
+            .hero h1 { font-size:30px; }
+            .container { padding:40px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-logo">
+            <img src="@logoPath" alt="لوغو">
+            <div class="nav-logo-text">
+                <h1>@siteName</h1>
+                <p>الاتحاد الفلسطيني للكاراتيه</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="/">الرئيسية</a>
+            <a href="/#tournaments">البطولات</a>
+            <a href="/#clubs">الأندية</a>
+            <a href="/Account/Login" class="login-btn">🔐 تسجيل الدخول</a>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">🥋 الاتحاد الفلسطيني للكاراتيه</div>
+            <h1>من <span>نحن</span></h1>
+            <p>الاتحاد الفلسطيني للكاراتيه — الجهة الرسمية المسؤولة عن تطوير وتنظيم رياضة الكاراتيه في فلسطين</p>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- عن الاتحاد -->
+        <div class="section">
+            <div class="section-tag">📋 عن الاتحاد</div>
+            <h2>الاتحاد الفلسطيني للكاراتيه</h2>
+            <p>تأسس الاتحاد الفلسطيني للكاراتيه بهدف تطوير رياضة الكاراتيه في فلسطين وتنظيم البطولات المحلية والدولية، وربط الأندية الفلسطينية بالمنظمات الدولية.</p>
+            <p>يعمل الاتحاد على رعاية اللاعبين الموهوبين وتطوير قدراتهم من خلال برامج التدريب المتخصصة والمشاركة في البطولات العربية والدولية.</p>
+            <p>تضم منصتنا الرقمية جميع الأندية المنتسبة واللاعبين المسجلين، وتوفر نظاماً متكاملاً لإدارة البطولات والاستحقاقات والنتائج.</p>
+        </div>
+
+        <!-- رسالتنا -->
+        <div class="section">
+            <div class="section-tag">🎯 رسالتنا وأهدافنا</div>
+            <h2>ماذا نسعى لتحقيقه؟</h2>
+            <div class="mission-grid">
+                <div class="mission-card"><div class="icon">🏆</div><h3>التميز الرياضي</h3><p>بناء جيل من الأبطال الفلسطينيين القادرين على المنافسة دولياً</p></div>
+                <div class="mission-card"><div class="icon">🤝</div><h3>الوحدة والتنظيم</h3><p>توحيد جهود الأندية الفلسطينية تحت مظلة واحدة منظمة</p></div>
+                <div class="mission-card"><div class="icon">📈</div><h3>التطوير المستمر</h3><p>تحديث أساليب التدريب والإدارة بأحدث التقنيات</p></div>
+                <div class="mission-card"><div class="icon">🌍</div><h3>التمثيل الدولي</h3><p>تمثيل فلسطين في البطولات العربية والآسيوية والدولية</p></div>
+            </div>
+        </div>
+
+        <!-- الأرقام -->
+        <div class="section">
+            <div class="section-tag">📊 بالأرقام</div>
+            <h2>إنجازاتنا</h2>
+            <div class="stats-row">
+                <div class="stat-item"><div class="stat-num">@ViewBag.ClubsCount+</div><div class="stat-lbl">نادٍ منتسب</div></div>
+                <div class="stat-item"><div class="stat-num">@ViewBag.PlayersCount+</div><div class="stat-lbl">لاعب مسجّل</div></div>
+                <div class="stat-item"><div class="stat-num">@ViewBag.TournamentsCount+</div><div class="stat-lbl">بطولة منظّمة</div></div>
+                <div class="stat-item"><div class="stat-num">2010+</div><div class="stat-lbl">سنة تأسيس</div></div>
+            </div>
+        </div>
+
+        <!-- فريق العمل -->
+        <div class="section">
+            <div class="section-tag">👥 فريق العمل</div>
+            <h2>القيادة والإدارة</h2>
+            <div class="team-grid">
+                <div class="team-card"><div class="team-avatar">👨</div><div class="team-name">رئيس الاتحاد</div><div class="team-role">القيادة العامة</div></div>
+                <div class="team-card"><div class="team-avatar">👨</div><div class="team-name">الأمين العام</div><div class="team-role">الإدارة التنفيذية</div></div>
+                <div class="team-card"><div class="team-avatar">👨</div><div class="team-name">المدير الفني</div><div class="team-role">التطوير التقني</div></div>
+                <div class="team-card"><div class="team-avatar">👨</div><div class="team-name">مدير البطولات</div><div class="team-role">تنظيم المسابقات</div></div>
+            </div>
+        </div>
+
+        <!-- تواصل معنا -->
+        <div class="section">
+            <div class="section-tag">📞 تواصل معنا</div>
+            <h2>نحن هنا لمساعدتك</h2>
+            <div class="contact-box">
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div class="contact-text"><span>العنوان</span>فلسطين، الضفة الغربية</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div class="contact-text"><span>البريد الإلكتروني</span>info@karate-ps.com</div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-text"><span>الهاتف</span><span dir="ltr">+970 59X XXX XXXX</span></div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">🌐</div>
+                    <div class="contact-text"><span>الموقع</span>www.karate-ps.com</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer><p>© 2025 @siteName — جميع الحقوق محفوظة</p></footer>
+</body>
+</html>
