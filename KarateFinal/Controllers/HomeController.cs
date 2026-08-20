@@ -1,7 +1,6 @@
 ﻿using KarateFinal.Data;
 using KarateFinal.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace KarateFinal.Controllers
 {
@@ -27,9 +26,8 @@ namespace KarateFinal.Controllers
             ViewBag.PlayersCount = _context.Players.Count();
             ViewBag.TournamentsCount = _context.Tournaments.Count();
             ViewBag.UpcomingTournaments = _context.Tournaments
-     .Where(t => t.Date >= DateTime.Today)
-     .OrderBy(t => t.Date).Take(6).ToList();
-
+                .Where(t => t.Date >= DateTime.Today)
+                .OrderBy(t => t.Date).Take(6).ToList();
             ViewBag.PastTournaments = _context.Tournaments
                 .Where(t => t.Date < DateTime.Today)
                 .OrderByDescending(t => t.Date).Take(6).ToList();
@@ -43,6 +41,7 @@ namespace KarateFinal.Controllers
                 }).ToList();
             return View();
         }
+
         public IActionResult About()
         {
             var site = _context.SiteSettings.FirstOrDefault();
@@ -53,6 +52,7 @@ namespace KarateFinal.Controllers
             ViewBag.TournamentsCount = _context.Tournaments.Count();
             return View();
         }
+
         public IActionResult Privacy()
         {
             return View();
@@ -61,7 +61,7 @@ namespace KarateFinal.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View();
         }
     }
 }

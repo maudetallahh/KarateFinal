@@ -3,17 +3,20 @@ using KarateFinal.Models;
 using KarateFinal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 namespace KarateFinal.Controllers
 {
     public class ClubController : Controller
     {
         private readonly KarateContext _context;
         private readonly EmailService _emailService;
+
         public ClubController(KarateContext context, EmailService emailService)
         {
             _context = context;
             _emailService = emailService;
         }
+
         public IActionResult Dashboard()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -31,6 +34,7 @@ namespace KarateFinal.Controllers
             ViewBag.LastLogin = user?.LastLogin?.ToString("yyyy/MM/dd HH:mm") ?? "---";
             return View();
         }
+
         public IActionResult AddPlayer()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -39,6 +43,7 @@ namespace KarateFinal.Controllers
             ViewBag.ClubId = user?.ClubId;
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> AddPlayer(Player player)
         {
@@ -49,11 +54,7 @@ namespace KarateFinal.Controllers
             {
                 var emailExists = _context.Players.Any(p => p.Email == player.Email)
                                || _context.Clubs.Any(c => c.Email == player.Email);
-                if (emailExists)
-                {
-                    TempData["Error"] = "البريد الإلكتروني مسجّل مسبقاً!";
-                    return RedirectToAction("Dashboard");
-                }
+                if (emailExists) { TempData["Error"] = "البريد الإلكتروني مسجّل مسبقاً!"; return RedirectToAction("Dashboard"); }
             }
             _context.Players.Add(player);
             _context.SaveChanges();
@@ -63,28 +64,14 @@ namespace KarateFinal.Controllers
             var playerUsername = "player" + player.Id;
             player.Username = playerUsername;
             player.Password = plainPassword;
-            _context.Users.Add(new User
-            {
-                Username = playerUsername,
-                Password = BCrypt.Net.BCrypt.HashPassword(plainPassword),
-                Role = "Player",
-                ClubId = player.ClubId,
-                PlayerId = player.Id,
-                MustChangePassword = true
-            });
+            _context.Users.Add(new User { Username = playerUsername, Password = BCrypt.Net.BCrypt.HashPassword(plainPassword), Role = "Player", ClubId = player.ClubId, PlayerId = player.Id, MustChangePassword = true });
             _context.SaveChanges();
             if (!string.IsNullOrEmpty(player.Email))
             {
                 try
                 {
                     var subject = "بيانات دخولك إلى منصة الكاراتيه الفلسطينية";
-                    var body = "<div dir='rtl' style='font-family:Arial;padding:20px;'>" +
-                        "<h2 style='color:#1e2a38;'>مرحباً " + player.Name + " 🥋</h2>" +
-                        "<p>تم تسجيلك في منصة الكاراتيه الفلسطينية.</p>" +
-                        "<div style='background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;margin:16px 0;'>" +
-                        "<p><strong>اسم المستخدم:</strong> " + playerUsername + "</p>" +
-                        "<p><strong>كلمة المرور:</strong> " + plainPassword + "</p>" +
-                        "</div><p style='color:#888;font-size:12px;'>يرجى تغيير كلمة المرور عند أول تسجيل دخول.</p></div>";
+                    var body = "<div dir='rtl' style='font-family:Arial;padding:20px;'><h2 style='color:#1e2a38;'>مرحباً " + player.Name + " 🥋</h2><p>تم تسجيلك في منصة الكاراتيه الفلسطينية.</p><div style='background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;margin:16px 0;'><p><strong>اسم المستخدم:</strong> " + playerUsername + "</p><p><strong>كلمة المرور:</strong> " + plainPassword + "</p></div><p style='color:#888;font-size:12px;'>يرجى تغيير كلمة المرور عند أول تسجيل دخول.</p></div>";
                     await _emailService.SendAsync(player.Email, player.Name, subject, body);
                 }
                 catch (Exception ex) { Console.WriteLine("Email error: " + ex.Message); }
@@ -94,6 +81,7 @@ namespace KarateFinal.Controllers
             TempData["NewPlayerName"] = player.Name;
             return RedirectToAction("PlayerCreated");
         }
+
         public IActionResult PlayerCreated()
         {
             ViewBag.PlayerUsername = TempData["NewPlayerUsername"];
@@ -101,6 +89,7 @@ namespace KarateFinal.Controllers
             ViewBag.PlayerName = TempData["NewPlayerName"];
             return View();
         }
+
         public IActionResult Players()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -108,29 +97,30 @@ namespace KarateFinal.Controllers
             ViewBag.Players = _context.Players.Where(p => p.ClubId == user.ClubId).ToList();
             return View();
         }
+
         public IActionResult Best()
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.ClubId == null) return RedirectToAction("Login", "Account");
-            int clubId = user.ClubId.Value;
-            var players = _context.Players.Where(p => p.ClubId == clubId).ToList().OrderByDescending(p => p.Age).ToList();
+            var players = _context.Players.Where(p => p.ClubId == user.ClubId.Value).ToList().OrderByDescending(p => p.Age).ToList();
             ViewBag.Players = players;
             return View();
         }
+
         public IActionResult Participation()
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.ClubId == null) return RedirectToAction("Login", "Account");
-            int clubId = user.ClubId.Value;
-            var participations = _context.Participations.Where(p => p.ClubId == clubId).Include(p => p.Tournament).ToList();
+            var participations = _context.Participations.Where(p => p.ClubId == user.ClubId.Value).Include(p => p.Tournament).ToList();
             ViewBag.Participations = participations;
             ViewBag.Total = participations.Count;
             ViewBag.Gold = participations.Count(p => p.Rank == 1);
             ViewBag.TotalPoints = participations.Sum(p => p.Points);
             return View();
         }
+
         public IActionResult Entitlements(int? year)
         {
             var username = HttpContext.Session.GetString("Username");
@@ -144,15 +134,7 @@ namespace KarateFinal.Controllers
                 var exists = _context.PlayerMemberships.Any(m => m.PlayerId == p.Id && m.Year == selectedYear);
                 if (!exists)
                 {
-                    _context.PlayerMemberships.Add(new PlayerMembership
-                    {
-                        PlayerId = p.Id,
-                        ClubId = clubId,
-                        Year = selectedYear,
-                        MonthlyFee = 150,
-                        OldDebt = 0,
-                        PaidMonths = ""
-                    });
+                    _context.PlayerMemberships.Add(new PlayerMembership { PlayerId = p.Id, ClubId = clubId, Year = selectedYear, MonthlyFee = 150, OldDebt = 0, PaidMonths = "" });
                 }
             }
             _context.SaveChanges();
@@ -161,6 +143,7 @@ namespace KarateFinal.Controllers
             ViewBag.Year = selectedYear;
             return View();
         }
+
         [HttpPost]
         public IActionResult ToggleMonth([FromBody] ToggleMonthRequest request)
         {
@@ -173,6 +156,7 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true, paidMonths = membership.PaidMonths });
         }
+
         [HttpPost]
         public IActionResult UpdateFee([FromBody] UpdateFeeRequest request)
         {
@@ -183,65 +167,55 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
         [HttpPost]
         public IActionResult PayOldDebt([FromBody] PayOldDebtRequest request)
         {
             var membership = _context.PlayerMemberships.Find(request.MembershipId);
             if (membership == null) return Json(new { success = false, message = "لم يتم العثور على السجل" });
-            if (request.Amount <= 0) return Json(new { success = false, message = "المبلغ يجب ان يكون اكبر من 0" });
-            if (request.Amount > membership.OldDebt) return Json(new { success = false, message = "المبلغ اكبر من الاستحقاق القديم" });
+            if (request.Amount <= 0) return Json(new { success = false, message = "المبلغ يجب أن يكون أكبر من 0" });
+            if (request.Amount > membership.OldDebt) return Json(new { success = false, message = "المبلغ أكبر من الاستحقاق القديم" });
             membership.OldDebt -= request.Amount;
             _context.SaveChanges();
             return Json(new { success = true, newOldDebt = membership.OldDebt });
         }
+
         public IActionResult PlayerCard(int id)
         {
             var player = _context.Players.Find(id);
             if (player == null) return RedirectToAction("Best");
-            var participations = _context.Participations
-                .Where(p => p.ClubId == player.ClubId)
-                .Include(p => p.Tournament).ToList();
-            var playerResults = _context.PlayerResults
-                .Where(r => r.PlayerId == id).ToList();
-
+            var participations = _context.Participations.Where(p => p.ClubId == player.ClubId).Include(p => p.Tournament).ToList();
+            var playerResults = _context.PlayerResults.Where(r => r.PlayerId == id).ToList();
             ViewBag.Player = player;
             ViewBag.Participations = participations;
             ViewBag.PlayerResults = playerResults;
-            ViewBag.InjuryRecords = _context.InjuryRecords
-    .Where(r => r.PlayerId == id)
-    .OrderByDescending(r => r.CreatedAt)
-    .ToList();
+            ViewBag.InjuryRecords = _context.InjuryRecords.Where(r => r.PlayerId == id).OrderByDescending(r => r.CreatedAt).ToList();
             ViewBag.TotalPoints = playerResults.Sum(r => r.Points);
             ViewBag.Gold = playerResults.Count(r => r.Rank == 1);
             ViewBag.Silver = playerResults.Count(r => r.Rank == 2);
             ViewBag.Bronze = playerResults.Count(r => r.Rank == 3);
             ViewBag.PlayerTournaments = _context.TournamentPlayerRequests
-    .Where(r => r.PlayerId == id && r.Status == "موافق")
-    .Include(r => r.Tournament)
-    .Select(r => new { r.TournamentId, r.Tournament.Title })
-    .ToList();
+                .Where(r => r.PlayerId == id && r.Status == "موافق")
+                .Include(r => r.Tournament)
+                .Select(r => new { r.TournamentId, r.Tournament.Title })
+                .ToList();
             return View();
-
         }
 
-        // ===== إعادة تعيين كلمة مرور اللاعب =====
         [HttpPost]
         public IActionResult ResetPlayerPassword([FromBody] ResetPlayerPasswordRequest request)
         {
             var player = _context.Players.Find(request.PlayerId);
             var user = _context.Users.FirstOrDefault(u => u.PlayerId == request.PlayerId);
             if (player == null || user == null) return Json(new { success = false });
-
             var chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
             var rng = new Random();
             var newPassword = "Kar@" + new string(Enumerable.Range(0, 6).Select(_ => chars[rng.Next(chars.Length)]).ToArray());
-
             player.Password = newPassword;
             user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
             user.MustChangePassword = true;
             _context.SaveChanges();
-
-            return Json(new { success = true, newPassword = newPassword });
+            return Json(new { success = true, newPassword });
         }
 
         [HttpPost]
@@ -258,6 +232,7 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
         public IActionResult DeletePlayer(int id)
         {
             var player = _context.Players.Find(id);
@@ -270,23 +245,21 @@ namespace KarateFinal.Controllers
             }
             return RedirectToAction("Best");
         }
+
         public IActionResult Tournaments()
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.ClubId == null) return RedirectToAction("Login", "Account");
             int clubId = user.ClubId.Value;
-            var tournaments = _context.Tournaments.ToList();
-            var myRegistrations = _context.TournamentRegistrations.Where(r => r.ClubId == clubId).ToList();
-            var clubPlayers = _context.Players.Where(p => p.ClubId == clubId).ToList();
-            var myRequests = _context.TournamentPlayerRequests.Where(r => r.ClubId == clubId).Include(r => r.Player).ToList();
-            ViewBag.Tournaments = tournaments;
-            ViewBag.MyRegistrations = myRegistrations;
+            ViewBag.Tournaments = _context.Tournaments.ToList();
+            ViewBag.MyRegistrations = _context.TournamentRegistrations.Where(r => r.ClubId == clubId).ToList();
             ViewBag.ClubId = clubId;
-            ViewBag.ClubPlayers = clubPlayers;
-            ViewBag.MyRequests = myRequests;
+            ViewBag.ClubPlayers = _context.Players.Where(p => p.ClubId == clubId).ToList();
+            ViewBag.MyRequests = _context.TournamentPlayerRequests.Where(r => r.ClubId == clubId).Include(r => r.Player).ToList();
             return View();
         }
+
         [HttpPost]
         public IActionResult RegisterTournament([FromBody] RegisterTournamentSimpleRequest request)
         {
@@ -295,35 +268,27 @@ namespace KarateFinal.Controllers
             if (user?.ClubId == null) return Json(new { success = false });
             var membership = _context.Memberships.FirstOrDefault(m => m.ClubId == user.ClubId.Value && m.Year == DateTime.Now.Year);
             if (membership == null || membership.Status == "غير مدفوع")
-                return Json(new { success = false, message = "يجب دفع رسوم العضوية السنوية اولا" });
+                return Json(new { success = false, message = "يجب دفع رسوم العضوية السنوية أولاً" });
             var hasPlayers = _context.Players.Any(p => p.ClubId == user.ClubId.Value);
             if (!hasPlayers) return Json(new { success = false, message = "لا يمكنك التسجيل لعدم وجود لاعبين" });
             var exists = _context.TournamentRegistrations.Any(r => r.TournamentId == request.TournamentId && r.ClubId == user.ClubId.Value);
-            if (exists) return Json(new { success = false, message = "انت مسجل في هاي البطولة مسبقا" });
-            var approvedCount = _context.TournamentPlayerRequests
-                .Count(r => r.TournamentId == request.TournamentId && r.ClubId == user.ClubId.Value && r.Status == "موافق");
-            _context.TournamentRegistrations.Add(new TournamentRegistration
-            {
-                TournamentId = request.TournamentId,
-                ClubId = user.ClubId.Value,
-                PlayersCount = approvedCount,
-                RegisteredAt = DateTime.Now,
-                Status = "موافق"
-            });
+            if (exists) return Json(new { success = false, message = "أنت مسجّل في هذه البطولة مسبقاً" });
+            var approvedCount = _context.TournamentPlayerRequests.Count(r => r.TournamentId == request.TournamentId && r.ClubId == user.ClubId.Value && r.Status == "موافق");
+            _context.TournamentRegistrations.Add(new TournamentRegistration { TournamentId = request.TournamentId, ClubId = user.ClubId.Value, PlayersCount = approvedCount, RegisteredAt = DateTime.Now, Status = "موافق" });
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
         [HttpPost]
         public IActionResult UpdatePlayerCount([FromBody] UpdatePlayerCountRequest request)
         {
             var reg = _context.TournamentRegistrations.FirstOrDefault(r => r.TournamentId == request.TournamentId && r.ClubId == request.ClubId);
             if (reg == null) return Json(new { success = false });
-            var approvedCount = _context.TournamentPlayerRequests
-                .Count(r => r.TournamentId == request.TournamentId && r.ClubId == request.ClubId && r.Status == "موافق");
-            reg.PlayersCount = approvedCount;
+            reg.PlayersCount = _context.TournamentPlayerRequests.Count(r => r.TournamentId == request.TournamentId && r.ClubId == request.ClubId && r.Status == "موافق");
             _context.SaveChanges();
-            return Json(new { success = true, count = approvedCount });
+            return Json(new { success = true, count = reg.PlayersCount });
         }
+
         [HttpPost]
         public IActionResult NewYear()
         {
@@ -331,47 +296,36 @@ namespace KarateFinal.Controllers
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.ClubId == null) return Json(new { success = false });
             int clubId = user.ClubId.Value;
-            int currentYear = DateTime.Now.Year;
-            int newYear = currentYear + 1;
+            int newYear = DateTime.Now.Year + 1;
             var players = _context.Players.Where(p => p.ClubId == clubId).ToList();
             foreach (var p in players)
             {
-                var currentMembership = _context.PlayerMemberships.FirstOrDefault(m => m.PlayerId == p.Id && m.Year == currentYear);
+                var currentMembership = _context.PlayerMemberships.FirstOrDefault(m => m.PlayerId == p.Id && m.Year == DateTime.Now.Year);
                 decimal oldDebt = 0;
                 if (currentMembership != null)
                 {
-                    var paidMonthsCount = currentMembership.PaidMonths.Split(',').Where(x => x != "").Count();
-                    var unpaidMonths = 12 - paidMonthsCount;
+                    var unpaidMonths = 12 - currentMembership.PaidMonths.Split(',').Where(x => x != "").Count();
                     oldDebt = unpaidMonths > 0 ? (unpaidMonths * currentMembership.MonthlyFee) + currentMembership.OldDebt : 0;
                 }
                 var newMembership = _context.PlayerMemberships.FirstOrDefault(m => m.PlayerId == p.Id && m.Year == newYear);
                 if (newMembership == null)
-                {
-                    _context.PlayerMemberships.Add(new PlayerMembership
-                    {
-                        PlayerId = p.Id,
-                        ClubId = clubId,
-                        Year = newYear,
-                        MonthlyFee = currentMembership?.MonthlyFee ?? 150,
-                        OldDebt = oldDebt,
-                        PaidMonths = ""
-                    });
-                }
+                    _context.PlayerMemberships.Add(new PlayerMembership { PlayerId = p.Id, ClubId = clubId, Year = newYear, MonthlyFee = currentMembership?.MonthlyFee ?? 150, OldDebt = oldDebt, PaidMonths = "" });
                 else { newMembership.PaidMonths = ""; newMembership.OldDebt = oldDebt; }
             }
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
         public IActionResult Profile()
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.ClubId == null) return RedirectToAction("Login", "Account");
-            var club = _context.Clubs.Find(user.ClubId.Value);
-            ViewBag.Club = club;
+            ViewBag.Club = _context.Clubs.Find(user.ClubId.Value);
             ViewBag.User = user;
             return View();
         }
+
         [HttpPost]
         public IActionResult UpdateProfile(string name, string email, string phone, string description, string newPassword, string newUsername)
         {
@@ -392,22 +346,14 @@ namespace KarateFinal.Controllers
             TempData["Success"] = "تم تحديث المعلومات بنجاح";
             return RedirectToAction("Profile");
         }
+
         [HttpPost]
         public IActionResult AddPlayerResult([FromBody] AddPlayerResultRequest request)
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.ClubId == null) return Json(new { success = false });
-
-            _context.PlayerResults.Add(new PlayerResult
-            {
-                PlayerId = request.PlayerId,
-                ClubId = user.ClubId.Value,
-                TournamentName = request.TournamentName,
-                Rank = request.Rank,
-                Points = request.Points,
-                Date = DateTime.Now
-            });
+            _context.PlayerResults.Add(new PlayerResult { PlayerId = request.PlayerId, ClubId = user.ClubId.Value, TournamentName = request.TournamentName, Rank = request.Rank, Points = request.Points, Date = DateTime.Now });
             _context.SaveChanges();
             return Json(new { success = true });
         }
@@ -418,6 +364,7 @@ namespace KarateFinal.Controllers
             if (result != null) { _context.PlayerResults.Remove(result); _context.SaveChanges(); }
             return Json(new { success = true });
         }
+
         [HttpPost]
         public IActionResult RequestPlayerTournament([FromBody] PlayerTournamentRequest request)
         {
@@ -425,23 +372,15 @@ namespace KarateFinal.Controllers
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.ClubId == null) return Json(new { success = false });
             var playerCheck = _context.Players.Find(request.PlayerId);
-            if (playerCheck?.HealthStatus == "مصاب")
-                return Json(new { success = false, message = "⚠️ لا يمكن تسجيل اللاعب — حالته الصحية: مصاب" });
-            if (playerCheck?.PlayerStatus == "موقوف")
-                return Json(new { success = false, message = "⚠️ لا يمكن تسجيل اللاعب — اللاعب موقوف حالياً" });
+            if (playerCheck?.HealthStatus == "مصاب") return Json(new { success = false, message = "⚠️ لا يمكن تسجيل اللاعب — حالته الصحية: مصاب" });
+            if (playerCheck?.PlayerStatus == "موقوف") return Json(new { success = false, message = "⚠️ لا يمكن تسجيل اللاعب — اللاعب موقوف حالياً" });
             var exists = _context.TournamentPlayerRequests.Any(r => r.PlayerId == request.PlayerId && r.TournamentId == request.TournamentId);
             if (exists) return Json(new { success = false, message = "تم إرسال الطلب مسبقاً" });
-            _context.TournamentPlayerRequests.Add(new TournamentPlayerRequest
-            {
-                TournamentId = request.TournamentId,
-                PlayerId = request.PlayerId,
-                ClubId = user.ClubId.Value,
-                Status = "بانتظار الموافقة"
-            });
+            _context.TournamentPlayerRequests.Add(new TournamentPlayerRequest { TournamentId = request.TournamentId, PlayerId = request.PlayerId, ClubId = user.ClubId.Value, Status = "بانتظار الموافقة" });
             _context.SaveChanges();
             return Json(new { success = true });
         }
-        // ===== تحديث حالة اللاعب (موقوف/ملتزم) =====
+
         [HttpPost]
         public IActionResult UpdatePlayerStatus([FromBody] UpdatePlayerStatusRequest request)
         {
@@ -452,13 +391,11 @@ namespace KarateFinal.Controllers
             return Json(new { success = true });
         }
 
-        // ===== إضافة إصابة =====
         [HttpPost]
         public async Task<IActionResult> AddInjury([FromForm] AddInjuryRequest request)
         {
             var player = _context.Players.Find(request.PlayerId);
             if (player == null) return Json(new { success = false });
-
             string? attachmentPath = null;
             if (request.Attachment != null && request.Attachment.Length > 0)
             {
@@ -470,46 +407,31 @@ namespace KarateFinal.Controllers
                 await request.Attachment.CopyToAsync(stream);
                 attachmentPath = "/uploads/injuries/" + fileName;
             }
-
-            _context.InjuryRecords.Add(new InjuryRecord
-            {
-                PlayerId = request.PlayerId,
-                InjuryNote = request.InjuryNote,
-                InjuryStart = request.InjuryStart,
-                InjuryEnd = request.InjuryEnd,
-                AttachmentPath = attachmentPath,
-                CreatedAt = DateTime.Now
-            });
-
+            _context.InjuryRecords.Add(new InjuryRecord { PlayerId = request.PlayerId, InjuryNote = request.InjuryNote, InjuryStart = request.InjuryStart, InjuryEnd = request.InjuryEnd, AttachmentPath = attachmentPath, CreatedAt = DateTime.Now });
             player.HealthStatus = "مصاب";
             _context.SaveChanges();
             return Json(new { success = true });
         }
 
-        // ===== حذف إصابة =====
         [HttpPost]
         public IActionResult DeleteInjury(int id)
         {
             var injury = _context.InjuryRecords.Find(id);
             if (injury == null) return Json(new { success = false });
             _context.InjuryRecords.Remove(injury);
-            // لو ما في إصابات ثانية → رجّع الحالة لسليم
             var remaining = _context.InjuryRecords.Any(r => r.PlayerId == injury.PlayerId && r.Id != id);
-            if (!remaining)
-            {
-                var player = _context.Players.Find(injury.PlayerId);
-                if (player != null) player.HealthStatus = "سليم";
-            }
+            if (!remaining) { var player = _context.Players.Find(injury.PlayerId); if (player != null) player.HealthStatus = "سليم"; }
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
         [HttpPost]
         public IActionResult CheckPlayerEmail([FromBody] CheckPlayerEmailRequest request)
         {
-            var exists = _context.Players.Any(p => p.Email == request.Email)
-                      || _context.Clubs.Any(c => c.Email == request.Email);
+            var exists = _context.Players.Any(p => p.Email == request.Email) || _context.Clubs.Any(c => c.Email == request.Email);
             return Json(new { exists });
         }
+
         [HttpPost]
         public IActionResult UpdatePlayerNotes([FromBody] UpdateNotesRequest request)
         {
@@ -519,14 +441,21 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
+        public IActionResult PrintPlayers()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return RedirectToAction("Login", "Account");
+            var club = _context.Clubs.Find(user.ClubId.Value);
+            var players = _context.Players.Where(p => p.ClubId == user.ClubId.Value).ToList();
+            ViewBag.Club = club;
+            ViewBag.Players = players;
+            return View();
+        }
     }
-    public class AddPlayerResultRequest
-    {
-        public int PlayerId { get; set; }
-        public string TournamentName { get; set; } = "";
-        public int Rank { get; set; }
-        public int Points { get; set; }
-    }
+
+    public class AddPlayerResultRequest { public int PlayerId { get; set; } public string TournamentName { get; set; } = ""; public int Rank { get; set; } public int Points { get; set; } }
     public class PlayerTournamentRequest { public int TournamentId { get; set; } public int PlayerId { get; set; } }
     public class SaveImagesRequest { public string? LogoImage { get; set; } public string? MaleImage { get; set; } public string? FemaleImage { get; set; } }
     public class ToggleMonthRequest { public int MembershipId { get; set; } public int Month { get; set; } }
@@ -538,14 +467,5 @@ namespace KarateFinal.Controllers
     public class UpdatePlayerStatusRequest { public int PlayerId { get; set; } public string PlayerStatus { get; set; } = "ملتزم"; }
     public class UpdateNotesRequest { public int PlayerId { get; set; } public string? Notes { get; set; } }
     public class CheckPlayerEmailRequest { public string Email { get; set; } = ""; }
-    public class AddInjuryRequest
-    {
-        public int PlayerId { get; set; }
-        public string InjuryNote { get; set; } = "";
-        public DateTime InjuryStart { get; set; }
-        public DateTime? InjuryEnd { get; set; }
-        public IFormFile? Attachment { get; set; }
-
-    }
-
+    public class AddInjuryRequest { public int PlayerId { get; set; } public string InjuryNote { get; set; } = ""; public DateTime InjuryStart { get; set; } public DateTime? InjuryEnd { get; set; } public IFormFile? Attachment { get; set; } }
 }

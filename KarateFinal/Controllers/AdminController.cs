@@ -3,17 +3,20 @@ using KarateFinal.Models;
 using KarateFinal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 namespace KarateFinal.Controllers
 {
     public class AdminController : Controller
     {
         private readonly KarateContext _context;
         private readonly EmailService _emailService;
+
         public AdminController(KarateContext context, EmailService emailService)
         {
             _context = context;
             _emailService = emailService;
         }
+
         public IActionResult Index()
         {
             ViewBag.ClubsCount = _context.Clubs.Count();
@@ -31,8 +34,6 @@ namespace KarateFinal.Controllers
                 .OrderByDescending(u => u.LastLogin)
                 .Select(u => u.LastLogin)
                 .FirstOrDefault();
-
-            // ===== إحصائيات: أفضل الأندية حسب النقاط =====
             ViewBag.TopClubs = _context.Participations
                 .GroupBy(p => p.ClubId)
                 .Select(g => new {
@@ -49,8 +50,6 @@ namespace KarateFinal.Controllers
                     x.GoldCount
                 })
                 .ToList();
-
-            // ===== إحصائيات: أكثر اللاعبين نقاطاً =====
             ViewBag.TopPlayers = _context.Players
                 .Where(p => _context.Participations.Any(par => par.ClubId == p.ClubId))
                 .ToList()
@@ -65,10 +64,11 @@ namespace KarateFinal.Controllers
                 .OrderByDescending(x => x.TotalPoints)
                 .Take(5)
                 .ToList();
-
             return View();
         }
+
         public IActionResult AddClub() => View();
+
         [HttpPost]
         public async Task<IActionResult> AddClub(Club club)
         {
@@ -78,6 +78,16 @@ namespace KarateFinal.Controllers
                 {"قلقيلية","qalqilya"},{"بيت لحم","bethlehem"},{"أريحا","jericho"},
                 {"سلفيت","salfit"},{"طوباس","tubas"},{"غزة","gaza"}
             };
+            if (!string.IsNullOrEmpty(club.Email))
+            {
+                var emailExists = _context.Clubs.Any(c => c.Email == club.Email);
+                if (emailExists) { TempData["Error"] = "البريد الإلكتروني مسجّل مسبقاً لنادٍ آخر!"; return RedirectToAction("Index"); }
+            }
+            if (!string.IsNullOrEmpty(club.Phone))
+            {
+                var phoneExists = _context.Clubs.Any(c => c.Phone == club.Phone);
+                if (phoneExists) { TempData["Error"] = "رقم الهاتف مسجّل مسبقاً لنادٍ آخر!"; return RedirectToAction("Index"); }
+            }
             var slug = citySlug.ContainsKey(club.City) ? citySlug[club.City] : "club";
             var count = _context.Clubs.Count() + 1;
             club.Username = slug + count;
@@ -111,6 +121,7 @@ namespace KarateFinal.Controllers
             }
             return RedirectToAction("Index");
         }
+
         public IActionResult DeleteClub(int id)
         {
             var club = _context.Clubs.Find(id);
@@ -125,6 +136,7 @@ namespace KarateFinal.Controllers
             }
             return RedirectToAction("Index");
         }
+
         [HttpPost]
         public IActionResult ResetClubPassword([FromBody] ResetPasswordRequest request)
         {
@@ -135,16 +147,21 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
         public IActionResult AddPlayer() { ViewBag.Clubs = _context.Clubs.ToList(); return View(); }
+
         [HttpPost]
         public IActionResult AddPlayer(Player player) { _context.Players.Add(player); _context.SaveChanges(); return RedirectToAction("Index"); }
+
         public IActionResult DeletePlayer(int id)
         {
             var player = _context.Players.Find(id);
             if (player != null) { _context.Players.Remove(player); _context.SaveChanges(); }
             return RedirectToAction("Index");
         }
+
         public IActionResult AddTournament() => View();
+
         [HttpPost]
         public IActionResult AddTournament(Tournament tournament)
         {
@@ -154,12 +171,14 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
+
         public IActionResult DeleteTournament(int id)
         {
             var tournament = _context.Tournaments.Find(id);
             if (tournament != null) { _context.Tournaments.Remove(tournament); _context.SaveChanges(); }
             return RedirectToAction("Index");
         }
+
         public IActionResult AddParticipation(int? tournamentId)
         {
             ViewBag.Tournaments = _context.Tournaments.ToList();
@@ -167,31 +186,36 @@ namespace KarateFinal.Controllers
             if (tournamentId.HasValue)
             {
                 var registeredClubIds = _context.TournamentRegistrations
-                   .Where(r => r.TournamentId == tournamentId.Value)
+                    .Where(r => r.TournamentId == tournamentId.Value)
                     .Select(r => r.ClubId).ToList();
                 ViewBag.Clubs = _context.Clubs.Where(c => registeredClubIds.Contains(c.Id)).ToList();
             }
             else { ViewBag.Clubs = new List<Club>(); }
             return View();
         }
+
         [HttpPost]
         public IActionResult AddParticipation(Participation participation) { _context.Participations.Add(participation); _context.SaveChanges(); return RedirectToAction("Index"); }
+
         public IActionResult DeleteParticipation(int id)
         {
             var p = _context.Participations.Find(id);
             if (p != null) { _context.Participations.Remove(p); _context.SaveChanges(); }
             return RedirectToAction("Index");
         }
+
         [HttpPost]
         public IActionResult ToggleMembership([FromBody] ToggleMembershipRequest request)
         {
             var membership = _context.Memberships.Find(request.MembershipId);
             if (membership == null) return Json(new { success = false });
-            membership.Status = membership.Status == "مدفوع" ? "غير مدفوع" : "مدفوع";
-            if (membership.Status == "مدفوع") membership.PaidDate = DateTime.Now;
+            if (membership.Status == "مدفوع") return Json(new { success = false, message = "لا يمكن إلغاء العضوية بعد الدفع" });
+            membership.Status = "مدفوع";
+            membership.PaidDate = DateTime.Now;
             _context.SaveChanges();
             return Json(new { success = true, status = membership.Status });
         }
+
         public IActionResult TournamentDetails(int id)
         {
             var registrations = _context.TournamentRegistrations.Where(r => r.TournamentId == id).Include(r => r.Club).ToList();
@@ -210,6 +234,7 @@ namespace KarateFinal.Controllers
             });
             return Json(result);
         }
+
         public IActionResult GetApprovedClubs(int tournamentId)
         {
             var clubIds = _context.TournamentRegistrations
@@ -218,6 +243,7 @@ namespace KarateFinal.Controllers
             var clubs = _context.Clubs.Where(c => clubIds.Contains(c.Id)).Select(c => new { id = c.Id, name = c.Name }).ToList();
             return Json(clubs);
         }
+
         [HttpPost]
         public IActionResult ApproveTournamentRegistration([FromBody] TournamentRegistrationActionRequest request)
         {
@@ -227,6 +253,7 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
         [HttpPost]
         public IActionResult RejectTournamentRegistration([FromBody] TournamentRegistrationActionRequest request)
         {
@@ -237,6 +264,7 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
         [HttpPost]
         public IActionResult ToggleTournamentRegistration([FromBody] ToggleTournamentRequest request)
         {
@@ -246,6 +274,7 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true, closed = tournament.RegistrationClosed });
         }
+
         [HttpPost]
         public IActionResult UpdateTournament([FromBody] UpdateTournamentRequest request)
         {
@@ -262,6 +291,7 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
         public IActionResult Profile()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -269,36 +299,46 @@ namespace KarateFinal.Controllers
             ViewBag.User = user;
             return View();
         }
+
         [HttpPost]
-        public IActionResult UpdateProfile(string newUsername, string newPassword, string email)
+        public IActionResult UpdateProfile(string newUsername, string newPassword, string oldPassword, string email)
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user == null) return RedirectToAction("Login", "Account");
+            if (!string.IsNullOrEmpty(newPassword))
+            {
+                if (string.IsNullOrEmpty(oldPassword) || !BCrypt.Net.BCrypt.Verify(oldPassword, user.Password))
+                {
+                    TempData["Error"] = "كلمة المرور القديمة غير صحيحة!";
+                    return RedirectToAction("Profile");
+                }
+                user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            }
             if (!string.IsNullOrEmpty(newUsername)) { user.Username = newUsername; HttpContext.Session.SetString("Username", newUsername); }
-            if (!string.IsNullOrEmpty(newPassword)) user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
             if (!string.IsNullOrEmpty(email)) user.Email = email;
             _context.SaveChanges();
             TempData["Success"] = "تم تحديث المعلومات بنجاح";
             return RedirectToAction("Profile");
         }
+
         [HttpPost]
         public IActionResult UpdateMembershipFee([FromBody] UpdateFeeSettingRequest request)
         {
             var setting = _context.Settings.FirstOrDefault(s => s.Key == "MembershipFee");
-            if (setting == null)
-                _context.Settings.Add(new Setting { Key = "MembershipFee", Value = request.Fee.ToString() });
-            else
-                setting.Value = request.Fee.ToString();
+            if (setting == null) _context.Settings.Add(new Setting { Key = "MembershipFee", Value = request.Fee.ToString() });
+            else setting.Value = request.Fee.ToString();
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
         public IActionResult GetMembershipFee()
         {
             var setting = _context.Settings.FirstOrDefault(s => s.Key == "MembershipFee");
             decimal fee = setting != null ? decimal.Parse(setting.Value) : 600;
             return Json(new { fee });
         }
+
         [HttpPost]
         public IActionResult UpdateClubMembershipFee([FromBody] UpdateClubFeeRequest request)
         {
@@ -308,7 +348,182 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+
+        [HttpPost]
+        public IActionResult ResetAllMemberships()
+        {
+            var currentYear = DateTime.Now.Year;
+            var memberships = _context.Memberships.Where(m => m.Year == currentYear).ToList();
+            foreach (var m in memberships) { m.Status = "غير مدفوع"; m.PaidDate = null; }
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public IActionResult CheckClubEmail([FromBody] CheckEmailRequest request)
+        {
+            var exists = _context.Clubs.Any(c => c.Email == request.Email);
+            return Json(new { exists });
+        }
+
+        [HttpPost]
+        public IActionResult CheckClubPhone([FromBody] CheckPhoneRequest request)
+        {
+            var exists = _context.Clubs.Any(c => c.Phone == request.Phone);
+            return Json(new { exists });
+        }
+
+        public IActionResult SiteSettings()
+        {
+            var settings = _context.SiteSettings.FirstOrDefault() ?? new SiteSetting();
+            return View(settings);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SiteSettings(SiteSetting model, IFormFile? logoFile, IFormFile? faviconFile)
+        {
+            var settings = _context.SiteSettings.FirstOrDefault();
+            if (settings == null) { settings = new SiteSetting(); _context.SiteSettings.Add(settings); }
+            settings.SiteName = model.SiteName;
+            settings.TabName = model.TabName;
+            settings.Slogan = model.Slogan;
+            if (logoFile != null && logoFile.Length > 0)
+            {
+                var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "site");
+                Directory.CreateDirectory(dir);
+                var fileName = "logo" + Path.GetExtension(logoFile.FileName);
+                using var stream = new FileStream(Path.Combine(dir, fileName), FileMode.Create);
+                await logoFile.CopyToAsync(stream);
+                settings.LogoPath = "/uploads/site/" + fileName;
+            }
+            if (faviconFile != null && faviconFile.Length > 0)
+            {
+                var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "site");
+                Directory.CreateDirectory(dir);
+                var fileName = "favicon" + Path.GetExtension(faviconFile.FileName);
+                using var stream = new FileStream(Path.Combine(dir, fileName), FileMode.Create);
+                await faviconFile.CopyToAsync(stream);
+                settings.FaviconPath = "/uploads/site/" + fileName;
+            }
+            _context.SaveChanges();
+            TempData["Success"] = "تم حفظ معلومات الموقع بنجاح ✅";
+            return RedirectToAction("SiteSettings");
+        }
+
+        public IActionResult GetSiteSettings()
+        {
+            var settings = _context.SiteSettings.FirstOrDefault() ?? new SiteSetting();
+            return Json(new
+            {
+                siteName = settings.SiteName,
+                tabName = settings.TabName,
+                slogan = settings.Slogan,
+                logoPath = settings.LogoPath ?? "/images/test.jpg",
+                faviconPath = settings.FaviconPath ?? "/images/test.jpg"
+            });
+        }
+
+        public IActionResult GetNotifications()
+        {
+            var notifications = _context.Notifications
+                .Where(n => n.TargetRole == "Admin" || n.TargetRole == "All")
+                .OrderByDescending(n => n.CreatedAt)
+                .Take(10)
+                .Select(n => new { n.Id, n.Title, n.Message, n.IsRead, n.CreatedAt })
+                .ToList();
+            var unread = notifications.Count(n => !n.IsRead);
+            return Json(new { notifications, unread });
+        }
+
+        [HttpPost]
+        public IActionResult MarkNotificationRead(int id)
+        {
+            var n = _context.Notifications.Find(id);
+            if (n != null) { n.IsRead = true; _context.SaveChanges(); }
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public IActionResult MarkAllRead()
+        {
+            var notifications = _context.Notifications
+                .Where(n => (n.TargetRole == "Admin" || n.TargetRole == "All") && !n.IsRead)
+                .ToList();
+            notifications.ForEach(n => n.IsRead = true);
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public IActionResult SendNotification([FromBody] SendNotificationRequest request)
+        {
+            _context.Notifications.Add(new AppNotification
+            {
+                Title = request.Title,
+                Message = request.Message,
+                TargetRole = request.TargetRole,
+                TargetClubId = request.TargetClubId,
+                CreatedAt = DateTime.Now
+            });
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        // ===== تصدير Excel =====
+        public IActionResult ExportClubsExcel()
+        {
+            using var workbook = new ClosedXML.Excel.XLWorkbook();
+            var ws = workbook.Worksheets.Add("الأندية");
+            ws.Cell(1, 1).Value = "اسم النادي";
+            ws.Cell(1, 2).Value = "المسؤول";
+            ws.Cell(1, 3).Value = "المدينة";
+            ws.Cell(1, 4).Value = "التصنيف";
+            ws.Cell(1, 5).Value = "الهاتف";
+            ws.Cell(1, 6).Value = "البريد";
+            var clubs = _context.Clubs.ToList();
+            for (int i = 0; i < clubs.Count; i++)
+            {
+                ws.Cell(i + 2, 1).Value = clubs[i].Name;
+                ws.Cell(i + 2, 2).Value = clubs[i].ManagerName;
+                ws.Cell(i + 2, 3).Value = clubs[i].City;
+                ws.Cell(i + 2, 4).Value = clubs[i].Category;
+                ws.Cell(i + 2, 5).Value = clubs[i].Phone ?? "";
+                ws.Cell(i + 2, 6).Value = clubs[i].Email ?? "";
+            }
+            ws.Columns().AdjustToContents();
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "الأندية.xlsx");
+        }
+
+        public IActionResult ExportPlayersExcel()
+        {
+            using var workbook = new ClosedXML.Excel.XLWorkbook();
+            var ws = workbook.Worksheets.Add("اللاعبون");
+            ws.Cell(1, 1).Value = "الاسم";
+            ws.Cell(1, 2).Value = "النادي";
+            ws.Cell(1, 3).Value = "الحزام";
+            ws.Cell(1, 4).Value = "العمر";
+            ws.Cell(1, 5).Value = "الجنس";
+            ws.Cell(1, 6).Value = "الحالة الصحية";
+            var players = _context.Players.ToList();
+            for (int i = 0; i < players.Count; i++)
+            {
+                var club = _context.Clubs.FirstOrDefault(c => c.Id == players[i].ClubId);
+                ws.Cell(i + 2, 1).Value = players[i].Name;
+                ws.Cell(i + 2, 2).Value = club?.Name ?? "—";
+                ws.Cell(i + 2, 3).Value = players[i].Belt ?? "";
+                ws.Cell(i + 2, 4).Value = players[i].Age;
+                ws.Cell(i + 2, 5).Value = players[i].Gender ?? "";
+                ws.Cell(i + 2, 6).Value = players[i].HealthStatus ?? "";
+            }
+            ws.Columns().AdjustToContents();
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "اللاعبون.xlsx");
+        }
     }
+
     public class ResetPasswordRequest { public int ClubId { get; set; } public string NewPassword { get; set; } = ""; }
     public class ToggleMembershipRequest { public int MembershipId { get; set; } }
     public class TournamentRegistrationActionRequest { public int RegistrationId { get; set; } public string? Note { get; set; } }
@@ -325,6 +540,9 @@ namespace KarateFinal.Controllers
         public int MaxPlayersPerClub { get; set; }
         public string? Categories { get; set; }
     }
+    public class CheckEmailRequest { public string Email { get; set; } = ""; }
+    public class CheckPhoneRequest { public string Phone { get; set; } = ""; }
     public class UpdateFeeSettingRequest { public decimal Fee { get; set; } }
     public class UpdateClubFeeRequest { public int MembershipId { get; set; } public decimal Fee { get; set; } }
+    public class SendNotificationRequest { public string Title { get; set; } = ""; public string Message { get; set; } = ""; public string TargetRole { get; set; } = "All"; public int? TargetClubId { get; set; } }
 }

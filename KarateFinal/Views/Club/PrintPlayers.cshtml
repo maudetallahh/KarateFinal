@@ -1,0 +1,186 @@
+﻿@{
+    Layout = null;
+
+    var club = ViewBag.Club as KarateFinal.Models.Club;
+
+    var players = ViewBag.Players as IEnumerable<KarateFinal.Models.Player>;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة لاعبي @club?.Name</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#f5f7fa; color:#1e2a38; }
+        .no-print { background:#1e2a38; padding:12px 24px; display:flex; justify-content:space-between; align-items:center; }
+        .no-print h2 { color:white; font-size:16px; }
+        .no-print-btns { display:flex; gap:10px; }
+        .btn-print { padding:8px 20px; background:#27ae60; color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:700; font-family:inherit; }
+        .btn-back { padding:8px 20px; background:#34495e; color:white; border:none; border-radius:8px; cursor:pointer; font-size:13px; font-weight:700; text-decoration:none; display:inline-block; }
+        .container { max-width:900px; margin:30px auto; padding:20px; background:white; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+        .header { text-align:center; margin-bottom:28px; border-bottom:3px solid #1e2a38; padding-bottom:20px; }
+        .header .logo-area { display:flex; justify-content:center; align-items:center; gap:16px; margin-bottom:12px; }
+        .flag-mini { width:60px; height:40px; }
+        .header h1 { font-size:22px; font-weight:900; color:#1e2a38; }
+        .header h2 { font-size:16px; color:#4a90e2; margin-top:4px; }
+        .header .meta { font-size:12px; color:#888; margin-top:8px; display:flex; justify-content:center; gap:20px; }
+        .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:24px; }
+        .stat-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; text-align:center; }
+        .stat-box .num { font-size:24px; font-weight:900; color:#1e2a38; }
+        .stat-box .lbl { font-size:11px; color:#888; margin-top:4px; }
+        table { width:100%; border-collapse:collapse; }
+        thead tr { background:#1e2a38; color:white; }
+        thead th { padding:12px 14px; font-size:12px; font-weight:700; text-align:right; }
+        tbody tr { border-bottom:1px solid #f0f0f0; transition:0.15s; }
+        tbody tr:nth-child(even) { background:#f8fafc; }
+        tbody tr:hover { background:#e8f4fd; }
+        tbody td { padding:10px 14px; font-size:13px; }
+        .belt-badge { display:inline-block; padding:2px 10px; border-radius:20px; font-size:11px; font-weight:700; }
+        .belt-white { background:#f0f0f0; color:#333; }
+        .belt-yellow { background:#fff9c4; color:#856404; }
+        .belt-orange { background:#ffe0cc; color:#7c3300; }
+        .belt-green { background:#d4edda; color:#155724; }
+        .belt-blue { background:#d1ecf1; color:#0c5460; }
+        .belt-brown { background:#e8d5b7; color:#5d3a1a; }
+        .belt-black { background:#333; color:white; }
+        .status-ok { color:#27ae60; font-weight:700; }
+        .status-bad { color:#e74c3c; font-weight:700; }
+        .footer { margin-top:24px; padding-top:16px; border-top:1px solid #ddd; display:flex; justify-content:space-between; font-size:12px; color:#888; }
+        .signature-box { display:flex; justify-content:space-between; margin-top:40px; }
+        .sig { text-align:center; }
+        .sig .line { width:180px; border-top:1px solid #333; margin:0 auto 6px; }
+        .sig p { font-size:12px; color:#555; }
+        @@media print {
+            .no-print { display:none !important; }
+            body { background:white; }
+            .container { box-shadow:none; margin:0; padding:16px; max-width:100%; }
+            tbody tr:hover { background:inherit; }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <h2>🖨️ طباعة قائمة لاعبي @club?.Name</h2>
+        <div class="no-print-btns">
+            <button class="btn-print" onclick="window.print()">🖨️ طباعة</button>
+            <a href="/Club/Dashboard" class="btn-back">← العودة</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo-area">
+                <svg class="flag-mini" viewBox="0 0 60 40">
+                    <rect width="60" height="13" fill="#000" />
+                    <rect y="13" width="60" height="14" fill="#fff" />
+                    <rect y="27" width="60" height="13" fill="#007a3d" />
+                    <polygon points="0,0 22,20 0,40" fill="#ce1126" />
+                </svg>
+                <div>
+                    <h1>الاتحاد الفلسطيني للكاراتيه</h1>
+                    <h2>قائمة لاعبي نادي @club?.Name</h2>
+                </div>
+            </div>
+            <div class="meta">
+                <span>📅 تاريخ الإصدار: @DateTime.Now.ToString("yyyy/MM/dd")</span>
+                <span>📍 @club?.City</span>
+                <span>🏷️ التصنيف: @club?.Category</span>
+            </div>
+        </div>
+
+        @{
+            var playerList = players?.ToList() ?? new List<KarateFinal.Models.Player>();
+
+            var active = playerList.Count(p => p.HealthStatus != "مصاب" && p.PlayerStatus != "موقوف");
+
+            var injured = playerList.Count(p => p.HealthStatus == "مصاب");
+
+            var suspended = playerList.Count(p => p.PlayerStatus == "موقوف");
+        }
+
+        <div class="stats-row">
+            <div class="stat-box"><div class="num">@playerList.Count</div><div class="lbl">إجمالي اللاعبين</div></div>
+            <div class="stat-box"><div class="num" style="color:#27ae60">@active</div><div class="lbl">لاعب نشط</div></div>
+            <div class="stat-box"><div class="num" style="color:#e74c3c">@injured</div><div class="lbl">مصاب</div></div>
+            <div class="stat-box"><div class="num" style="color:#d29922">@suspended</div><div class="lbl">موقوف</div></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>اسم اللاعب</th>
+                    <th>العمر</th>
+                    <th>الجنس</th>
+                    <th>الحزام</th>
+                    <th>الوزن</th>
+                    <th>الحالة الصحية</th>
+                    <th>حالة الانضباط</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (playerList.Any())
+
+                {
+                    int i = 1;
+                    foreach (var p in playerList.OrderBy(p => p.Name))
+                    {
+
+                        var beltClass = p.Belt switch
+                        {
+
+                            "أبيض" => "belt-white",
+                            "أصفر" => "belt-yellow",
+
+                            "برتقالي" => "belt-orange",
+                            "أخضر" => "belt-green",
+
+                            "أزرق" => "belt-blue",
+                            "بني" => "belt-brown",
+
+                            "أسود" => "belt-black",
+                            _ => "belt-white"
+
+                        };
+                        <tr>
+                            <td>@i</td>
+                            <td><strong>@p.Name</strong></td>
+                            <td>@p.Age سنة</td>
+                            <td>@p.Gender</td>
+                            <td><span class="belt-badge @beltClass">@p.Belt</span></td>
+                            <td>@(p.Weight > 0 ? p.Weight + " كغ" : "—")</td>
+                            <td class="@(p.HealthStatus == "مصاب" ? "status-bad" : "status-ok")">
+                                @(p.HealthStatus == "مصاب" ? "🤕 مصاب" : "💪 سليم")
+                            </td>
+                            <td class="@(p.PlayerStatus == "موقوف" ? "status-bad" : "status-ok")">
+                                @(p.PlayerStatus == "موقوف" ? "🚫 موقوف" : "✅ ملتزم")
+                            </td>
+                        </tr>
+                        i++;
+                    }
+
+                }
+
+                else
+
+                {
+                    <tr><td colspan="8" style="text-align:center;padding:20px;color:#888;">لا يوجد لاعبون مسجّلون</td></tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="signature-box">
+            <div class="sig"><div class="line"></div><p>توقيع مدير النادي</p></div>
+            <div class="sig"><div class="line"></div><p>توقيع مسؤول الاتحاد</p></div>
+            <div class="sig"><div class="line"></div><p>الختم الرسمي</p></div>
+        </div>
+
+        <div class="footer">
+            <span>© 2025 الاتحاد الفلسطيني للكاراتيه — جميع الحقوق محفوظة</span>
+            <span>تم الإصدار بتاريخ @DateTime.Now.ToString("yyyy/MM/dd HH:mm")</span>
+        </div>
+    </div>
+</body>
+</html>

@@ -9,22 +9,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة تحكم الإدارة - منصة الكاراتيه</title>
     <style>
-       :root {
-    --bg: #0f1923;
-    --surface: #1a2535;
-    --surface2: #223044;
-    --border: #2d3f55;
-    --accent: #3b82f6;
-    --accent2: #2563eb;
-    --green: #10b981;
-    --red: #ef4444;
-    --amber: #f59e0b;
-    --text: #f1f5f9;
-    --muted: #94a3b8;
-    --sidebar-w: 240px;
-    --sidebar-active-bg: rgba(59,130,246,0.12);
-    --card-hover: rgba(255,255,255,0.04);
-}
+        :root {
+            --bg: #0f1923;
+            --surface: #1a2535;
+            --surface2: #223044;
+            --border: #2d3f55;
+            --accent: #3b82f6;
+            --accent2: #2563eb;
+            --green: #10b981;
+            --red: #ef4444;
+            --amber: #f59e0b;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --sidebar-w: 240px;
+            --sidebar-active-bg: rgba(59,130,246,0.12);
+        }
 
         *, *::before, *::after {
             box-sizing: border-box;
@@ -40,10 +39,9 @@
             display: flex;
         }
 
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: var(--sidebar-w);
-            background: var(--surface);
+            background: linear-gradient(180deg,#1a2535,#0f1923);
             border-left: 1px solid var(--border);
             display: flex;
             flex-direction: column;
@@ -110,12 +108,12 @@
                 background: rgba(255,255,255,0.04);
             }
 
-           .nav-item.active {
-    color: var(--accent);
-    background: var(--sidebar-active-bg);
-    border-right-color: var(--accent);
-    border-radius: 0 8px 8px 0;
-}
+            .nav-item.active {
+                color: var(--accent);
+                background: var(--sidebar-active-bg);
+                border-right-color: var(--accent);
+                border-radius: 0 8px 8px 0;
+            }
 
             .nav-item .icon {
                 font-size: 16px;
@@ -161,7 +159,6 @@
             color: var(--accent);
         }
 
-        /* ===== OVERLAY ===== */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -174,7 +171,6 @@
                 display: block;
             }
 
-        /* ===== HAMBURGER ===== */
         .hamburger-btn {
             display: none;
             background: none;
@@ -187,7 +183,6 @@
             line-height: 1;
         }
 
-        /* ===== MAIN ===== */
         .main {
             margin-right: var(--sidebar-w);
             flex: 1;
@@ -197,8 +192,8 @@
         }
 
         .topbar {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
+            background: linear-gradient(90deg,#1a2535,#223044);
+            border-bottom: 2px solid var(--accent);
             padding: 10px 20px;
             display: flex;
             align-items: center;
@@ -291,7 +286,6 @@
             white-space: nowrap;
         }
 
-        /* ===== CONTENT ===== */
         .content {
             padding: 20px;
             flex: 1;
@@ -319,7 +313,6 @@
             }
         }
 
-        /* ===== STATS ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4,1fr);
@@ -327,21 +320,21 @@
             margin-bottom: 24px;
         }
 
-      .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px 18px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    transition: 0.2s;
-    border-top: 3px solid var(--accent);
-}
-.stat-card:hover {
-    border-color: var(--accent);
-    background: var(--surface2);
-}
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: 0.2s;
+        }
+
+            .stat-card:hover {
+                background: var(--surface2);
+            }
 
             .stat-card .sc-label {
                 font-size: 11px;
@@ -361,7 +354,6 @@
                 color: var(--muted);
             }
 
-        /* ===== SECTION HD ===== */
         .section-hd {
             display: flex;
             align-items: center;
@@ -376,7 +368,6 @@
                 font-weight: 700;
             }
 
-        /* ===== BUTTONS ===== */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -430,7 +421,6 @@
             border-radius: 6px;
         }
 
-        /* ===== TABLE ===== */
         .table-wrap {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -497,7 +487,6 @@
             text-align: right;
         }
 
-        /* ===== BADGE ===== */
         .badge {
             display: inline-flex;
             align-items: center;
@@ -519,7 +508,6 @@
             border: 1px solid rgba(218,54,51,0.25);
         }
 
-        /* ===== MODAL ===== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -647,7 +635,6 @@
                 margin-bottom: 4px;
             }
 
-        /* ===== MEM SUMMARY ===== */
         .mem-summary {
             display: grid;
             grid-template-columns: repeat(3,1fr);
@@ -674,7 +661,13 @@
                 line-height: 1;
             }
 
-        /* ===== RESPONSIVE ===== */
+        .name-error {
+            color: #e74c3c;
+            font-size: 11px;
+            margin-top: 2px;
+            display: none;
+        }
+
         @@media(max-width:1024px) {
             .stats-grid {
                 grid-template-columns: repeat(2,1fr);
@@ -688,7 +681,6 @@
         @@media(max-width:768px) {
             .sidebar {
                 transform: translateX(100%);
-                background: linear-gradient(180deg, #1a2535 0%, #0f1923 100%);
             }
 
                 .sidebar.open {
@@ -720,8 +712,6 @@
 
             .topbar {
                 padding: 8px 14px;
-                background: linear-gradient(90deg, #1a2535, #223044);
-border-bottom: 2px solid var(--accent);
             }
 
             .form-grid {
@@ -763,9 +753,7 @@ border-bottom: 2px solid var(--accent);
     </style>
 </head>
 <body>
-    <!-- Overlay for mobile sidebar -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <div class="belt">🥋</div>
@@ -786,17 +774,14 @@ border-bottom: 2px solid var(--accent);
         <div class="sidebar-footer">
             <div class="admin-chip">
                 <div class="admin-avatar">A</div>
-                <div class="admin-info">
-                    <div class="name">@username</div>
-                    <div class="role">Admin</div>
-                </div>
+                <div class="admin-info"><div class="name">@username</div><div class="role">Admin</div></div>
             </div>
         </div>
     </aside>
 
     <main class="main">
         <header class="topbar">
-            <div style="display:flex;align-items:center;gap:10px;">HomeController.cs
+            <div style="display:flex;align-items:center;gap:10px;">
                 <button class="hamburger-btn" onclick="openSidebar()">☰</button>
                 <div class="topbar-title" id="pageTitle">لوحة التحكم</div>
             </div>
@@ -809,6 +794,17 @@ border-bottom: 2px solid var(--accent);
                     </div>
                 </div>
                 <span class="topbar-badge" id="dateLabel"></span>
+                <div style="position:relative;display:inline-block;">
+                    <button onclick="toggleNotifications()" id="bellBtn" style="background:rgba(74,144,226,0.15);border:1px solid rgba(74,144,226,0.3);color:#4a90e2;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;">🔔</button>
+                    <span id="bellBadge" style="position:absolute;top:-4px;right:-4px;background:#da3633;color:white;font-size:10px;font-weight:700;border-radius:50%;width:16px;height:16px;display:none;align-items:center;justify-content:center;">0</span>
+                    <div id="notifPanel" style="display:none;position:absolute;top:44px;left:0;width:320px;background:#1a2535;border:1px solid #2d3f55;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.4);z-index:9999;overflow:hidden;">
+                        <div style="padding:12px 16px;border-bottom:1px solid #2d3f55;display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:13px;font-weight:700;">الإشعارات</span>
+                            <button onclick="markAllRead()" style="background:none;border:none;color:#4a90e2;cursor:pointer;font-size:11px;">قراءة الكل</button>
+                        </div>
+                        <div id="notifList" style="max-height:320px;overflow-y:auto;"></div>
+                    </div>
+                </div>
                 <a href="/Account/Logout" class="logout-btn">🚪 خروج</a>
                 <button onclick="toggleLang()" id="langBtn" class="lang-btn">EN</button>
             </div>
@@ -828,24 +824,22 @@ border-bottom: 2px solid var(--accent);
                     <div class="stat-card"><div class="sc-label">البطولات</div><div class="sc-value">@ViewBag.TournamentsCount</div><div class="sc-change">بطولة مسجّلة</div></div>
                     <div class="stat-card"><div class="sc-label">عضويات غير مدفوعة</div><div class="sc-value">@ViewBag.UnpaidCount</div><div class="sc-change" style="color:var(--amber)">بانتظار الدفع</div></div>
                 </div>
-
-                   </div>
-    <!-- Charts -->
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin:20px 0;">
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;">
-            <div style="font-size:13px;font-weight:700;margin-bottom:16px;">🏆 نقاط أفضل الأندية</div>
-            <canvas id="clubsChart" height="200"></canvas>
-        </div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;">
-            <div style="font-size:13px;font-weight:700;margin-bottom:16px;">💰 حالة العضويات</div>
-            <canvas id="membershipChart" height="200"></canvas>
-        </div>
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;">
-            <div style="font-size:13px;font-weight:700;margin-bottom:16px;">🥋 توزيع الأحزمة</div>
-            <canvas id="beltsChart" height="200"></canvas>
-        </div>
-    </div>
-    <div class="section-hd" style="margin-top:20px;"><h3 id="topClubsTitle">🏆 أفضل الأندية</h3></div>
+                <!-- Charts -->
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin:0 0 24px;">
+                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;">
+                        <div style="font-size:13px;font-weight:700;margin-bottom:16px;">🏆 نقاط أفضل الأندية</div>
+                        <canvas id="clubsChart" height="200"></canvas>
+                    </div>
+                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;">
+                        <div style="font-size:13px;font-weight:700;margin-bottom:16px;">💰 حالة العضويات</div>
+                        <canvas id="membershipChart" height="200"></canvas>
+                    </div>
+                    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;">
+                        <div style="font-size:13px;font-weight:700;margin-bottom:16px;">🥋 توزيع الأحزمة</div>
+                        <canvas id="beltsChart" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="section-hd"><h3 id="topClubsTitle">🏆 أفضل الأندية</h3></div>
                 <div class="table-wrap" style="margin-bottom:20px;">
                     <table>
                         <thead><tr><th>#</th><th>النادي</th><th>النقاط</th><th>🥇</th></tr></thead>
@@ -908,7 +902,10 @@ border-bottom: 2px solid var(--accent);
             <div class="page" id="page-clubs">
                 <div class="section-hd">
                     <h3>إدارة الأندية</h3>
-                    <button class="btn btn-primary" onclick="document.getElementById('clubModal').classList.add('show')">➕ إضافة نادي</button>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <a href="/Admin/ExportClubsExcel" class="btn btn-success">📊 تصدير Excel</a>
+                        <button class="btn btn-primary" onclick="document.getElementById('clubModal').classList.add('show')">➕ إضافة نادي</button>
+                    </div>
                 </div>
                 <div class="table-wrap">
                     <div class="tbl-toolbar">
@@ -933,7 +930,10 @@ border-bottom: 2px solid var(--accent);
 
             <!-- PLAYERS -->
             <div class="page" id="page-players">
-                <div class="section-hd"><h3>اللاعبون</h3></div>
+                <div class="section-hd">
+                    <h3>اللاعبون</h3>
+                    <a href="/Admin/ExportPlayersExcel" class="btn btn-success">📊 تصدير Excel</a>
+                </div>
                 <div class="table-wrap">
                     <table>
                         <thead><tr><th>#</th><th>الاسم</th><th>النادي</th><th>الحزام</th><th>العمر</th><th>إجراءات</th></tr></thead>
@@ -978,18 +978,27 @@ border-bottom: 2px solid var(--accent);
             <div class="page" id="page-participations">
                 <div class="section-hd">
                     <h3>المشاركات</h3>
-                    <a href="/Admin/AddParticipation" class="btn btn-primary">➕ إضافة نتيجة</a>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                        <select id="yearFilter" onchange="filterByYear()" style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;font-size:12px;">
+                            @for (int y = DateTime.Now.Year; y >= 2020; y--)
+                            {
+                                <option value="@y">@y</option>
+                            }
+                            <option value="0">كل السنوات</option>
+                        </select>
+                        <a href="/Admin/AddParticipation" class="btn btn-primary">➕ إضافة نتيجة</a>
+                    </div>
                 </div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>#</th><th>النادي</th><th>البطولة</th><th>المركز</th><th>النقاط</th><th>إجراءات</th></tr></thead>
-                        <tbody>
+                        <thead><tr><th>#</th><th>النادي</th><th>البطولة</th><th>المركز</th><th>النقاط</th><th>السنة</th><th>إجراءات</th></tr></thead>
+                        <tbody id="participationsBody">
                             @if (ViewBag.Participations != null)
                             {
                                 int i = 1; foreach (var p in ViewBag.Participations)
                                 {
-                                    var medal = p.Rank == 1 ? "🥇" : p.Rank == 2 ? "🥈" : p.Rank == 3 ? "🥉" : "";
-                                    <tr><td>@i</td><td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == p.ClubId)?.Name ?? "—" : "—")</td><td>@(ViewBag.Tournaments != null ? ((IEnumerable<dynamic>)ViewBag.Tournaments).FirstOrDefault(t => t.Id == p.TournamentId)?.Title ?? "—" : "—")</td><td>@medal @p.Rank</td><td>@p.Points ⭐</td><td><a href="/Admin/DeleteParticipation/@p.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد؟')">🗑️</a></td></tr>
+                                    var medal = p.Rank == 1 ? "🥇" : p.Rank == 2 ? "🥈" : p.Rank == 3 ? "🥉" : ""; var year = p.GetType().GetProperty("Year") != null ? (int)p.Year : DateTime.Now.Year;
+                                    <tr data-year="@year"><td>@i</td><td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == p.ClubId)?.Name ?? "—" : "—")</td><td>@(ViewBag.Tournaments != null ? ((IEnumerable<dynamic>)ViewBag.Tournaments).FirstOrDefault(t => t.Id == p.TournamentId)?.Title ?? "—" : "—")</td><td>@medal @p.Rank</td><td>@p.Points ⭐</td><td>@year</td><td><a href="/Admin/DeleteParticipation/@p.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد؟')">🗑️</a></td></tr>
                                     i++;
                                 }
                             }
@@ -1021,7 +1030,7 @@ border-bottom: 2px solid var(--accent);
                                 int i = 1; foreach (var m in ViewBag.Memberships)
                                 {
                                     var isPaid = m.Status == "مدفوع";
-                                    <tr id="mem-row-@m.Id" style="@(isPaid?"background:rgba(46,160,67,0.08);":"")"><td>@i</td><td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == m.ClubId)?.Name ?? "—" : "—")</td><td>@m.Year</td><td>@m.Fee ₪</td><td><span class="badge @(isPaid?"badge-active":"badge-inactive")" id="mem-badge-@m.Id">@m.Status</span></td><td><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="btn btn-sm btn-success" id="mem-btn-@m.Id" style="@(isPaid?"display:none;":"")" onclick="toggleMembership(@m.Id,'@m.Status')">✅</button><button class="btn btn-sm btn-info" onclick="openClubFeeModal(@m.Id,@m.Fee)">💰</button></div></td></tr>
+                                    <tr id="mem-row-@m.Id" style="@(isPaid?"background:rgba(46,160,67,0.08);":"")"><td>@i</td><td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == m.ClubId)?.Name ?? "—" : "—")</td><td>@m.Year</td><td>@m.Fee ₪</td><td><span class="badge @(isPaid?"badge-active":"badge-inactive")" id="mem-badge-@m.Id">@m.Status</span></td><td><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="btn btn-sm btn-success" id="mem-btn-@m.Id" style="@(isPaid?"display:none;":"")" onclick="toggleMembership(@m.Id)">✅</button><button class="btn btn-sm btn-info" onclick="openClubFeeModal(@m.Id,@m.Fee)">💰</button></div></td></tr>
                                     i++;
                                 }
                             }
@@ -1039,19 +1048,13 @@ border-bottom: 2px solid var(--accent);
             <form method="post" action="/Admin/AddClub">
                 <div class="modal-body">
                     <div class="form-grid">
-                        <div class="form-group full"><label>اسم النادي *</label><input type="text" name="Name" placeholder="أدخل اسم النادي" required oninput="checkName(this)">
-<span class="name-error" style="color:#e74c3c;font-size:11px;display:none;"></span></div>
-                        <div class="form-group full"><label>اسم المسؤول *</label><input type="text" name="ManagerName" placeholder="اسم مدير النادي" required oninput="checkName(this)">
-<span class="name-error" style="color:#e74c3c;font-size:11px;display:none;"></span></div>
+                        <div class="form-group full"><label>اسم النادي *</label><input type="text" name="Name" placeholder="أدخل اسم النادي" required oninput="checkName(this)"><span class="name-error"></span></div>
+                        <div class="form-group full"><label>اسم المسؤول *</label><input type="text" name="ManagerName" placeholder="اسم مدير النادي" required oninput="checkName(this)"><span class="name-error"></span></div>
                         <div class="form-group"><label>المدينة *</label><select name="City" required><option value="">-- اختر المدينة --</option><option>نابلس</option><option>رام الله</option><option>القدس</option><option>الخليل</option><option>جنين</option><option>طولكرم</option><option>قلقيلية</option><option>بيت لحم</option><option>أريحا</option><option>سلفيت</option><option>طوباس</option><option>غزة</option></select></div>
                         <div class="form-group"><label>التصنيف *</label><select name="Category" required><option value="">-- اختر --</option><option value="A">A — الدرجة الأولى</option><option value="B">B — الدرجة الثانية</option><option value="C">C — الدرجة الثالثة</option></select></div>
                         <div class="form-group full"><label>الوصف</label><input type="text" name="Description" placeholder="وصف مختصر للنادي"></div>
-                        <div class="form-group"><label>البريد الإلكتروني *</label<input type="email" name="Email" id="clubEmail" placeholder="example@email.com" required
-       onblur="checkEmail(this.value)">
-<span id="emailError" style="color:#f85149;font-size:11px;display:none;">⚠️ هذا الإيميل مسجّل مسبقاً</span></div>
-                        <div class="form-group"><label>رقم الهاتف *</label><input type="tel" name="Phone" id="clubPhone" placeholder="+970 5X XXX XXXX" required
-       onblur="checkPhone(this.value)">
-<span id="phoneError" style="color:#f85149;font-size:11px;display:none;">⚠️ هذا الرقم مسجّل مسبقاً</span></div>
+                        <div class="form-group"><label>البريد الإلكتروني *</label><input type="email" name="Email" id="clubEmail" placeholder="example@email.com" required onblur="checkEmail(this.value)"><span id="emailError" style="color:#f85149;font-size:11px;display:none;">⚠️ هذا الإيميل مسجّل مسبقاً</span></div>
+                        <div class="form-group"><label>رقم الهاتف *</label><input type="tel" name="Phone" id="clubPhone" placeholder="+970 5X XXX XXXX" required onblur="checkPhone(this.value)"><span id="phoneError" style="color:#f85149;font-size:11px;display:none;">⚠️ هذا الرقم مسجّل مسبقاً</span></div>
                         <div class="form-group"><label>سنة التأسيس</label><input type="number" name="FoundedYear" min="1900" max="2025" placeholder="2010"></div>
                     </div>
                     <div class="creds-box"><div class="creds-title">🔐 سيتم توليد بيانات الدخول تلقائياً</div></div>
@@ -1060,6 +1063,7 @@ border-bottom: 2px solid var(--accent);
             </form>
         </div>
     </div>
+
     <div class="modal-overlay" id="clubDetailsModal">
         <div class="modal">
             <div class="modal-header"><h3>📋 تفاصيل النادي</h3><button class="modal-close" onclick="document.getElementById('clubDetailsModal').classList.remove('show')">×</button></div>
@@ -1068,23 +1072,15 @@ border-bottom: 2px solid var(--accent);
                     <div class="form-group full"><label>اسم النادي</label><input type="text" id="detailName" readonly style="background:var(--surface2);"></div>
                     <div class="form-group full"><label>اسم المسؤول</label><input type="text" id="detailManager" readonly style="background:var(--surface2);"></div>
                     <div class="form-group"><label>اسم المستخدم</label><input type="text" id="detailUsername" readonly style="background:var(--surface2);font-family:monospace;"></div>
-<div class="form-group">
-    <label>كلمة المرور</label>
-    <div style="display:flex;gap:8px;">
-        <input type="password" id="detailPassword" readonly
-               style="background:var(--surface2);font-family:monospace;flex:1;cursor:default;">
-        <button onclick="toggleAdminPass()"
-                style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;cursor:pointer;">
-            👁️
-        </button>
-    </div>
-</div>                </div>
+                    <div class="form-group"><label>كلمة المرور</label><div style="display:flex;gap:8px;"><input type="password" id="detailPassword" readonly style="background:var(--surface2);font-family:monospace;flex:1;cursor:default;"><button onclick="toggleAdminPass()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;cursor:pointer;">👁️</button></div></div>
+                </div>
                 <hr style="border-color:var(--border);margin:14px 0;">
                 <div class="form-group"><label>🔑 إعادة تعيين كلمة المرور</label><div style="display:flex;gap:8px;margin-top:6px;"><input type="text" id="newPasswordInput" placeholder="كلمة مرور جديدة" style="flex:1;"><button class="btn btn-primary" onclick="resetClubPassword()">تغيير</button></div></div>
             </div>
             <div class="modal-footer"><button class="btn btn-ghost" onclick="document.getElementById('clubDetailsModal').classList.remove('show')">إغلاق</button></div>
         </div>
     </div>
+
     <div class="modal-overlay" id="tournamentModal">
         <div class="modal">
             <div class="modal-header"><h3>🏆 إضافة بطولة جديدة</h3><button class="modal-close" onclick="document.getElementById('tournamentModal').classList.remove('show')">×</button></div>
@@ -1100,6 +1096,8 @@ border-bottom: 2px solid var(--accent);
                         <div class="form-group"><label>رسوم الاشتراك (₪)</label><input type="number" name="RegistrationFee" min="0" placeholder="0"></div>
                         <div class="form-group"><label>آخر موعد للتسجيل *</label><input type="date" name="RegistrationDeadline" required></div>
                         <div class="form-group"><label>الحد الأقصى من كل نادي</label><input type="number" name="MaxPlayersPerClub" min="1" placeholder="5"></div>
+                        <div class="form-group"><label>الحد الأدنى للعمر</label><input type="number" name="MinAge" min="5" max="99" placeholder="10"></div>
+                        <div class="form-group"><label>الحد الأقصى للعمر</label><input type="number" name="MaxAge" min="5" max="99" placeholder="18"></div>
                         <div class="form-group full"><label>الفئات</label><input type="text" name="Categories" placeholder="مثال: أشبال، ناشئين، شباب"></div>
                     </div>
                 </div>
@@ -1107,6 +1105,7 @@ border-bottom: 2px solid var(--accent);
             </form>
         </div>
     </div>
+
     <div class="modal-overlay" id="tournamentDetailsModal">
         <div class="modal">
             <div class="modal-header"><h3>📋 تفاصيل البطولة</h3><button class="modal-close" onclick="document.getElementById('tournamentDetailsModal').classList.remove('show')">×</button></div>
@@ -1114,6 +1113,7 @@ border-bottom: 2px solid var(--accent);
             <div class="modal-footer"><button class="btn btn-ghost" onclick="document.getElementById('tournamentDetailsModal').classList.remove('show')">إغلاق</button></div>
         </div>
     </div>
+
     <div class="modal-overlay" id="editTournamentModal">
         <div class="modal">
             <div class="modal-header"><h3>✏️ تعديل البطولة</h3><button class="modal-close" onclick="document.getElementById('editTournamentModal').classList.remove('show')">×</button></div>
@@ -1133,6 +1133,7 @@ border-bottom: 2px solid var(--accent);
             <div class="modal-footer"><button class="btn btn-ghost" onclick="document.getElementById('editTournamentModal').classList.remove('show')">إلغاء</button><button class="btn btn-success" onclick="saveEditTournament()">💾 حفظ</button></div>
         </div>
     </div>
+
     <div class="modal-overlay" id="feeModal">
         <div class="modal">
             <div class="modal-header"><h3>⚙️ تعديل رسوم العضوية</h3><button class="modal-close" onclick="document.getElementById('feeModal').classList.remove('show')">×</button></div>
@@ -1140,6 +1141,7 @@ border-bottom: 2px solid var(--accent);
             <div class="modal-footer"><button class="btn btn-ghost" onclick="document.getElementById('feeModal').classList.remove('show')">إلغاء</button><button class="btn btn-success" onclick="saveFee()">💾 حفظ</button></div>
         </div>
     </div>
+
     <div class="modal-overlay" id="clubFeeModal">
         <div class="modal">
             <div class="modal-header"><h3>💰 تعديل رسوم النادي</h3><button class="modal-close" onclick="document.getElementById('clubFeeModal').classList.remove('show')">×</button></div>
@@ -1149,89 +1151,23 @@ border-bottom: 2px solid var(--accent);
     </div>
 
     <script>
-        // Sidebar mobile
         function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('show'); }
         function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('show'); }
-
         document.getElementById('dateLabel').textContent = new Date().toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
         const pageTitles = { dashboard: 'لوحة التحكم', clubs: 'الأندية', players: 'اللاعبون', tournaments: 'البطولات', participations: 'المشاركات', memberships: 'العضويات' };
-        function showPage(id, navEl) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('page-' + id).classList.add('active');
-            if (navEl) navEl.classList.add('active');
-            document.getElementById('pageTitle').textContent = pageTitles[id] || id;
-        }
-        function filterClubs() {
-            const q = document.getElementById('clubSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#clubsTableBody tr');
-            let count = 0;
-            rows.forEach(row => { const text = row.textContent.toLowerCase(); if (text.includes(q)) { row.style.display = ''; count++; } else row.style.display = 'none'; });
-            document.getElementById('clubsCount').textContent = count + ' نادٍ';
-        }
+        function showPage(id, navEl) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); document.getElementById('page-' + id).classList.add('active'); if (navEl) navEl.classList.add('active'); document.getElementById('pageTitle').textContent = pageTitles[id] || id; }
+        function filterByYear() { const year = document.getElementById('yearFilter').value; document.querySelectorAll('#participationsBody tr').forEach(row => { row.style.display = year === '0' || row.dataset.year === year ? '' : ' none'; }); }
+        function filterClubs() { const q = document.getElementById('clubSearch').value.toLowerCase(); const rows = document.querySelectorAll('#clubsTableBody tr'); let count = 0; rows.forEach(row => { const text = row.textContent.toLowerCase(); if (text.includes(q)) { row.style.display = ''; count++; } else row.style.display = 'none'; }); document.getElementById('clubsCount').textContent = count + ' نادٍ'; }
         let currentClubId = null;
-        function showClubDetails(id, name, manager, username, password) {
-            currentClubId = id;
-            document.getElementById('detailName').value = name;
-            document.getElementById('detailManager').value = manager;
-            document.getElementById('detailUsername').value = username;
-document.getElementById('detailPassword').value = password;
-document.getElementById('detailPassword').type = 'password';
-document.getElementById('newPasswordInput').value = '';
-            document.getElementById('clubDetailsModal').classList.add('show');
-        }
-        function resetClubPassword() {
-            const newPass = document.getElementById('newPasswordInput').value.trim();
-            if (!newPass) { toast('أدخل كلمة مرور جديدة', 'error'); return; }
-            fetch('/Admin/ResetClubPassword', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ clubId: currentClubId, newPassword: newPass }) }).then(r => r.json()).then(data => { if (data.success) { document.getElementById('detailPassword').value = newPass; toast('✅ تم تغيير كلمة المرور', 'success'); } });
-        }
-        function toggleMembership(id, currentStatus) {
-            fetch('/Admin/ToggleMembership', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ membershipId: id }) }).then(r => r.json()).then(data => {
-                if (data.success) {
-                    const isPaid = data.status === 'مدفوع';
-                    const badge = document.getElementById('mem-badge-' + id);
-                    const btn = document.getElementById('mem-btn-' + id);
-                    const row = document.getElementById('mem-row-' + id);
-                    badge.textContent = data.status;
-                    badge.className = 'badge ' + (isPaid ? 'badge-active' : 'badge-inactive');
-                    btn.style.display = isPaid ? 'none' : '';
-                    row.style.background = isPaid ? 'rgba(46,160,67,0.08)' : '';
-                    toast(isPaid ? '✅ تم تحديد العضوية كمدفوعة' : '⚠️ تم تغيير العضوية لغير مدفوعة', isPaid ? 'success' : 'info');
-                    const allBadges = document.querySelectorAll('[id^="mem-badge-"]');
-                    let paidCount = 0, unpaidCount = 0;
-                    allBadges.forEach(b => { if (b.textContent === 'مدفوع') paidCount++; else unpaidCount++; });
-                    const mcValues = document.querySelectorAll('.mc-value');
-                    if (mcValues[1]) mcValues[1].textContent = paidCount;
-                    if (mcValues[2]) mcValues[2].textContent = unpaidCount;
-                }
-            });
-        }
-        function showTournamentDetails(id) {
-            document.getElementById('tournamentDetailsContent').innerHTML = '<p style="color:var(--muted);text-align:center;">جاري التحميل...</p>';
-            document.getElementById('tournamentDetailsModal').classList.add('show');
-            fetch('/Admin/TournamentDetails?id=' + id).then(r => r.json()).then(data => {
-                if (data.length === 0) { document.getElementById('tournamentDetailsContent').innerHTML = '<p style="color:var(--muted);text-align:center;">لا يوجد أندية مسجّلة</p>'; return; }
-                let html = '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;min-width:400px;"><thead><tr><th style="padding:8px;background:var(--surface2);text-align:right;">النادي</th><th style="padding:8px;background:var(--surface2);text-align:right;">اللاعبين</th><th style="padding:8px;background:var(--surface2);text-align:right;">الحالة</th><th style="padding:8px;background:var(--surface2);text-align:right;">إجراءات</th></tr></thead><tbody>';
-                data.forEach(r => { const statusColor = r.status === 'موافق' ? '#3fb950' : r.status === 'مرفوض' ? '#f85149' : '#e3b341'; html += `<tr><td style="padding:8px;border-bottom:1px solid var(--border);">${r.clubName}</td><td style="padding:8px;border-bottom:1px solid var(--border);">${r.approvedPlayers && r.approvedPlayers.length > 0 ? r.approvedPlayers.join(' — ') : r.playersCount + ' لاعب'}</td><td style="padding:8px;border-bottom:1px solid var(--border);color:${statusColor};font-weight:bold;">${r.status}</td><td style="padding:8px;border-bottom:1px solid var(--border);">${r.status === 'بانتظار الموافقة' ? `<div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="btn btn-success btn-sm" onclick="approveReg(${r.id})">✅</button><button class="btn btn-danger btn-sm" onclick="openRejectModal(${r.id})">❌</button></div>` : r.status === 'مرفوض' && r.adminNote ? `<span style="font-size:11px;color:var(--muted);">📋 ${r.adminNote}</span>` : '—'}</td></tr>`; });
-                html += '</tbody></table></div>';
-                document.getElementById('tournamentDetailsContent').innerHTML = html;
-            });
-        }
+        function showClubDetails(id, name, manager, username, password) { currentClubId = id; document.getElementById('detailName').value = name; document.getElementById('detailManager').value = manager; document.getElementById('detailUsername').value = username; document.getElementById('detailPassword').value = password; document.getElementById('detailPassword').type = 'password'; document.getElementById('newPasswordInput').value = ''; document.getElementById('clubDetailsModal').classList.add('show'); }
+        function resetClubPassword() { const newPass = document.getElementById('newPasswordInput').value.trim(); if (!newPass) { toast('أدخل كلمة مرور جديدة', 'error'); return; } fetch('/Admin/ResetClubPassword', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ clubId: currentClubId, newPassword: newPass }) }).then(r => r.json()).then(data => { if (data.success) { document.getElementById('detailPassword').value = newPass; toast('✅ تم تغيير كلمة المرور', 'success'); } }); }
+        function toggleAdminPass() { const input = document.getElementById('detailPassword'); input.type = input.type === 'password' ? 'text' : 'password'; }
+        function toggleMembership(id) { fetch('/Admin/ToggleMembership', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ membershipId: id }) }).then(r => r.json()).then(data => { if (data.success) { const isPaid = data.status === 'مدفوع'; const badge = document.getElementById('mem-badge-' + id); const btn = document.getElementById('mem-btn-' + id); const row = document.getElementById('mem-row-' + id); badge.textContent = data.status; badge.className = 'badge ' + (isPaid ? 'badge-active' : 'badge-inactive'); btn.style.display = isPaid ? 'none' : ''; row.style.background = isPaid ? 'rgba(46,160,67,0.08)' : ''; toast(isPaid ? '✅ تم تحديد العضوية كمدفوعة' : '⚠️ تم تغيير الحالة', isPaid ? 'success' : 'info'); } }); }
+        function showTournamentDetails(id) { document.getElementById('tournamentDetailsContent').innerHTML = '<p style="color:var(--muted);text-align:center;">جاري التحميل...</p>'; document.getElementById('tournamentDetailsModal').classList.add('show'); fetch('/Admin/TournamentDetails?id=' + id).then(r => r.json()).then(data => { if (data.length === 0) { document.getElementById('tournamentDetailsContent').innerHTML = '<p style="color:var(--muted);text-align:center;">لا يوجد أندية مسجّلة</p>'; return; } let html = '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;min-width:400px;"><thead><tr><th style="padding:8px;background:var(--surface2);text-align:right;">النادي</th><th style="padding:8px;background:var(--surface2);text-align:right;">اللاعبين</th><th style="padding:8px;background:var(--surface2);text-align:right;">الحالة</th><th style="padding:8px;background:var(--surface2);text-align:right;">إجراءات</th></tr></thead><tbody>'; data.forEach(r => { const statusColor = r.status === 'موافق' ? '#3fb950' : r.status === 'مرفوض' ? '#f85149' : '#e3b341'; html += `<tr><td style="padding:8px;border-bottom:1px solid var(--border);">${r.clubName}</td><td style="padding:8px;border-bottom:1px solid var(--border);">${r.approvedPlayers && r.approvedPlayers.length > 0 ? r.approvedPlayers.join(' — ') : r.playersCount + ' لاعب'}</td><td style="padding:8px;border-bottom:1px solid var(--border);color:${statusColor};font-weight:bold;">${r.status}</td><td style="padding:8px;border-bottom:1px solid var(--border);">${r.status === 'بانتظار الموافقة' ? `<div style="display:flex;gap:4px;"><button class="btn btn-success btn-sm" onclick="approveReg(${r.id})">✅</button><button class="btn btn-danger btn-sm" onclick="openRejectModal(${r.id})">❌</button></div>` : r.status === 'مرفوض' && r.adminNote ? `<span style="font-size:11px;color:var(--muted);">📋 ${r.adminNote}</span>` : '—'}</td></tr>`; }); html += '</tbody></table></div>'; document.getElementById('tournamentDetailsContent').innerHTML = html; }); }
         function approveReg(id) { fetch('/Admin/ApproveTournamentRegistration', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ registrationId: id }) }).then(r => r.json()).then(data => { if (data.success) { toast('✅ تم قبول التسجيل', 'success'); location.reload(); } }); }
         function openRejectModal(id) { const note = prompt('أدخل سبب الرفض:'); if (note === null) return; fetch('/Admin/RejectTournamentRegistration', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ registrationId: id, note: note }) }).then(r => r.json()).then(data => { if (data.success) { toast('تم رفض التسجيل', 'info'); location.reload(); } }); }
         document.querySelectorAll('.modal-overlay').forEach(overlay => { overlay.addEventListener('click', function (e) { if (e.target === this) this.classList.remove('show'); }); });
-        function toast(msg, type = 'info') {
-            const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' };
-            const colors = { success: { bg: '#f0fdf4', border: '#2ea043', text: '#166534' }, error: { bg: '#fef2f2', border: '#da3633', text: '#991b1b' }, info: { bg: '#eff6ff', border: '#4a90e2', text: '#1e40af' }, warning: { bg: '#fffbeb', border: '#d29922', text: '#92400e' } };
-            const c = colors[type] || colors.info;
-            const el = document.createElement('div');
-            el.style.cssText = `position:fixed;top:24px;left:50%;transform:translateX(-50%);background:${c.bg};border:2px solid ${c.border};color:${c.text};border-radius:12px;padding:14px 20px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;z-index:99999;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:260px;max-width:90vw;font-family:'Cairo',sans-serif;direction:rtl;`;
-            el.innerHTML = `<span style="font-size:20px;">${icons[type] || 'ℹ️'}</span><span style="flex:1;">${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:16px;color:${c.text};">×</button>`;
-            if (!document.getElementById('toast-style')) { const s = document.createElement('style'); s.id = 'toast-style'; s.textContent = '@@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}'; document.head.appendChild(s); }
-            el.style.animation = 'slideDown 0.3s ease';
-            document.body.appendChild(el);
-            setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 4000);
-        }
+        function toast(msg, type = 'info') { const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' }; const colors = { success: { bg: '#f0fdf4', border: '#2ea043', text: '#166534' }, error: { bg: '#fef2f2', border: '#da3633', text: '#991b1b' }, info: { bg: '#eff6ff', border: '#4a90e2', text: '#1e40af' }, warning: { bg: '#fffbeb', border: '#d29922', text: '#92400e' } }; const c = colors[type] || colors.info; const el = document.createElement('div'); el.style.cssText = `position:fixed;top:24px;left:50%;transform:translateX(-50%);background:${c.bg};border:2px solid ${c.border};color:${c.text};border-radius:12px;padding:14px 20px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;z-index:99999;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:260px;max-width:90vw;font-family:'Cairo',sans-serif;direction:rtl;`; el.innerHTML = `<span style="font-size:20px;">${icons[type] || 'ℹ️'}</span><span style="flex:1;">${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:16px;color:${c.text};">×</button>`; if (!document.getElementById('toast-style')) { const s = document.createElement('style'); s.id = 'toast-style'; s.textContent = '@@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}'; document.head.appendChild(s); } el.style.animation = 'slideDown 0.3s ease'; document.body.appendChild(el); setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 4000); }
         function toggleTournamentReg(id) { fetch('/Admin/ToggleTournamentRegistration', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tournamentId: id }) }).then(r => r.json()).then(data => { if (data.success) location.reload(); }); }
         function showEditTournament(id, title, date, city, location, desc, fee, max, categories) { document.getElementById('editTId').value = id; document.getElementById('editTTitle').value = title; document.getElementById('editTDate').value = date; document.getElementById('editTCity').value = city; document.getElementById('editTLocation').value = location; document.getElementById('editTDesc').value = desc; document.getElementById('editTFee').value = fee; document.getElementById('editTMax').value = max; document.getElementById('editTCategories').value = categories; document.getElementById('editTournamentModal').classList.add('show'); }
         function saveEditTournament() { fetch('/Admin/UpdateTournament', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: parseInt(document.getElementById('editTId').value), title: document.getElementById('editTTitle').value, date: document.getElementById('editTDate').value, city: document.getElementById('editTCity').value, location: document.getElementById('editTLocation').value, description: document.getElementById('editTDesc').value, registrationFee: parseFloat(document.getElementById('editTFee').value) || 0, maxPlayersPerClub: parseInt(document.getElementById('editTMax').value) || 0, categories: document.getElementById('editTCategories').value }) }).then(r => r.json()).then(data => { if (data.success) { document.getElementById('editTournamentModal').classList.remove('show'); location.reload(); toast('✅ تم تعديل البطولة', 'success'); } }); }
@@ -1239,124 +1175,52 @@ document.getElementById('newPasswordInput').value = '';
         function saveClubFee() { const id = parseInt(document.getElementById('clubFeeId').value); const fee = parseFloat(document.getElementById('clubFeeInput').value); if (!fee || fee <= 0) { toast('أدخل قيمة صحيحة', 'error'); return; } fetch('/Admin/UpdateClubMembershipFee', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ membershipId: id, fee: fee }) }).then(r => r.json()).then(data => { if (data.success) { document.getElementById('clubFeeModal').classList.remove('show'); toast('✅ تم تحديث الرسوم', 'success'); location.reload(); } }); }
         function openFeeModal() { fetch('/Admin/GetMembershipFee').then(r => r.json()).then(data => { document.getElementById('feeInput').value = data.fee; document.getElementById('feeModal').classList.add('show'); }); }
         function saveFee() { const fee = parseFloat(document.getElementById('feeInput').value); if (!fee || fee <= 0) { toast('أدخل قيمة صحيحة', 'error'); return; } fetch('/Admin/UpdateMembershipFee', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fee: fee }) }).then(r => r.json()).then(data => { if (data.success) { document.getElementById('feeModal').classList.remove('show'); toast('✅ تم تحديث الرسوم إلى ' + fee + '₪', 'success'); } }); }
-        function resetAllMemberships() { if (!confirm('هل أنت متأكد؟ سيتم تحويل جميع العضويات إلى غير مدفوعة')) return; fetch('/Admin/ResetAllMemberships', { method: 'POST', headers: { 'Content-Type': 'application/json' } }).then(r => r.json()).then(data => { if (data.success) { toast('✅ تم تصفير جميع العضويات', 'success'); setTimeout(() => location.reload(), 1500); } }); }
-        const translations = { ar: { sidebar_sub: "لوحة الإدارة", nav_profile: "معلوماتي", nav_clubs: "الأندية", nav_players: "اللاعبون", nav_tournaments: "البطولات", nav_participations: "المشاركات", nav_memberships: "العضويات", logout: "🚪 خروج", last_login: "🕐 آخر تسجيل دخول", stat1: "إجمالي الأندية", stat1s: "نادي مسجّل", stat2: "إجمالي اللاعبين", stat2s: "في جميع الأندية", stat3: "البطولات", stat3s: "بطولة مسجّلة", stat4: "عضويات غير مدفوعة", stat4s: "بانتظار الدفع", mem_total: "إجمالي الأندية", mem_paid: "مدفوعة", mem_unpaid: "غير مدفوعة", page_titles: { dashboard: "لوحة التحكم", clubs: "الأندية", players: "اللاعبون", tournaments: "البطولات", participations: "المشاركات", memberships: "العضويات" } }, en: { sidebar_sub: "Admin Panel", nav_profile: "My Profile", nav_clubs: "Clubs", nav_players: "Players", nav_tournaments: "Tournaments", nav_participations: "Participations", nav_memberships: "Memberships", logout: "🚪 Logout", last_login: "🕐 Last Login", stat1: "Total Clubs", stat1s: "registered clubs", stat2: "Total Players", stat2s: "in all clubs", stat3: "Tournaments", stat3s: "tournaments", stat4: "Unpaid Memberships", stat4s: "pending", mem_total: "Total Clubs", mem_paid: "Paid", mem_unpaid: "Unpaid", page_titles: { dashboard: "Dashboard", clubs: "Clubs", players: "Players", tournaments: "Tournaments", participations: "Participations", memberships: "Memberships" } } };
+        function resetAllMemberships() { if (!confirm('هل أنت متأكد؟')) return; fetch('/Admin/ResetAllMemberships', { method: 'POST', headers: { 'Content-Type': 'application/json' } }).then(r => r.json()).then(data => { if (data.success) { toast('✅ تم تصفير جميع العضويات', 'success'); setTimeout(() => location.reload(), 1500); } }); }
+        function checkEmail(email) { if (!email) return; fetch('/Admin/CheckClubEmail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) }).then(r => r.json()).then(data => { document.getElementById('emailError').style.display = data.exists ? 'block' : 'none'; }); }
+        function checkPhone(phone) { if (!phone) return; fetch('/Admin/CheckClubPhone', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: phone }) }).then(r => r.json()).then(data => { document.getElementById('phoneError').style.display = data.exists ? 'block' : 'none'; }); }
+        function validateName(name) { const parts = name.trim().split(/\s+/); if (parts.length < 3) return "يجب إدخال الاسم الأول واسم الأب واسم العائلة"; const valid = /^[\u0600-\u06FF a-zA-Z\s]+$/; if (!valid.test(name)) return "الاسم يجب أن يحتوي على أحرف فقط"; return null; }
+        function checkName(input) { const error = validateName(input.value); const span = input.nextElementSibling; if (span && span.classList.contains('name-error')) { span.textContent = error || ''; span.style.display = error ? 'block' : 'none'; input.style.borderColor = error ? '#e74c3c' : ''; } };
+        function loadNotifications() { fetch('/Admin/GetNotifications').then(r => r.json()).then(data => { const badge = document.getElementById('bellBadge'); const list = document.getElementById('notifList'); badge.textContent = data.unread; badge.style.display = data.unread > 0 ? 'flex' : 'none'; if (data.notifications.length === 0) { list.innerHTML = '<div style="padding:20px;text-align:center;color:#8b949e;font-size:13px;">لا توجد إشعارات</div>'; return; } list.innerHTML = data.notifications.map(n => `<div onclick="markRead(${n.id})" style="padding:12px 16px;border-bottom:1px solid #2d3f55;cursor:pointer;background:${n.isRead ? 'transparent' : 'rgba(74,144,226,0.08)'};"><div style="font-size:13px;font-weight:${n.isRead ? '400' : '700'};color:#f1f5f9;">${n.title}</div><div style="font-size:11px;color:#94a3b8;margin-top:3px;">${n.message}</div></div>`).join(''); }); }
+        function toggleNotifications() { const panel = document.getElementById('notifPanel'); panel.style.display = panel.style.display === 'none' ? 'block' : 'none'; if (panel.style.display === 'block') loadNotifications(); }
+        function markRead(id) { fetch('/Admin/MarkNotificationRead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) }).then(() => loadNotifications()); }
+        function markAllRead() { fetch('/Admin/MarkAllRead', { method: 'POST' }).then(() => loadNotifications()); }
+        document.addEventListener('click', e => { if (!document.getElementById('bellBtn')?.contains(e.target) && !document.getElementById('notifPanel')?.contains(e.target)) { const panel = document.getElementById('notifPanel'); if (panel) panel.style.display = 'none'; } });
+        const translations = { ar: { sidebar_sub: "لوحة الإدارة", nav_profile: "معلوماتي", nav_site: "معلومات الموقع", nav_clubs: "الأندية", nav_players: "اللاعبون", nav_tournaments: "البطولات", nav_participations: "المشاركات", nav_memberships: "العضويات", logout: "🚪 خروج", last_login: "🕐 آخر تسجيل دخول", stat1: "إجمالي الأندية", stat1s: "نادي مسجّل", stat2: "إجمالي اللاعبين", stat2s: "في جميع الأندية", stat3: "البطولات", stat3s: "بطولة مسجّلة", stat4: "عضويات غير مدفوعة", stat4s: "بانتظار الدفع", mem_total: "إجمالي الأندية", mem_paid: "مدفوعة", mem_unpaid: "غير مدفوعة", page_titles: { dashboard: "لوحة التحكم", clubs: "الأندية", players: "اللاعبون", tournaments: "البطولات", participations: "المشاركات", memberships: "العضويات" } }, en: { sidebar_sub: "Admin Panel", nav_profile: "My Profile", nav_site: "Site Settings", nav_clubs: "Clubs", nav_players: "Players", nav_tournaments: "Tournaments", nav_participations: "Participations", nav_memberships: "Memberships", logout: "🚪 Logout", last_login: "🕐 Last Login", stat1: "Total Clubs", stat1s: "registered clubs", stat2: "Total Players", stat2s: "in all clubs", stat3: "Tournaments", stat3s: "tournaments", stat4: "Unpaid Memberships", stat4s: "pending", mem_total: "Total Clubs", mem_paid: "Paid", mem_unpaid: "Unpaid", page_titles: { dashboard: "Dashboard", clubs: "Clubs", players: "Players", tournaments: "Tournaments", participations: "Participations", memberships: "Memberships" } } };
         let currentLang = localStorage.getItem("lang") || "ar";
-        function applyLang(lang) {
-            const t = translations[lang]; const isAr = lang === "ar";
-            document.documentElement.lang = lang; document.documentElement.dir = isAr ? "rtl" : "ltr";
-            document.getElementById("langBtn").textContent = isAr ? "EN" : "عر";
-            document.querySelector(".sidebar-logo h2").textContent = isAr ? "منصة الكاراتيه الفلسطينية" : "Palestinian Karate Platform";
-            document.querySelector(".sidebar-logo span").textContent = t.sidebar_sub;
-            const navItems = document.querySelectorAll(".nav-item");
-            if (navItems[0]) navItems[0].innerHTML = `<span class="icon">⚙️</span> ${t.nav_profile}`;
-            if (navItems[1]) navItems[1].innerHTML = `<span class="icon">🏟️</span> ${t.nav_clubs}`;
-            if (navItems[2]) navItems[2].innerHTML = `<span class="icon">👥</span> ${t.nav_players}`;
-            if (navItems[3]) navItems[3].innerHTML = `<span class="icon">🏆</span> ${t.nav_tournaments}`;
-            if (navItems[4]) navItems[4].innerHTML = `<span class="icon">🏅</span> ${t.nav_participations}`;
-            if (navItems[5]) navItems[5].innerHTML = `<span class="icon">🪪</span> ${t.nav_memberships}`;
-            document.querySelector(".logout-btn").textContent = t.logout;
-            document.querySelector(".ll-title").textContent = t.last_login;
-            const scLabels = document.querySelectorAll(".sc-label"); const scChanges = document.querySelectorAll(".sc-change");
-            if (scLabels[0]) scLabels[0].textContent = t.stat1; if (scLabels[1]) scLabels[1].textContent = t.stat2; if (scLabels[2]) scLabels[2].textContent = t.stat3; if (scLabels[3]) scLabels[3].textContent = t.stat4;
-            if (scChanges[0]) scChanges[0].textContent = t.stat1s; if (scChanges[1]) scChanges[1].textContent = t.stat2s; if (scChanges[2]) scChanges[2].textContent = t.stat3s; if (scChanges[3]) scChanges[3].textContent = t.stat4s;
-            document.getElementById("topClubsTitle").textContent = lang === "ar" ? "🏆 أفضل الأندية" : "🏆 Top Clubs";
-            document.getElementById("topPlayersTitle").textContent = lang === "ar" ? "🥋 أكثر اللاعبين نقاطاً" : "🥋 Top Players";
-            document.getElementById("recentClubsTitle").textContent = lang === "ar" ? "آخر الأندية المضافة" : "Recently Added Clubs";
-            pageTitles.dashboard = t.page_titles.dashboard; pageTitles.clubs = t.page_titles.clubs; pageTitles.players = t.page_titles.players; pageTitles.tournaments = t.page_titles.tournaments; pageTitles.participations = t.page_titles.participations; pageTitles.memberships = t.page_titles.memberships;
-            const mcLabels = document.querySelectorAll(".mc-label");
-            if (mcLabels[0]) mcLabels[0].textContent = t.mem_total; if (mcLabels[1]) mcLabels[1].textContent = t.mem_paid; if (mcLabels[2]) mcLabels[2].textContent = t.mem_unpaid;
-            localStorage.setItem("lang", lang);
-        }
+        function applyLang(lang) { const t = translations[lang]; const isAr = lang === "ar"; document.documentElement.lang = lang; document.documentElement.dir = isAr ? "rtl" : "ltr"; document.getElementById("langBtn").textContent = isAr ? "EN" : "عر"; document.querySelector(".sidebar-logo h2").textContent = isAr ? "منصة الكاراتيه الفلسطينية" : "Palestinian Karate Platform"; document.querySelector(".sidebar-logo span").textContent = t.sidebar_sub; const navItems = document.querySelectorAll(".nav-item"); const navTexts = [t.nav_profile, t.nav_site, t.nav_clubs, t.nav_players, t.nav_tournaments, t.nav_participations, t.nav_memberships]; const navIcons = ['⚙️', '🌐', '🏟️', '👥', '🏆', '🏅', '🪪']; const onclicks = ["window.location='/Admin/Profile'", "window.location='/Admin/SiteSettings'", "showPage('clubs',this);closeSidebar()", "showPage('players',this);closeSidebar()", "showPage('tournaments',this);closeSidebar()", "showPage('participations',this);closeSidebar()", "showPage('memberships',this);closeSidebar()"]; navItems.forEach((item, i) => { if (navTexts[i] !== undefined) { item.innerHTML = `<span class="icon">${navIcons[i]}</span> ${navTexts[i]}`; item.setAttribute('onclick', onclicks[i]); } }); document.querySelector(".logout-btn").textContent = t.logout; document.querySelector(".ll-title").textContent = t.last_login; const scLabels = document.querySelectorAll(".sc-label"); const scChanges = document.querySelectorAll(".sc-change"); if (scLabels[0]) scLabels[0].textContent = t.stat1; if (scLabels[1]) scLabels[1].textContent = t.stat2; if (scLabels[2]) scLabels[2].textContent = t.stat3; if (scLabels[3]) scLabels[3].textContent = t.stat4; if (scChanges[0]) scChanges[0].textContent = t.stat1s; if (scChanges[1]) scChanges[1].textContent = t.stat2s; if (scChanges[2]) scChanges[2].textContent = t.stat3s; if (scChanges[3]) scChanges[3].textContent = t.stat4s; document.getElementById("topClubsTitle").textContent = lang === "ar" ? "🏆 أفضل الأندية" : "🏆 Top Clubs"; document.getElementById("topPlayersTitle").textContent = lang === "ar" ? "🥋 أكثر اللاعبين نقاطاً" : "🥋 Top Players"; document.getElementById("recentClubsTitle").textContent = lang === "ar" ? "آخر الأندية المضافة" : "Recently Added Clubs"; pageTitles.dashboard = t.page_titles.dashboard; pageTitles.clubs = t.page_titles.clubs; pageTitles.players = t.page_titles.players; pageTitles.tournaments = t.page_titles.tournaments; pageTitles.participations = t.page_titles.participations; pageTitles.memberships = t.page_titles.memberships; const mcLabels = document.querySelectorAll(".mc-label"); if (mcLabels[0]) mcLabels[0].textContent = t.mem_total; if (mcLabels[1]) mcLabels[1].textContent = t.mem_paid; if (mcLabels[2]) mcLabels[2].textContent = t.mem_unpaid; localStorage.setItem("lang", lang); }
         function toggleLang() { currentLang = currentLang === "ar" ? "en" : "ar"; applyLang(currentLang); }
-        document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
-        function checkEmail(email) {
-    if (!email) return;
-    fetch('/Admin/CheckClubEmail', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email })
-    }).then(r => r.json()).then(data => {
-        document.getElementById('emailError').style.display = data.exists ? 'block' : 'none';
-    });
-}
-
-function checkPhone(phone) {
-    if (!phone) return;
-    fetch('/Admin/CheckClubPhone', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: phone })
-    }).then(r => r.json()).then(data => {
-        document.getElementById('phoneError').style.display = data.exists ? 'block' : 'none';
-    });
-}
-function toggleAdminPass() {
-    const input = document.getElementById('detailPassword');
-    input.type = input.type === 'password' ? 'text' : 'password';
-}
-function validateName(name) {
-    const parts = name.trim().split(/\s+/);
-    if (parts.length < 3) return "يجب إدخال الاسم الأول واسم الأب واسم العائلة";
-    const valid = /^[\u0600-\u06FF a-zA-Z\s]+$/;
-    if (!valid.test(name)) return "الاسم يجب أن يحتوي على أحرف فقط بدون أرقام أو رموز";
-    return null;
-}
-function checkName(input) {
-    const error = validateName(input.value);
-    const span = input.nextElementSibling;
-    if (span && span.classList.contains('name-error')) {
-        span.textContent = error || '';
-        span.style.display = error ? 'block' : 'none';
-        input.style.borderColor = error ? '#e74c3c' : '';
-    }
-}
-// ===== Charts =====
-(function() {
-    const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js';
-    s.onload = function() {
-        // Bar — أفضل الأندية
-        const topClubs = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
-            ((IEnumerable<dynamic>)ViewBag.TopClubs ?? new List<dynamic>())
-            .Select(c => new { name = (string)c.ClubName, points = (int)c.TotalPoints })
-            .ToList()
-        ));
-        new Chart(document.getElementById('clubsChart'), {
-            type: 'bar',
-            data: {
-                labels: topClubs.map(c => c.name),
-                datasets: [{ label: 'النقاط', data: topClubs.map(c => c.points), backgroundColor: 'rgba(74,144,226,0.7)', borderColor: '#4a90e2', borderWidth: 1, borderRadius: 6 }]
-            },
-            options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' } }, y: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' } } } }
-        });
-        // Pie — العضويات
-        new Chart(document.getElementById('membershipChart'), {
-            type: 'pie',
-            data: {
-                labels: ['مدفوع', 'غير مدفوع'],
-                datasets: [{ data: [@ViewBag.PaidCount, @ViewBag.UnpaidCount], backgroundColor: ['rgba(46,160,67,0.8)', 'rgba(218,54,51,0.8)'], borderColor: ['#2ea043', '#da3633'], borderWidth: 2 }]
-            },
-            options: { plugins: { legend: { labels: { color: '#8b949e' } } } }
-        });
-        // Doughnut — الأحزمة
-        const belts = {};
-        @if (ViewBag.Players != null) {
-            foreach (var p in ViewBag.Players) {
-                <text>belts['@(p.Belt ?? "غير محدد")'] = (belts['@(p.Belt ?? "غير محدد")'] || 0) + 1;</text>
+        document.addEventListener("DOMContentLoaded", () => { applyLang(currentLang); loadNotifications(); setInterval(loadNotifications, 60000); });
+        // Charts
+        (function () {
+            const s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js';
+            s.onload = function () {
+                const topClubs = [@if (ViewBag.TopClubs != null)
+        {
+            bool first = true; foreach (var c in ViewBag.TopClubs)
+            {
+                if (!first)
+                {
+                    <text>,</text>
+                }
+                <text>{name:"@c.ClubName",points:@c.TotalPoints}</text>
+                first = false;
+            }
+        }];
+                if (document.getElementById('clubsChart') && topClubs.length > 0) { new Chart(document.getElementById('clubsChart'), { type: 'bar', data: { labels: topClubs.map(c => c.name), datasets: [{ label: 'النقاط', data: topClubs.map(c => c.points), backgroundColor: 'rgba(59,130,246,0.7)', borderColor: '#3b82f6', borderWidth: 1, borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8' }, grid: { color: '#2d3f55' } }, y: { ticks: { color: '#94a3b8' }, grid: { color: '#2d3f55' } } } } }); }
+                if (document.getElementById('membershipChart')) { new Chart(document.getElementById('membershipChart'), { type: 'pie', data: { labels: ['مدفوع', 'غير مدفوع'], datasets: [{ data: [@ViewBag.PaidCount, @ViewBag.UnpaidCount], backgroundColor: ['rgba(16,185,129,0.8)', 'rgba(239,68,68,0.8)'], borderColor: ['#10b981', '#ef4444'], borderWidth: 2 }] }, options: { plugins: { legend: { labels: { color: '#94a3b8' } } } } }); }
+                const belts = {};
+        @if (ViewBag.Players != null)
+        {
+            foreach (var p in ViewBag.Players)
+            {
+                <text>belts['@(p.Belt ?? "غير محدد")']=(belts['@(p.Belt ?? "غير محدد")']||0)+1;</text>
             }
         }
-        new Chart(document.getElementById('beltsChart'), {
-            type: 'doughnut',
-            data: {
-                labels: Object.keys(belts),
-                datasets: [{ data: Object.values(belts), backgroundColor: ['#fff','#FFD700','#FF8C00','#228B22','#4a90e2','#8B4513','#333'], borderColor: '#161b22', borderWidth: 2 }]
-            },
-            options: { plugins: { legend: { labels: { color: '#8b949e', font: { size: 10 } } } } }
-        });
-    };
-    document.head.appendChild(s);
-})();
+                        if (document.getElementById('beltsChart') && Object.keys(belts).length > 0) { new Chart(document.getElementById('beltsChart'), { type: 'doughnut', data: { labels: Object.keys(belts), datasets: [{ data: Object.values(belts), backgroundColor: ['#fff', '#FFD700', '#FF8C00', '#228B22', '#3b82f6', '#8B4513', '#555'], borderColor: '#1a2535', borderWidth: 2 }] }, options: { plugins: { legend: { labels: { color: '#94a3b8', font: { size: 10 } } } } } }); }
+            };
+            document.head.appendChild(s);
+        })();
     </script>
 </body>
 </html>

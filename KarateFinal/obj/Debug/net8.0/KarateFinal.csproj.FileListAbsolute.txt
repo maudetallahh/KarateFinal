@@ -149,3 +149,4 @@ C:\Users\ME\Desktop\DataBase\KarateFinal\KarateFinal\bin\Debug\net8.0\ExcelNumbe
 C:\Users\ME\Desktop\DataBase\KarateFinal\KarateFinal\bin\Debug\net8.0\RBush.dll
 C:\Users\ME\Desktop\DataBase\KarateFinal\KarateFinal\bin\Debug\net8.0\SixLabors.Fonts.dll
 C:\Users\ME\Desktop\DataBase\KarateFinal\KarateFinal\bin\Debug\net8.0\System.IO.Packaging.dll
+C:\Users\ME\Desktop\DataBase\KarateFinal\KarateFinal\bin\Debug\net8.0\appsettings.Production.json
