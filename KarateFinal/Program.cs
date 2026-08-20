@@ -24,11 +24,13 @@ if (!app.Environment.IsDevelopment())
 }
 
 // استدعاء الادمن من ملف السيد
+// تشغيل Migrations وإنشاء الجداول
 using (var scope = app.Services.CreateScope())
 {
+    var db = scope.ServiceProvider.GetRequiredService<KarateContext>();
+    db.Database.Migrate();
     SeedData.Initialize(scope.ServiceProvider);
 }
-
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
