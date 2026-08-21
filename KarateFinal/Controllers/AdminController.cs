@@ -114,11 +114,27 @@ namespace KarateFinal.Controllers
             var club = _context.Clubs.Find(id);
             if (club != null)
             {
+                // Soft delete
+                club.IsDeleted = true;
+                club.DeletedAt = DateTime.UtcNow;
+                club.DeletedByAdmin = HttpContext.Session.GetString("Username");
+
+                // حذف المستخدم واللاعبين والبيانات المرتبطة
                 var user = _context.Users.FirstOrDefault(u => u.ClubId == id);
                 if (user != null) _context.Users.Remove(user);
-                var memberships = _context.Memberships.Where(m => m.ClubId == id).ToList();
-                _context.Memberships.RemoveRange(memberships);
-                _context.Clubs.Remove(club);
+
+                var players = _context.Players.Where(p => p.ClubId == id).ToList();
+                foreach (var p in players)
+                {
+                    var playerUser = _context.Users.FirstOrDefault(u => u.PlayerId == p.Id);
+                    if (playerUser != null) _context.Users.Remove(playerUser);
+                }
+                _context.Players.RemoveRange(players);
+                _context.Memberships.RemoveRange(_context.Memberships.Where(m => m.ClubId == id));
+                _context.TournamentRegistrations.RemoveRange(_context.TournamentRegistrations.Where(r => r.ClubId == id));
+                _context.TournamentPlayerRequests.RemoveRange(_context.TournamentPlayerRequests.Where(r => r.ClubId == id));
+                _context.PlayerMemberships.RemoveRange(_context.PlayerMemberships.Where(m => m.ClubId == id));
+
                 _context.SaveChanges();
             }
             return RedirectToAction("Index");
@@ -135,7 +151,10 @@ namespace KarateFinal.Controllers
             return Json(new { success = true });
         }
 
-        public IActionResult AddPlayer() { ViewBag.Clubs = _context.Clubs.ToList(); return View(); }
+        public IActionResult AddPlayer() {
+            ViewBag.Clubs = _context.Clubs.Where(c => !c.IsDeleted).ToList();
+            ViewBag.ArchivedClubs = _context.Clubs.Where(c => c.IsDeleted).ToList();
+            return View(); }
 
         [HttpPost]
         public IActionResult AddPlayer(Player player) { _context.Players.Add(player); _context.SaveChanges(); return RedirectToAction("Index"); }

@@ -16,5 +16,8 @@
         public string Email { get; set; } = "";
         public string Phone { get; set; } = "";
         public int FoundedYear { get; set; }
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
+        public string? DeletedByAdmin { get; set; }
     }
 }
