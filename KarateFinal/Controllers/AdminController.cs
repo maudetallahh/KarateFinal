@@ -71,6 +71,16 @@ namespace KarateFinal.Controllers
                    var phoneExists = _context.Clubs.Any(c => c.Phone == club.Phone);
                    if (phoneExists) { TempData["Error"] = "رقم الهاتف مسجّل مسبقاً لنادٍ آخر!"; return RedirectToAction("Index"); }
                }*/
+            if (!string.IsNullOrEmpty(club.Email))
+            {
+                var emailExists = _context.Clubs.Any(c => c.Email == club.Email);
+                if (emailExists) { TempData["Error"] = "البريد الإلكتروني مسجّل مسبقاً لنادٍ آخر!"; return RedirectToAction("Index"); }
+            }
+            if (!string.IsNullOrEmpty(club.Phone))
+            {
+                var phoneExists = _context.Clubs.Any(c => c.Phone == club.Phone);
+                if (phoneExists) { TempData["Error"] = "رقم الهاتف مسجّل مسبقاً لنادٍ آخر!"; return RedirectToAction("Index"); }
+            }
             var slug = citySlug.ContainsKey(club.City) ? citySlug[club.City] : "club";
             var count = _context.Clubs.Count() + 1;
             club.Username = slug + count;
