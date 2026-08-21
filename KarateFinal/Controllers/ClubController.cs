@@ -16,7 +16,12 @@ namespace KarateFinal.Controllers
             _context = context;
             _emailService = emailService;
         }
-
+        public IActionResult Index()
+        {
+            var clubs = _context.Clubs.ToList();
+            ViewBag.Clubs = clubs;
+            return View();
+        }
         public IActionResult Dashboard()
         {
             var username = HttpContext.Session.GetString("Username");
