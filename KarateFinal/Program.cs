@@ -48,17 +48,20 @@ app.Use(async (context, next) =>
     }
     if (path != null && path.StartsWith("/club") && role != "Club" && role != "Admin")
     {
-        context.Response.Redirect("/Account/Login");
-        return;
+        if (path != "/club/index" && path != "/club")
+        {
+            context.Response.Redirect("/Account/Login");
+            return;
+        }
     }
     if (path != null && path.StartsWith("/player") && role != "Player" && role != "Admin")
     {
         context.Response.Redirect("/Account/Login");
         return;
     }
-    if (path != null && path.StartsWith("/tour") && role == "Player")
+    if (path != null && (path == "/tournament/index" || path == "/tournament"))
     {
-        context.Response.Redirect("/Player/Dashboard");
+        await next();
         return;
     }
     await next();
