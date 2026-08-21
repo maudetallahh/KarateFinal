@@ -18,7 +18,7 @@ namespace KarateFinal.Controllers
         }
         public IActionResult Index()
         {
-            var clubs = _context.Clubs.ToList();
+            var clubs = _context.Clubs.Where(c => !c.IsDeleted).ToList();
             ViewBag.Clubs = clubs;
             return View();
         }
@@ -73,13 +73,15 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             if (!string.IsNullOrEmpty(player.Email))
             {
-                try
+                var emailTo = player.Email;
+                var emailName = player.Name;
+                var emailSubject = "بيانات دخولك إلى منصة الكاراتيه الفلسطينية";
+                var emailBody = "<div dir='rtl' style='font-family:Arial;padding:20px;'><h2 style='color:#1e2a38;'>مرحباً " + player.Name + " 🥋</h2><p>تم تسجيلك في منصة الكاراتيه الفلسطينية.</p><div style='background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;margin:16px 0;'><p><strong>اسم المستخدم:</strong> " + playerUsername + "</p><p><strong>كلمة المرور:</strong> " + plainPassword + "</p></div><p style='color:#888;font-size:12px;'>يرجى تغيير كلمة المرور عند أول تسجيل دخول.</p></div>";
+                _ = Task.Run(async () =>
                 {
-                    var subject = "بيانات دخولك إلى منصة الكاراتيه الفلسطينية";
-                    var body = "<div dir='rtl' style='font-family:Arial;padding:20px;'><h2 style='color:#1e2a38;'>مرحباً " + player.Name + " 🥋</h2><p>تم تسجيلك في منصة الكاراتيه الفلسطينية.</p><div style='background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;margin:16px 0;'><p><strong>اسم المستخدم:</strong> " + playerUsername + "</p><p><strong>كلمة المرور:</strong> " + plainPassword + "</p></div><p style='color:#888;font-size:12px;'>يرجى تغيير كلمة المرور عند أول تسجيل دخول.</p></div>";
-                    await _emailService.SendAsync(player.Email, player.Name, subject, body);
-                }
-                catch (Exception ex) { Console.WriteLine("Email error: " + ex.Message); }
+                    try { await _emailService.SendAsync(emailTo, emailName, emailSubject, emailBody); }
+                    catch (Exception ex) { Console.WriteLine("Email error: " + ex.Message); }
+                });
             }
             TempData["NewPlayerUsername"] = playerUsername;
             TempData["NewPlayerPassword"] = plainPassword;
