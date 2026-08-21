@@ -770,6 +770,7 @@
             <div class="nav-item" onclick="showPage('tournaments',this);closeSidebar()"><span class="icon">🏆</span> البطولات</div>
             <div class="nav-item" onclick="showPage('participations',this);closeSidebar()"><span class="icon">🏅</span> المشاركات</div>
             <div class="nav-item" onclick="showPage('memberships',this);closeSidebar()"><span class="icon">🪪</span> العضويات</div>
+            <div class="nav-item" onclick="showPage('archive',this);closeSidebar()"><span class="icon">🗃️</span> الأرشيف</div>
         </nav>
         <div class="sidebar-footer">
             <div class="admin-chip">
@@ -1040,6 +1041,40 @@
                     </table>
                 </div>
             </div>
+
+            <!-- ARCHIVE -->
+            <div class="page" id="page-archive">
+                <div class="section-hd">
+                    <h3>🗃️ أرشيف الأندية المحذوفة</h3>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>اسم النادي</th><th>المسؤول</th><th>المدينة</th><th>التصنيف</th><th>تاريخ الحذف</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.ArchivedClubs != null)
+                            {
+                                int i = 1; foreach (var c in ViewBag.ArchivedClubs)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@c.Name</td>
+                                        <td>@c.ManagerName</td>
+                                        <td>@c.City</td>
+                                        <td>@c.Category</td>
+                                        <td>@(c.DeletedAt != null ? ((DateTime)c.DeletedAt).ToString("yyyy/MM/dd") : "—")</td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="6" style="text-align:center;color:var(--muted);">لا توجد أندية محذوفة</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
     </main>
 
@@ -1055,7 +1090,7 @@
                         <div class="form-group"><label>المدينة *</label><select name="City" required><option value="">-- اختر المدينة --</option><option>نابلس</option><option>رام الله</option><option>القدس</option><option>الخليل</option><option>جنين</option><option>طولكرم</option><option>قلقيلية</option><option>بيت لحم</option><option>أريحا</option><option>سلفيت</option><option>طوباس</option><option>غزة</option></select></div>
                         <div class="form-group"><label>التصنيف *</label><select name="Category" required><option value="">-- اختر --</option><option value="A">A — الدرجة الأولى</option><option value="B">B — الدرجة الثانية</option><option value="C">C — الدرجة الثالثة</option></select></div>
                         <div class="form-group full"><label>الوصف</label><input type="text" name="Description" placeholder="وصف مختصر للنادي"></div>
-                        <div class="form-group"><label>البريد الإلكتروني *</label><input type="email" name="Email" id="clubEmail" placeholder="example@email.com" required onblur="checkEmail(this.value)"><span id="emailError" style="color:#f85149;font-size:11px;display:none;">⚠️ هذا الإيميل مسجّل مسبقاً</span></div>
+                        <div class="form-group"><label>البريد الإلكتروني *</label><input type="email" name="Email" id="clubEmail" placeholder="example@email.com" required ><span id="emailError" style="color:#f85149;font-size:11px;display:none;">⚠️ هذا الإيميل مسجّل مسبقاً</span></div>
                         <div class="form-group"><label>رقم الهاتف *</label><input type="tel" name="Phone" id="clubPhone" placeholder="+970 5X XXX XXXX" required onblur="checkPhone(this.value)"><span id="phoneError" style="color:#f85149;font-size:11px;display:none;">⚠️ هذا الرقم مسجّل مسبقاً</span></div>
                         <div class="form-group"><label>سنة التأسيس</label><input type="number" name="FoundedYear" min="1900" max="2025" placeholder="2010"></div>
                     </div>
@@ -1073,8 +1108,7 @@
                 <div class="form-grid">
                     <div class="form-group full"><label>اسم النادي</label><input type="text" id="detailName" readonly style="background:var(--surface2);"></div>
                     <div class="form-group full"><label>اسم المسؤول</label><input type="text" id="detailManager" readonly style="background:var(--surface2);"></div>
-                    <div class="form-group"><label>اسم المستخدم</label><input type="text" id="detailUsername" readonly style="background:var(--surface2);font-family:monospace;"></div>
-                    <div class="form-group"><label>كلمة المرور</label><div style="display:flex;gap:8px;"><input type="password" id="detailPassword" readonly style="background:var(--surface2);font-family:monospace;flex:1;cursor:default;"><button onclick="toggleAdminPass()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;cursor:pointer;">👁️</button></div></div>
+                    <!-- تم إزالة اسم المستخدم وكلمة المرور لأسباب أمنية -->
                 </div>
                 <hr style="border-color:var(--border);margin:14px 0;">
                 <div class="form-group"><label>🔑 إعادة تعيين كلمة المرور</label><div style="display:flex;gap:8px;margin-top:6px;"><input type="text" id="newPasswordInput" placeholder="كلمة مرور جديدة" style="flex:1;"><button class="btn btn-primary" onclick="resetClubPassword()">تغيير</button></div></div>
@@ -1165,9 +1199,9 @@
             currentClubId = id;
             document.getElementById('detailName').value = name;
             document.getElementById('detailManager').value = manager;
-            document.getElementById('detailUsername').value = '***';
-            document.getElementById('detailPassword').value = '***';
-            document.getElementById('detailPassword').type = 'password'; document.getElementById('newPasswordInput').value = ''; document.getElementById('clubDetailsModal').classList.add('show'); }
+            document.getElementById('newPasswordInput').value = '';
+            document.getElementById('clubDetailsModal').classList.add('show');
+        }
         function resetClubPassword() { const newPass = document.getElementById('newPasswordInput').value.trim(); if (!newPass) { toast('أدخل كلمة مرور جديدة', 'error'); return; } fetch('/Admin/ResetClubPassword', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ clubId: currentClubId, newPassword: newPass }) }).then(r => r.json()).then(data => { if (data.success) { document.getElementById('detailPassword').value = newPass; toast('✅ تم تغيير كلمة المرور', 'success'); } }); }
         function toggleAdminPass() { const input = document.getElementById('detailPassword'); input.type = input.type === 'password' ? 'text' : 'password'; }
         function toggleMembership(id) { fetch('/Admin/ToggleMembership', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ membershipId: id }) }).then(r => r.json()).then(data => { if (data.success) { const isPaid = data.status === 'مدفوع'; const badge = document.getElementById('mem-badge-' + id); const btn = document.getElementById('mem-btn-' + id); const row = document.getElementById('mem-row-' + id); badge.textContent = data.status; badge.className = 'badge ' + (isPaid ? 'badge-active' : 'badge-inactive'); btn.style.display = isPaid ? 'none' : ''; row.style.background = isPaid ? 'rgba(46,160,67,0.08)' : ''; toast(isPaid ? '✅ تم تحديد العضوية كمدفوعة' : '⚠️ تم تغيير الحالة', isPaid ? 'success' : 'info'); } }); }
