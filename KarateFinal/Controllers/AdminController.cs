@@ -36,34 +36,17 @@ namespace KarateFinal.Controllers
                 .FirstOrDefault();
             ViewBag.TopClubs = _context.Participations
                 .GroupBy(p => p.ClubId)
-                .Select(g => new {
-                    ClubId = g.Key,
-                    TotalPoints = g.Sum(p => p.Points),
-                    GoldCount = g.Count(p => p.Rank == 1)
-                })
-                .OrderByDescending(x => x.TotalPoints)
-                .Take(5)
-                .ToList()
-                .Select(x => new {
-                    ClubName = _context.Clubs.FirstOrDefault(c => c.Id == x.ClubId)?.Name ?? "—",
-                    x.TotalPoints,
-                    x.GoldCount
-                })
-                .ToList();
+                .Select(g => new { ClubId = g.Key, TotalPoints = g.Sum(p => p.Points), GoldCount = g.Count(p => p.Rank == 1) })
+                .OrderByDescending(x => x.TotalPoints).Take(5).ToList()
+                .Select(x => new { ClubName = _context.Clubs.FirstOrDefault(c => c.Id == x.ClubId)?.Name ?? "—", x.TotalPoints, x.GoldCount }).ToList();
             ViewBag.TopPlayers = _context.Players
-                .Where(p => _context.Participations.Any(par => par.ClubId == p.ClubId))
-                .ToList()
+                .Where(p => _context.Participations.Any(par => par.ClubId == p.ClubId)).ToList()
                 .Select(p => new {
                     PlayerName = p.Name,
                     Belt = p.Belt,
                     ClubName = _context.Clubs.FirstOrDefault(c => c.Id == p.ClubId)?.Name ?? "—",
-                    TotalPoints = _context.Participations
-                        .Where(par => par.ClubId == p.ClubId)
-                        .Sum(par => par.Points)
-                })
-                .OrderByDescending(x => x.TotalPoints)
-                .Take(5)
-                .ToList();
+                    TotalPoints = _context.Participations.Where(par => par.ClubId == p.ClubId).Sum(par => par.Points)
+                }).OrderByDescending(x => x.TotalPoints).Take(5).ToList();
             return View();
         }
 
@@ -108,13 +91,7 @@ namespace KarateFinal.Controllers
                 try
                 {
                     var subject = "بيانات دخولك إلى منصة الكاراتيه الفلسطينية";
-                    var body = "<div dir='rtl' style='font-family:Arial;padding:20px;'>" +
-                        "<h2 style='color:#1e2a38;'>مرحباً بنادي " + club.Name + "</h2>" +
-                        "<p>تم تسجيل ناديك في منصة الكاراتيه الفلسطينية.</p>" +
-                        "<div style='background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;margin:16px 0;'>" +
-                        "<p><strong>اسم المستخدم:</strong> " + club.Username + "</p>" +
-                        "<p><strong>كلمة المرور:</strong> " + plainPassword + "</p>" +
-                        "</div><p style='color:#888;font-size:12px;'>يرجى تغيير كلمة المرور عند أول تسجيل دخول.</p></div>";
+                    var body = "<div dir='rtl' style='font-family:Arial;padding:20px;'><h2 style='color:#1e2a38;'>مرحباً بنادي " + club.Name + "</h2><p>تم تسجيل ناديك في منصة الكاراتيه الفلسطينية.</p><div style='background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;margin:16px 0;'><p><strong>اسم المستخدم:</strong> " + club.Username + "</p><p><strong>كلمة المرور:</strong> " + plainPassword + "</p></div><p style='color:#888;font-size:12px;'>يرجى تغيير كلمة المرور عند أول تسجيل دخول.</p></div>";
                     await _emailService.SendAsync(club.Email, club.Name, subject, body);
                 }
                 catch (Exception ex) { Console.WriteLine("Email error: " + ex.Message); }
@@ -185,9 +162,7 @@ namespace KarateFinal.Controllers
             ViewBag.SelectedTournament = tournamentId;
             if (tournamentId.HasValue)
             {
-                var registeredClubIds = _context.TournamentRegistrations
-                    .Where(r => r.TournamentId == tournamentId.Value)
-                    .Select(r => r.ClubId).ToList();
+                var registeredClubIds = _context.TournamentRegistrations.Where(r => r.TournamentId == tournamentId.Value).Select(r => r.ClubId).ToList();
                 ViewBag.Clubs = _context.Clubs.Where(c => registeredClubIds.Contains(c.Id)).ToList();
             }
             else { ViewBag.Clubs = new List<Club>(); }
@@ -228,18 +203,14 @@ namespace KarateFinal.Controllers
                 adminNote = r.AdminNote ?? "",
                 approvedPlayers = _context.TournamentPlayerRequests
                     .Where(p => p.TournamentId == id && p.ClubId == r.ClubId && p.Status == "موافق")
-                    .Include(p => p.Player)
-                    .Select(p => p.Player.Name)
-                    .ToList()
+                    .Include(p => p.Player).Select(p => p.Player.Name).ToList()
             });
             return Json(result);
         }
 
         public IActionResult GetApprovedClubs(int tournamentId)
         {
-            var clubIds = _context.TournamentRegistrations
-                .Where(r => r.TournamentId == tournamentId)
-                .Select(r => r.ClubId).ToList();
+            var clubIds = _context.TournamentRegistrations.Where(r => r.TournamentId == tournamentId).Select(r => r.ClubId).ToList();
             var clubs = _context.Clubs.Where(c => clubIds.Contains(c.Id)).Select(c => new { id = c.Id, name = c.Name }).ToList();
             return Json(clubs);
         }
@@ -309,10 +280,7 @@ namespace KarateFinal.Controllers
             if (!string.IsNullOrEmpty(newPassword))
             {
                 if (string.IsNullOrEmpty(oldPassword) || !BCrypt.Net.BCrypt.Verify(oldPassword, user.Password))
-                {
-                    TempData["Error"] = "كلمة المرور القديمة غير صحيحة!";
-                    return RedirectToAction("Profile");
-                }
+                { TempData["Error"] = "كلمة المرور القديمة غير صحيحة!"; return RedirectToAction("Profile"); }
                 user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
             }
             if (!string.IsNullOrEmpty(newUsername)) { user.Username = newUsername; HttpContext.Session.SetString("Username", newUsername); }
@@ -387,24 +355,23 @@ namespace KarateFinal.Controllers
             settings.SiteName = model.SiteName;
             settings.TabName = model.TabName;
             settings.Slogan = model.Slogan;
+
             if (logoFile != null && logoFile.Length > 0)
             {
-                var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "site");
-                Directory.CreateDirectory(dir);
-                var fileName = "logo" + Path.GetExtension(logoFile.FileName);
-                using var stream = new FileStream(Path.Combine(dir, fileName), FileMode.Create);
-                await logoFile.CopyToAsync(stream);
-                settings.LogoPath = "/uploads/site/" + fileName;
+                using var ms = new MemoryStream();
+                await logoFile.CopyToAsync(ms);
+                var base64 = Convert.ToBase64String(ms.ToArray());
+                settings.LogoPath = $"data:{logoFile.ContentType};base64,{base64}";
             }
+
             if (faviconFile != null && faviconFile.Length > 0)
             {
-                var dir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "site");
-                Directory.CreateDirectory(dir);
-                var fileName = "favicon" + Path.GetExtension(faviconFile.FileName);
-                using var stream = new FileStream(Path.Combine(dir, fileName), FileMode.Create);
-                await faviconFile.CopyToAsync(stream);
-                settings.FaviconPath = "/uploads/site/" + fileName;
+                using var ms = new MemoryStream();
+                await faviconFile.CopyToAsync(ms);
+                var base64 = Convert.ToBase64String(ms.ToArray());
+                settings.FaviconPath = $"data:{faviconFile.ContentType};base64,{base64}";
             }
+
             _context.SaveChanges();
             TempData["Success"] = "تم حفظ معلومات الموقع بنجاح ✅";
             return RedirectToAction("SiteSettings");
@@ -427,10 +394,8 @@ namespace KarateFinal.Controllers
         {
             var notifications = _context.Notifications
                 .Where(n => n.TargetRole == "Admin" || n.TargetRole == "All")
-                .OrderByDescending(n => n.CreatedAt)
-                .Take(10)
-                .Select(n => new { n.Id, n.Title, n.Message, n.IsRead, n.CreatedAt })
-                .ToList();
+                .OrderByDescending(n => n.CreatedAt).Take(10)
+                .Select(n => new { n.Id, n.Title, n.Message, n.IsRead, n.CreatedAt }).ToList();
             var unread = notifications.Count(n => !n.IsRead);
             return Json(new { notifications, unread });
         }
@@ -447,8 +412,7 @@ namespace KarateFinal.Controllers
         public IActionResult MarkAllRead()
         {
             var notifications = _context.Notifications
-                .Where(n => (n.TargetRole == "Admin" || n.TargetRole == "All") && !n.IsRead)
-                .ToList();
+                .Where(n => (n.TargetRole == "Admin" || n.TargetRole == "All") && !n.IsRead).ToList();
             notifications.ForEach(n => n.IsRead = true);
             _context.SaveChanges();
             return Json(new { success = true });
@@ -469,26 +433,18 @@ namespace KarateFinal.Controllers
             return Json(new { success = true });
         }
 
-        // ===== تصدير Excel =====
         public IActionResult ExportClubsExcel()
         {
             using var workbook = new ClosedXML.Excel.XLWorkbook();
             var ws = workbook.Worksheets.Add("الأندية");
-            ws.Cell(1, 1).Value = "اسم النادي";
-            ws.Cell(1, 2).Value = "المسؤول";
-            ws.Cell(1, 3).Value = "المدينة";
-            ws.Cell(1, 4).Value = "التصنيف";
-            ws.Cell(1, 5).Value = "الهاتف";
-            ws.Cell(1, 6).Value = "البريد";
+            ws.Cell(1, 1).Value = "اسم النادي"; ws.Cell(1, 2).Value = "المسؤول"; ws.Cell(1, 3).Value = "المدينة";
+            ws.Cell(1, 4).Value = "التصنيف"; ws.Cell(1, 5).Value = "الهاتف"; ws.Cell(1, 6).Value = "البريد";
             var clubs = _context.Clubs.ToList();
             for (int i = 0; i < clubs.Count; i++)
             {
-                ws.Cell(i + 2, 1).Value = clubs[i].Name;
-                ws.Cell(i + 2, 2).Value = clubs[i].ManagerName;
-                ws.Cell(i + 2, 3).Value = clubs[i].City;
-                ws.Cell(i + 2, 4).Value = clubs[i].Category;
-                ws.Cell(i + 2, 5).Value = clubs[i].Phone ?? "";
-                ws.Cell(i + 2, 6).Value = clubs[i].Email ?? "";
+                ws.Cell(i + 2, 1).Value = clubs[i].Name; ws.Cell(i + 2, 2).Value = clubs[i].ManagerName;
+                ws.Cell(i + 2, 3).Value = clubs[i].City; ws.Cell(i + 2, 4).Value = clubs[i].Category;
+                ws.Cell(i + 2, 5).Value = clubs[i].Phone ?? ""; ws.Cell(i + 2, 6).Value = clubs[i].Email ?? "";
             }
             ws.Columns().AdjustToContents();
             using var stream = new MemoryStream();
@@ -500,22 +456,15 @@ namespace KarateFinal.Controllers
         {
             using var workbook = new ClosedXML.Excel.XLWorkbook();
             var ws = workbook.Worksheets.Add("اللاعبون");
-            ws.Cell(1, 1).Value = "الاسم";
-            ws.Cell(1, 2).Value = "النادي";
-            ws.Cell(1, 3).Value = "الحزام";
-            ws.Cell(1, 4).Value = "العمر";
-            ws.Cell(1, 5).Value = "الجنس";
-            ws.Cell(1, 6).Value = "الحالة الصحية";
+            ws.Cell(1, 1).Value = "الاسم"; ws.Cell(1, 2).Value = "النادي"; ws.Cell(1, 3).Value = "الحزام";
+            ws.Cell(1, 4).Value = "العمر"; ws.Cell(1, 5).Value = "الجنس"; ws.Cell(1, 6).Value = "الحالة الصحية";
             var players = _context.Players.ToList();
             for (int i = 0; i < players.Count; i++)
             {
                 var club = _context.Clubs.FirstOrDefault(c => c.Id == players[i].ClubId);
-                ws.Cell(i + 2, 1).Value = players[i].Name;
-                ws.Cell(i + 2, 2).Value = club?.Name ?? "—";
-                ws.Cell(i + 2, 3).Value = players[i].Belt ?? "";
-                ws.Cell(i + 2, 4).Value = players[i].Age;
-                ws.Cell(i + 2, 5).Value = players[i].Gender ?? "";
-                ws.Cell(i + 2, 6).Value = players[i].HealthStatus ?? "";
+                ws.Cell(i + 2, 1).Value = players[i].Name; ws.Cell(i + 2, 2).Value = club?.Name ?? "—";
+                ws.Cell(i + 2, 3).Value = players[i].Belt ?? ""; ws.Cell(i + 2, 4).Value = players[i].Age;
+                ws.Cell(i + 2, 5).Value = players[i].Gender ?? ""; ws.Cell(i + 2, 6).Value = players[i].HealthStatus ?? "";
             }
             ws.Columns().AdjustToContents();
             using var stream = new MemoryStream();
@@ -528,18 +477,7 @@ namespace KarateFinal.Controllers
     public class ToggleMembershipRequest { public int MembershipId { get; set; } }
     public class TournamentRegistrationActionRequest { public int RegistrationId { get; set; } public string? Note { get; set; } }
     public class ToggleTournamentRequest { public int TournamentId { get; set; } }
-    public class UpdateTournamentRequest
-    {
-        public int Id { get; set; }
-        public string Title { get; set; } = "";
-        public DateTime Date { get; set; }
-        public string City { get; set; } = "";
-        public string Location { get; set; } = "";
-        public string? Description { get; set; }
-        public decimal RegistrationFee { get; set; }
-        public int MaxPlayersPerClub { get; set; }
-        public string? Categories { get; set; }
-    }
+    public class UpdateTournamentRequest { public int Id { get; set; } public string Title { get; set; } = ""; public DateTime Date { get; set; } public string City { get; set; } = ""; public string Location { get; set; } = ""; public string? Description { get; set; } public decimal RegistrationFee { get; set; } public int MaxPlayersPerClub { get; set; } public string? Categories { get; set; } }
     public class CheckEmailRequest { public string Email { get; set; } = ""; }
     public class CheckPhoneRequest { public string Phone { get; set; } = ""; }
     public class UpdateFeeSettingRequest { public decimal Fee { get; set; } }
