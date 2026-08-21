@@ -24,7 +24,8 @@ namespace KarateFinal.Controllers
             ViewBag.TournamentsCount = _context.Tournaments.Count();
             ViewBag.UnpaidCount = _context.Memberships.Count(m => m.Status == "غير مدفوع");
             ViewBag.PaidCount = _context.Memberships.Count(m => m.Status == "مدفوع");
-            ViewBag.Clubs = _context.Clubs.ToList();
+            ViewBag.Clubs = _context.Clubs.Where(c => !c.IsDeleted).ToList();
+            ViewBag.ArchivedClubs = _context.Clubs.Where(c => c.IsDeleted).ToList();
             ViewBag.Players = _context.Players.ToList();
             ViewBag.Tournaments = _context.Tournaments.ToList();
             ViewBag.Memberships = _context.Memberships.ToList();
@@ -73,12 +74,12 @@ namespace KarateFinal.Controllers
                }*/
             if (!string.IsNullOrEmpty(club.Email))
             {
-                var emailExists = _context.Clubs.Any(c => c.Email == club.Email);
+                var emailExists = _context.Clubs.Any(c => c.Email == club.Email && !c.IsDeleted);
                 if (emailExists) { TempData["Error"] = "البريد الإلكتروني مسجّل مسبقاً لنادٍ آخر!"; return RedirectToAction("Index"); }
             }
             if (!string.IsNullOrEmpty(club.Phone))
             {
-                var phoneExists = _context.Clubs.Any(c => c.Phone == club.Phone);
+                var phoneExists = _context.Clubs.Any(c => c.Phone == club.Phone && !c.IsDeleted);
                 if (phoneExists) { TempData["Error"] = "رقم الهاتف مسجّل مسبقاً لنادٍ آخر!"; return RedirectToAction("Index"); }
             }
             var slug = citySlug.ContainsKey(club.City) ? citySlug[club.City] : "club";
