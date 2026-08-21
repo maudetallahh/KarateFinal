@@ -1,36 +1,48 @@
-﻿using MailKit.Net.Smtp;
-using MimeKit;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 
 namespace KarateFinal.Services
 {
     public class EmailService
     {
         private readonly IConfiguration _config;
+        private readonly HttpClient _httpClient;
 
         public EmailService(IConfiguration config)
         {
             _config = config;
+            _httpClient = new HttpClient();
         }
 
         public async Task SendAsync(string toEmail, string toName, string subject, string body)
         {
-            var settings = _config.GetSection("EmailSettings");
+            var apiKey = _config["EmailSettings__SenderPassword"]
+                      ?? _config["EmailSettings:SenderPassword"] ?? "";
+            var senderEmail = _config["EmailSettings__SenderEmail"]
+                           ?? _config["EmailSettings:SenderEmail"] ?? "";
+            var senderName = _config["EmailSettings__SenderName"]
+                          ?? _config["EmailSettings:SenderName"] ?? "";
 
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(
-                settings["SenderName"],
-                settings["SenderEmail"]
-            ));
-            message.To.Add(new MailboxAddress(toName, toEmail));
-            message.Subject = subject;
-            message.Body = new TextPart("html") { Text = body };
+            var payload = new
+            {
+                sender = new { name = senderName, email = senderEmail },
+                to = new[] { new { email = toEmail, name = toName } },
+                subject = subject,
+                htmlContent = body
+            };
 
-            using var client = new SmtpClient();
-            await client.ConnectAsync(settings["SmtpServer"], int.Parse(settings["SmtpPort"]!), MailKit.Security.SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(settings["SenderEmail"], settings["SenderPassword"]);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(true);
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.brevo.com/v3/smtp/email");
+            request.Headers.Add("api-key", apiKey);
+            request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.SendAsync(request);
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                Console.WriteLine("Brevo error: " + error);
+            }
         }
     }
 }
