@@ -48,7 +48,7 @@ app.Use(async (context, next) =>
     }
     if (path != null && path.StartsWith("/club") && role != "Club" && role != "Admin")
     {
-        if (path != "/club/index" && path != "/club")
+        if (path != "/club/index")
         {
             context.Response.Redirect("/Account/Login");
             return;
