@@ -27,7 +27,7 @@ namespace KarateFinal.Services
             message.Body = new TextPart("html") { Text = body };
 
             using var client = new SmtpClient();
-            await client.ConnectAsync(settings["SmtpServer"], int.Parse(settings["SmtpPort"]!), false);
+            await client.ConnectAsync(settings["SmtpServer"], int.Parse(settings["SmtpPort"]!), MailKit.Security.SecureSocketOptions.StartTls);
             await client.AuthenticateAsync(settings["SenderEmail"], settings["SenderPassword"]);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
