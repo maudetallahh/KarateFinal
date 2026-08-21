@@ -19,7 +19,7 @@ namespace KarateFinal.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.ClubsCount = _context.Clubs.Count();
+            ViewBag.ClubsCount = _context.Clubs.Count(c => !c.IsDeleted);
             ViewBag.PlayersCount = _context.Players.Count();
             ViewBag.TournamentsCount = _context.Tournaments.Count();
             ViewBag.UnpaidCount = _context.Memberships.Count(m => m.Status == "غير مدفوع");
@@ -155,7 +155,8 @@ namespace KarateFinal.Controllers
         public IActionResult AddPlayer() {
             ViewBag.Clubs = _context.Clubs.Where(c => !c.IsDeleted).ToList();
             ViewBag.ArchivedClubs = _context.Clubs.Where(c => c.IsDeleted).ToList();
-            return View(); }
+            return View();
+        }
 
         [HttpPost]
         public IActionResult AddPlayer(Player player) { _context.Players.Add(player); _context.SaveChanges(); return RedirectToAction("Index"); }
