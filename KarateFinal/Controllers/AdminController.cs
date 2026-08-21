@@ -61,11 +61,11 @@ namespace KarateFinal.Controllers
                 {"قلقيلية","qalqilya"},{"بيت لحم","bethlehem"},{"أريحا","jericho"},
                 {"سلفيت","salfit"},{"طوباس","tubas"},{"غزة","gaza"}
             };
-            if (!string.IsNullOrEmpty(club.Email))
+         /*   if (!string.IsNullOrEmpty(club.Email))
             {
                 var emailExists = _context.Clubs.Any(c => c.Email == club.Email);
                 if (emailExists) { TempData["Error"] = "البريد الإلكتروني مسجّل مسبقاً لنادٍ آخر!"; return RedirectToAction("Index"); }
-            }
+            }*/
             if (!string.IsNullOrEmpty(club.Phone))
             {
                 var phoneExists = _context.Clubs.Any(c => c.Phone == club.Phone);
