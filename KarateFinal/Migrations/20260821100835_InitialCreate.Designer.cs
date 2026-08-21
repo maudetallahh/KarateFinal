@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KarateFinal.Migrations
 {
     [DbContext(typeof(KarateContext))]
-    [Migration("20260821100414_InitialCreate")]
+    [Migration("20260821100835_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
