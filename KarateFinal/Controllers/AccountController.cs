@@ -15,6 +15,11 @@ namespace KarateFinal.Controllers
 
         public IActionResult Login()
         {
+            var site = _context.SiteSettings.FirstOrDefault();
+            ViewBag.LogoPath = site?.LogoPath ?? "/images/test.jpg";
+            ViewBag.SiteName = site?.SiteName ?? "منصة الكاراتيه الفلسطينية";
+            ViewBag.TabName = site?.TabName ?? "منصة الكاراتيه";
+            ViewBag.Slogan = site?.Slogan ?? "اصنع تاريخك ...وكن بطلاً";
             return View();
         }
 
