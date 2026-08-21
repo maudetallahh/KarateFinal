@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -25,9 +25,9 @@ namespace KarateFinal.Migrations
                     ManagerName = table.Column<string>(type: "text", nullable: false),
                     Username = table.Column<string>(type: "text", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false),
-                    LogoImage = table.Column<string>(type: "nvarchar(MAX)", nullable: true),
-                    MaleImage = table.Column<string>(type: "nvarchar(MAX)", nullable: true),
-                    FemaleImage = table.Column<string>(type: "nvarchar(MAX)", nullable: true),
+                    LogoImage = table.Column<string>(type: "text", nullable: true),
+                    MaleImage = table.Column<string>(type: "text", nullable: true),
+                    FemaleImage = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: false),
                     Phone = table.Column<string>(type: "text", nullable: false),
                     FoundedYear = table.Column<int>(type: "integer", nullable: false)
