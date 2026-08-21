@@ -15,588 +15,93 @@
     <title>@(ViewBag.TabName ?? "منصة الكاراتيه")</title>
     <link rel="icon" type="image/png" href="@logoPath">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI',Tahoma,sans-serif;
-        }
-
-        body {
-            background: #0d1117;
-            color: #e6edf3;
-            min-height: 100vh;
-        }
-
-        nav {
-            background: #161b22;
-            border-bottom: 3px solid #4a90e2;
-            padding: 14px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-            .nav-logo img {
-                height: 44px;
-                object-fit: contain;
-            }
-
-        .nav-logo-text h1 {
-            font-size: 18px;
-            font-weight: 700;
-            color: white;
-        }
-
-        .nav-logo-text p {
-            font-size: 11px;
-            color: #8b949e;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-            .nav-links a {
-                color: #8b949e;
-                text-decoration: none;
-                font-size: 14px;
-                font-weight: 600;
-                transition: 0.2s;
-            }
-
-                .nav-links a:hover {
-                    color: white;
-                }
-
-        .login-btn {
-            background: #4a90e2;
-            color: white !important;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-weight: 700 !important;
-        }
-
-            .login-btn:hover {
-                background: #1e6fc4 !important;
-            }
-
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-        }
-
-            .hamburger span {
-                width: 24px;
-                height: 2px;
-                background: white;
-                border-radius: 2px;
-            }
-
-        .mobile-menu {
-            display: none;
-            flex-direction: column;
-            background: #161b22;
-            padding: 16px 24px;
-            gap: 12px;
-            border-bottom: 1px solid #30363d;
-        }
-
-            .mobile-menu a {
-                color: #8b949e;
-                text-decoration: none;
-                font-size: 14px;
-                padding: 8px 0;
-                border-bottom: 1px solid #21262d;
-            }
-
-            .mobile-menu.show {
-                display: flex;
-            }
-
-        .hero {
-            background: linear-gradient(135deg,#0d1117 0%,#1a2332 50%,#0d1117 100%);
-            padding: 100px 40px 80px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-            .hero::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: radial-gradient(ellipse at center, rgba(74,144,226,0.15) 0%, transparent 70%);
-            }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero-badge {
-            display: inline-block;
-            background: rgba(74,144,226,0.15);
-            border: 1px solid rgba(74,144,226,0.4);
-            color: #4a90e2;
-            padding: 6px 18px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 24px;
-        }
-
-        .hero h1 {
-            font-size: 52px;
-            font-weight: 900;
-            color: white;
-            margin-bottom: 16px;
-            line-height: 1.2;
-        }
-
-            .hero h1 span {
-                color: #4a90e2;
-            }
-
-        .hero p {
-            font-size: 18px;
-            color: #8b949e;
-            margin-bottom: 36px;
-            line-height: 1.7;
-        }
-
-        .hero-btns {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-hero {
-            padding: 14px 32px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-            transition: 0.3s;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: #4a90e2;
-            color: white;
-        }
-
-            .btn-primary:hover {
-                background: #1e6fc4;
-                transform: translateY(-2px);
-            }
-
-        .btn-outline {
-            background: transparent;
-            color: #4a90e2;
-            border: 2px solid #4a90e2;
-        }
-
-            .btn-outline:hover {
-                background: rgba(74,144,226,0.1);
-                transform: translateY(-2px);
-            }
-
-        .hero-stats {
-            display: flex;
-            justify-content: center;
-            gap: 48px;
-            margin-top: 60px;
-            flex-wrap: wrap;
-        }
-
-        .hero-stat {
-            text-align: center;
-        }
-
-            .hero-stat .num {
-                font-size: 36px;
-                font-weight: 900;
-                color: #4a90e2;
-            }
-
-            .hero-stat .lbl {
-                font-size: 13px;
-                color: #8b949e;
-                margin-top: 4px;
-            }
-
-        section {
-            padding: 80px 40px;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-            .section-header h2 {
-                font-size: 32px;
-                font-weight: 800;
-                color: white;
-                margin-bottom: 12px;
-            }
-
-            .section-header p {
-                font-size: 15px;
-                color: #8b949e;
-            }
-
-        .section-tag {
-            display: inline-block;
-            background: rgba(74,144,226,0.15);
-            color: #4a90e2;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 4px 14px;
-            border-radius: 20px;
-            margin-bottom: 12px;
-        }
-
-        .tab-btns {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 32px;
-        }
-
-        .tab-btn {
-            padding: 8px 24px;
-            border-radius: 20px;
-            border: 2px solid #4a90e2;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 700;
-            transition: 0.2s;
-        }
-
-            .tab-btn.active {
-                background: #4a90e2;
-                color: white;
-            }
-
-            .tab-btn:not(.active) {
-                background: transparent;
-                color: #4a90e2;
-            }
-
-        .tournaments-section {
-            background: #0d1117;
-        }
-
-        .tournaments-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
-            gap: 20px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .t-card {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 14px;
-            padding: 24px;
-            transition: 0.3s;
-        }
-
-            .t-card:hover {
-                border-color: #4a90e2;
-                transform: translateY(-4px);
-                box-shadow: 0 8px 30px rgba(74,144,226,0.15);
-            }
-
-            .t-card .t-date {
-                font-size: 11px;
-                color: #4a90e2;
-                font-weight: 700;
-                margin-bottom: 8px;
-            }
-
-            .t-card .t-title {
-                font-size: 16px;
-                font-weight: 700;
-                color: white;
-                margin-bottom: 10px;
-            }
-
-            .t-card .t-info {
-                font-size: 12px;
-                color: #8b949e;
-                margin-bottom: 4px;
-            }
-
-            .t-card .t-badge {
-                display: inline-block;
-                background: rgba(46,160,67,0.15);
-                color: #3fb950;
-                border: 1px solid rgba(46,160,67,0.3);
-                padding: 3px 10px;
-                border-radius: 20px;
-                font-size: 11px;
-                font-weight: 700;
-                margin-top: 12px;
-            }
-
-                .t-card .t-badge.closed {
-                    background: rgba(139,148,158,0.15);
-                    color: #8b949e;
-                    border-color: #30363d;
-                }
-
-                .t-card .t-badge.past {
-                    background: rgba(74,144,226,0.15);
-                    color: #4a90e2;
-                    border-color: rgba(74,144,226,0.3);
-                }
-
-        .features-section {
-            background: #161b22;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-            gap: 24px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 14px;
-            padding: 28px 24px;
-            text-align: center;
-            transition: 0.3s;
-        }
-
-            .feature-card:hover {
-                border-color: #4a90e2;
-            }
-
-            .feature-card .icon {
-                font-size: 40px;
-                margin-bottom: 16px;
-            }
-
-            .feature-card h3 {
-                font-size: 16px;
-                font-weight: 700;
-                color: white;
-                margin-bottom: 10px;
-            }
-
-            .feature-card p {
-                font-size: 13px;
-                color: #8b949e;
-                line-height: 1.7;
-            }
-
-        .clubs-section {
-            background: #0d1117;
-        }
-
-        .clubs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
-            gap: 16px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .club-card {
-            background: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            transition: 0.3s;
-        }
-
-            .club-card:hover {
-                border-color: #4a90e2;
-            }
-
-        .club-rank {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .club-name {
-            font-size: 14px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 6px;
-        }
-
-        .club-points {
-            font-size: 12px;
-            color: #4a90e2;
-            font-weight: 700;
-        }
-
-        .cta-section {
-            background: linear-gradient(135deg,#1a2332,#0d1117);
-            text-align: center;
-        }
-
-            .cta-section h2 {
-                font-size: 36px;
-                font-weight: 800;
-                color: white;
-                margin-bottom: 16px;
-            }
-
-            .cta-section p {
-                font-size: 16px;
-                color: #8b949e;
-                margin-bottom: 32px;
-            }
-
-        footer {
-            background: #161b22;
-            border-top: 1px solid #30363d;
-            padding: 40px;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
-            gap: 32px;
-            max-width: 1100px;
-            margin: 0 auto 32px;
-        }
-
-        .footer-col h3 {
-            font-size: 14px;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 14px;
-        }
-
-        .footer-col.brand h3 {
-            color: #4a90e2;
-        }
-
-        .footer-col p {
-            font-size: 13px;
-            color: #8b949e;
-            line-height: 1.8;
-        }
-
-        .footer-col ul {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-            .footer-col ul li a {
-                color: #8b949e;
-                text-decoration: none;
-                font-size: 13px;
-                transition: 0.2s;
-            }
-
-                .footer-col ul li a:hover {
-                    color: #4a90e2;
-                }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 24px;
-            border-top: 1px solid #30363d;
-            color: #475569;
-            font-size: 12px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#0d1117; color:#e6edf3; min-height:100vh; }
+        nav { background:#161b22; border-bottom:3px solid #4a90e2; padding:14px 40px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; }
+        .nav-logo { display:flex; align-items:center; gap:12px; }
+        .nav-logo img { height:44px; object-fit:contain; }
+        .nav-logo-text h1 { font-size:18px; font-weight:700; color:white; }
+        .nav-logo-text p { font-size:11px; color:#8b949e; }
+        .nav-links { display:flex; align-items:center; gap:16px; }
+        .nav-links a { color:#8b949e; text-decoration:none; font-size:14px; font-weight:600; transition:0.2s; }
+        .nav-links a:hover { color:white; }
+        .login-btn { background:#4a90e2; color:white !important; padding:8px 20px; border-radius:8px; font-weight:700 !important; }
+        .login-btn:hover { background:#1e6fc4 !important; }
+        .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; }
+        .hamburger span { width:24px; height:2px; background:white; border-radius:2px; }
+        .mobile-menu { display:none; flex-direction:column; background:#161b22; padding:16px 24px; gap:12px; border-bottom:1px solid #30363d; }
+        .mobile-menu a { color:#8b949e; text-decoration:none; font-size:14px; padding:8px 0; border-bottom:1px solid #21262d; }
+        .mobile-menu.show { display:flex; }
+        .hero { background:linear-gradient(135deg,#0d1117 0%,#1a2332 50%,#0d1117 100%); padding:100px 40px 80px; text-align:center; position:relative; overflow:hidden; }
+        .hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at center, rgba(74,144,226,0.15) 0%, transparent 70%); }
+        .hero-content { position:relative; z-index:1; max-width:800px; margin:0 auto; }
+        .hero-badge { display:inline-block; background:rgba(74,144,226,0.15); border:1px solid rgba(74,144,226,0.4); color:#4a90e2; padding:6px 18px; border-radius:20px; font-size:13px; font-weight:700; margin-bottom:24px; }
+        .hero h1 { font-size:52px; font-weight:900; color:white; margin-bottom:16px; line-height:1.2; }
+        .hero h1 span { color:#4a90e2; }
+        .hero p { font-size:18px; color:#8b949e; margin-bottom:36px; line-height:1.7; }
+        .hero-btns { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+        .btn-hero { padding:14px 32px; border-radius:10px; font-size:15px; font-weight:700; cursor:pointer; text-decoration:none; transition:0.3s; display:inline-block; }
+        .btn-primary { background:#4a90e2; color:white; }
+        .btn-primary:hover { background:#1e6fc4; transform:translateY(-2px); }
+        .btn-outline { background:transparent; color:#4a90e2; border:2px solid #4a90e2; }
+        .btn-outline:hover { background:rgba(74,144,226,0.1); transform:translateY(-2px); }
+        .hero-stats { display:flex; justify-content:center; gap:48px; margin-top:60px; flex-wrap:wrap; }
+        .hero-stat { text-align:center; }
+        .hero-stat .num { font-size:36px; font-weight:900; color:#4a90e2; }
+        .hero-stat .lbl { font-size:13px; color:#8b949e; margin-top:4px; }
+        section { padding:80px 40px; }
+        .section-header { text-align:center; margin-bottom:32px; }
+        .section-header h2 { font-size:32px; font-weight:800; color:white; margin-bottom:12px; }
+        .section-header p { font-size:15px; color:#8b949e; }
+        .section-tag { display:inline-block; background:rgba(74,144,226,0.15); color:#4a90e2; font-size:12px; font-weight:700; padding:4px 14px; border-radius:20px; margin-bottom:12px; }
+        .tab-btns { display:flex; justify-content:center; gap:12px; margin-bottom:32px; }
+        .tab-btn { padding:8px 24px; border-radius:20px; border:2px solid #4a90e2; cursor:pointer; font-family:inherit; font-size:14px; font-weight:700; transition:0.2s; }
+        .tab-btn.active { background:#4a90e2; color:white; }
+        .tab-btn:not(.active) { background:transparent; color:#4a90e2; }
+        .tournaments-section { background:#0d1117; }
+        .tournaments-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; max-width:1100px; margin:0 auto; }
+        .t-card { background:#161b22; border:1px solid #30363d; border-radius:14px; padding:24px; transition:0.3s; }
+        .t-card:hover { border-color:#4a90e2; transform:translateY(-4px); box-shadow:0 8px 30px rgba(74,144,226,0.15); }
+        .t-card .t-date { font-size:11px; color:#4a90e2; font-weight:700; margin-bottom:8px; }
+        .t-card .t-title { font-size:16px; font-weight:700; color:white; margin-bottom:10px; }
+        .t-card .t-info { font-size:12px; color:#8b949e; margin-bottom:4px; }
+        .t-card .t-badge { display:inline-block; background:rgba(46,160,67,0.15); color:#3fb950; border:1px solid rgba(46,160,67,0.3); padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; margin-top:12px; }
+        .t-card .t-badge.closed { background:rgba(139,148,158,0.15); color:#8b949e; border-color:#30363d; }
+        .t-card .t-badge.past { background:rgba(74,144,226,0.15); color:#4a90e2; border-color:rgba(74,144,226,0.3); }
+        .features-section { background:#161b22; }
+        .features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:24px; max-width:1000px; margin:0 auto; }
+        .feature-card { background:#0d1117; border:1px solid #30363d; border-radius:14px; padding:28px 24px; text-align:center; transition:0.3s; }
+        .feature-card:hover { border-color:#4a90e2; }
+        .feature-card .icon { font-size:40px; margin-bottom:16px; }
+        .feature-card h3 { font-size:16px; font-weight:700; color:white; margin-bottom:10px; }
+        .feature-card p { font-size:13px; color:#8b949e; line-height:1.7; }
+        .clubs-section { background:#0d1117; }
+        .clubs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; max-width:900px; margin:0 auto; }
+        .club-card { background:#161b22; border:1px solid #30363d; border-radius:12px; padding:20px; text-align:center; transition:0.3s; }
+        .club-card:hover { border-color:#4a90e2; }
+        .club-rank { font-size:28px; margin-bottom:8px; }
+        .club-name { font-size:14px; font-weight:700; color:white; margin-bottom:6px; }
+        .club-points { font-size:12px; color:#4a90e2; font-weight:700; }
+        .cta-section { background:linear-gradient(135deg,#1a2332,#0d1117); text-align:center; }
+        .cta-section h2 { font-size:36px; font-weight:800; color:white; margin-bottom:16px; }
+        .cta-section p { font-size:16px; color:#8b949e; margin-bottom:32px; }
+        footer { background:#161b22; border-top:1px solid #30363d; padding:40px; }
+        .footer-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:32px; max-width:1100px; margin:0 auto 32px; }
+        .footer-col h3 { font-size:14px; font-weight:700; color:white; margin-bottom:14px; }
+        .footer-col.brand h3 { color:#4a90e2; }
+        .footer-col p { font-size:13px; color:#8b949e; line-height:1.8; }
+        .footer-col ul { list-style:none; display:flex; flex-direction:column; gap:8px; }
+        .footer-col ul li a { color:#8b949e; text-decoration:none; font-size:13px; transition:0.2s; }
+        .footer-col ul li a:hover { color:#4a90e2; }
+        .footer-bottom { text-align:center; padding-top:24px; border-top:1px solid #30363d; color:#475569; font-size:12px; max-width:1100px; margin:0 auto; }
         @@media(max-width:768px) {
-            nav {
-                padding: 12px 20px;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .hamburger {
-                display: flex;
-            }
-
-            .hero {
-                padding: 70px 20px 60px;
-            }
-
-                .hero h1 {
-                    font-size: 32px;
-                }
-
-                .hero p {
-                    font-size: 15px;
-                }
-
-            .hero-stats {
-                gap: 28px;
-            }
-
-            section {
-                padding: 60px 20px;
-            }
-
-            .section-header h2 {
-                font-size: 26px;
-            }
-
-            footer {
-                padding: 32px 20px;
-            }
+            nav { padding:12px 20px; } .nav-links { display:none; } .hamburger { display:flex; }
+            .hero { padding:70px 20px 60px; } .hero h1 { font-size:32px; } .hero p { font-size:15px; }
+            .hero-stats { gap:28px; } section { padding:60px 20px; } .section-header h2 { font-size:26px; } footer { padding:32px 20px; }
         }
-
         @@media(max-width:480px) {
-            .hero h1 {
-                font-size: 26px;
-            }
-
-            .hero-btns {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn-hero {
-                width: 100%;
-                text-align: center;
-            }
-
-            .tab-btns {
-                flex-direction: column;
-                align-items: center;
-            }
+            .hero h1 { font-size:26px; } .hero-btns { flex-direction:column; align-items:center; }
+            .btn-hero { width:100%; text-align:center; } .tab-btns { flex-direction:column; align-items:center; }
         }
     </style>
 </head>
@@ -604,10 +109,7 @@
     <nav>
         <div class="nav-logo">
             <img src="@logoPath" alt="لوغو">
-            <div class="nav-logo-text">
-                <h1>@siteName</h1>
-                <p>@slogan</p>
-            </div>
+            <div class="nav-logo-text"><h1>@siteName</h1><p>@slogan</p></div>
         </div>
         <div class="nav-links">
             <a href="#tournaments">البطولات</a>
@@ -653,13 +155,11 @@
             <button class="tab-btn active" id="tab-upcoming" onclick="showTab('upcoming')">🗓️ القادمة</button>
             <button class="tab-btn" id="tab-past" onclick="showTab('past')">📁 السابقة</button>
         </div>
-        <!-- القادمة -->
         <div id="grid-upcoming" class="tournaments-grid">
             @if (upcoming != null && upcoming.Any())
             {
                 foreach (var t in upcoming)
                 {
-                    var isClosed = t.RegistrationClosed || (t.RegistrationDeadline.HasValue && t.RegistrationDeadline.Value < DateTime.Now);
                     <div class="t-card">
                         <div class="t-date">📅 @t.Date.ToString("yyyy/MM/dd")</div>
                         <div class="t-title">@t.Title</div>
@@ -672,7 +172,7 @@
                         {
                             <div class="t-info">💰 @t.RegistrationFee ₪</div>
                         }
-                        <div class="t-badge @(isClosed ? "closed" : "")">@(isClosed ? "🔒 أُغلق التسجيل" : "🟢 مفتوح للتسجيل")</div>
+                        <div class="t-badge @(t.RegistrationClosed ? "closed" : "")">@(t.RegistrationClosed ? "🔒 أُغلق التسجيل" : "🟢 مفتوح للتسجيل")</div>
                     </div>
                 }
             }
@@ -681,7 +181,6 @@
                 <div style="grid-column:1/-1;text-align:center;color:#8b949e;padding:40px;">لا توجد بطولات قادمة حالياً</div>
             }
         </div>
-        <!-- السابقة -->
         <div id="grid-past" class="tournaments-grid" style="display:none;">
             @if (past != null && past.Any())
             {
@@ -779,7 +278,7 @@
     </footer>
 
     <script>
-        document.getElementById('hamburger').addEventListener('click', function () {
+        document.getElementById('hamburger').addEventListener('click', function() {
             this.classList.toggle('open');
             document.getElementById('mobileMenu').classList.toggle('show');
         });
@@ -787,7 +286,7 @@
             a.addEventListener('click', e => {
                 e.preventDefault();
                 const el = document.querySelector(a.getAttribute('href'));
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
+                if (el) el.scrollIntoView({ behavior:'smooth' });
                 document.getElementById('mobileMenu').classList.remove('show');
             });
         });

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace KarateFinal.Models
+﻿namespace KarateFinal.Models
 {
     public class Club
     {
@@ -12,14 +10,8 @@ namespace KarateFinal.Models
         public string ManagerName { get; set; } = "";
         public string Username { get; set; } = "";
         public string Password { get; set; } = "";
-
-        [Column(TypeName = "nvarchar(MAX)")]
         public string? LogoImage { get; set; }
-
-        [Column(TypeName = "nvarchar(MAX)")]
         public string? MaleImage { get; set; }
-
-        [Column(TypeName = "nvarchar(MAX)")]
         public string? FemaleImage { get; set; }
         public string Email { get; set; } = "";
         public string Phone { get; set; } = "";
