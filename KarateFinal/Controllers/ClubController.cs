@@ -55,12 +55,7 @@ namespace KarateFinal.Controllers
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.ClubId != null) player.ClubId = user.ClubId.Value;
-            if (!string.IsNullOrEmpty(player.Email))
-            {
-                var emailExists = _context.Players.Any(p => p.Email == player.Email)
-                               || _context.Clubs.Any(c => c.Email == player.Email);
-                if (emailExists) { TempData["Error"] = "البريد الإلكتروني مسجّل مسبقاً!"; return RedirectToAction("Dashboard"); }
-            }
+          
             _context.Players.Add(player);
             _context.SaveChanges();
             var chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
