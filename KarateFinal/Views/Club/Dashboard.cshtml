@@ -24,7 +24,6 @@
             min-height: 100vh;
         }
 
-        /* ===== NAV ===== */
         nav {
             background-color: #1e2a38;
             color: white;
@@ -163,7 +162,6 @@
             white-space: nowrap;
         }
 
-        /* ===== HEADER ===== */
         .main-header {
             position: relative;
             background-color: #fff;
@@ -315,7 +313,6 @@
             backdrop-filter: blur(4px);
         }
 
-        /* ===== CARDS ===== */
         .cards-section {
             margin-top: 40px;
             flex-grow: 1;
@@ -411,7 +408,6 @@
                 background: linear-gradient(135deg,#4a90e2,#1e6fc4);
             }
 
-        /* ===== FOOTER ===== */
         footer {
             background: #1e2a38;
             color: white;
@@ -519,7 +515,6 @@
                 font-size: 11px;
             }
 
-        /* ===== RESPONSIVE ===== */
         @@media(max-width:1024px) {
             .cards-row-3 {
                 grid-template-columns: 1fr 1fr;
@@ -662,7 +657,7 @@
         </a>
         <ul>
             <li><a href="/Club/Dashboard">الرئيسية</a></li>
-            <li><a href="/Tournament/Index">البطولات</a></li>
+            <li><a href="/Club/Tournaments">البطولات</a></li>
             <li><a href="/Club/Profile">⚙️ معلوماتي</a></li>
             <li><a href="/Account/Logout" class="login-btn">تسجيل خروج</a></li>
         </ul>
@@ -671,7 +666,7 @@
     </nav>
     <div class="mobile-menu" id="mobileMenu">
         <a href="/Club/Dashboard">الرئيسية</a>
-        <a href="/Tournament/Index">البطولات</a>
+        <a href="/Club/Tournaments">البطولات</a>
         <a href="/Club/Profile">⚙️ معلوماتي</a>
         <a href="/Club/PrintPlayers">🖨️ طباعة اللاعبين</a>
         <a href="/Account/Logout">تسجيل خروج</a>
@@ -761,9 +756,8 @@
             <div class="footer-col">
                 <h3>روابط سريعة</h3>
                 <ul>
-                    <li><a href="/Home/Index">← الرئيسية</a></li>
-                    <li><a href="/Tour/Index">← الأندية</a></li>
-                    <li><a href="/Tournament/Index">← البطولات</a></li>
+                    <li><a href="/Club/Dashboard">← الرئيسية</a></li>
+                    <li><a href="/Club/Tournaments">← البطولات</a></li>
                     <li><a href="/Club/Profile">← معلوماتي</a></li>
                 </ul>
             </div>
@@ -814,7 +808,7 @@
         }
         const translations = {
             ar: {
-                nav_home: "الرئيسية", nav_clubs: "الاندية", nav_tournaments: "البطولات", nav_profile: "⚙️ معلوماتي", nav_logout: "تسجيل خروج",
+                nav_home: "الرئيسية", nav_tournaments: "البطولات", nav_profile: "⚙️ معلوماتي", nav_logout: "تسجيل خروج",
                 title: "منصة الكاراتيه الفلسطينية", slogan: "اصنع تاريخك ...وكن بطلاً",
                 card1_title: "مشاركاتي", card1_desc: "عرض البطولات التي شاركت بها والنتائج الخاصة بك.", card1_btn: "عرض التفاصيل",
                 card2_title: "اللاعبين", card2_desc: "تعرف على لاعبين ولاعبات النادي لديك.", card2_btn: "عرض التفاصيل",
@@ -825,7 +819,7 @@
                 footer_title: "منصة الكاراتيه الفلسطينية", copyright: "© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة"
             },
             en: {
-                nav_home: "Home", nav_clubs: "Clubs", nav_tournaments: "Tournaments", nav_profile: "⚙️ My Profile", nav_logout: "Logout",
+                nav_home: "Home", nav_tournaments: "Tournaments", nav_profile: "⚙️ My Profile", nav_logout: "Logout",
                 title: "Palestinian Karate Platform", slogan: "Make your history... Be a champion",
                 card1_title: "My Participations", card1_desc: "View tournaments you participated in and your results.", card1_btn: "View Details",
                 card2_title: "Players", card2_desc: "View your club players and their tournament points.", card2_btn: "View Details",
@@ -847,10 +841,9 @@
             document.querySelector(".nav-header h2").textContent = t.slogan;
             const navLinks = document.querySelectorAll("nav ul li a");
             if (navLinks[0]) navLinks[0].textContent = t.nav_home;
-            if (navLinks[1]) navLinks[1].textContent = t.nav_clubs;
-            if (navLinks[2]) navLinks[2].textContent = t.nav_tournaments;
-            if (navLinks[3]) navLinks[3].textContent = t.nav_profile;
-            if (navLinks[4]) navLinks[4].textContent = t.nav_logout;
+            if (navLinks[1]) navLinks[1].textContent = t.nav_tournaments;
+            if (navLinks[2]) navLinks[2].textContent = t.nav_profile;
+            if (navLinks[3]) navLinks[3].textContent = t.nav_logout;
             document.querySelector(".titles h1").textContent = "🥋 " + t.title;
             document.querySelector(".slogan").textContent = t.slogan;
             const cards = document.querySelectorAll(".info-card");
@@ -871,7 +864,6 @@
         }
         function toggleLang() { currentLang = currentLang === "ar" ? "en" : "ar"; applyLang(currentLang); }
         document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
-
     </script>
 </body>
 </html>
