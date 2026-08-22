@@ -217,6 +217,18 @@ namespace KarateFinal.Controllers
             user.Password = BCrypt.Net.BCrypt.HashPassword(newPassword);
             user.MustChangePassword = true;
             _context.SaveChanges();
+            if (!string.IsNullOrEmpty(player.Email))
+            {
+                var emailTo = player.Email;
+                var emailName = player.Name;
+                var emailSubject = "تم إعادة تعيين كلمة المرور — منصة الكاراتيه الفلسطينية";
+                var emailBody = "<div dir='rtl' style='font-family:Arial;padding:20px;'><h2 style='color:#1e2a38;'>مرحباً " + player.Name + " 🥋</h2><p>تم إعادة تعيين كلمة مرورك.</p><div style='background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;margin:16px 0;'><p><strong>اسم المستخدم:</strong> " + player.Username + "</p><p><strong>كلمة المرور الجديدة:</strong> " + newPassword + "</p></div><p style='color:#888;font-size:12px;'>يرجى تغيير كلمة المرور عند أول تسجيل دخول.</p></div>";
+                _ = Task.Run(async () =>
+                {
+                    try { await _emailService.SendAsync(emailTo, emailName, emailSubject, emailBody); }
+                    catch (Exception ex) { Console.WriteLine("Email error: " + ex.Message); }
+                });
+            }
             return Json(new { success = true, newPassword });
         }
 
