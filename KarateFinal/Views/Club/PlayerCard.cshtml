@@ -544,7 +544,6 @@
         <img src="/images/test.jpg" alt="لوغو" style="position:absolute;right:260px;height:55px;">
         <ul>
             <li><a href="/Club/Dashboard">← الرئيسية</a></li>
-            <li><a href="/Tour/Index">← الأندية</a></li>
             <li><a href="/Tournament/Index">← البطولات</a></li>
             <li><a href="/Account/Logout" class="login-btn">تسجيل خروج</a></li>
         </ul>
@@ -611,13 +610,6 @@
             <div class="cred-row">
                 <span class="cred-label">اسم المستخدم</span>
                 <span class="cred-value">@player?.Username</span>
-            </div>
-            <div class="cred-row">
-                <span class="cred-label">كلمة المرور</span>
-                <div style="display:flex;align-items:center;gap:8px;">
-                    <span class="cred-value" id="currentPass" data-pass="@player?.Password">••••••••</span>
-                    <button onclick="togglePassView('currentPass')" style="background:none;border:1px solid #ddd;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:12px;">👁️</button>
-                </div>
             </div>
         </div>
 
@@ -786,7 +778,7 @@
                 <h3>روابط سريعة</h3>
                 <ul>
                     <li><a href="/Club/Dashboard">← الرئيسية</a></li>
-                    <li><a href="/Tour/Index">← الأندية</a></li>
+                    <li><a href="/Club/Tournaments">← الأندية</a></li>
                     <li><a href="/Tournament/Index">← البطولات</a></li>
                 </ul>
             </div>
@@ -805,8 +797,10 @@
             if (!confirm('هل أنت متأكد من إعادة تعيين كلمة المرور؟')) return;
             fetch('/Club/ResetPlayerPassword', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId }) })
                 .then(r => r.json()).then(data => {
-                    if (data.success) { document.getElementById('currentPass').textContent = data.newPassword; document.getElementById('newPassVal').textContent = data.newPassword; document.getElementById('newPassBox').style.display = 'block'; }
-                    else alert('حدث خطأ');
+                    if (data.success) {
+                        document.getElementById('newPassBox').style.display = 'block';
+                        document.getElementById('newPassVal').textContent = '✅ تم إرسال كلمة المرور الجديدة على إيميل اللاعب';
+                    }
                 });
         }
         function addPlayerResult(playerId) {
