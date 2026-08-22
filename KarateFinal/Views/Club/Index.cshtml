@@ -1,5 +1,101 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    Layout = null;
+
+    var clubs = ViewBag.Clubs as IEnumerable<KarateFinal.Models.Club>;
 }
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأندية — منصة الكاراتيه الفلسطينية</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#0d1117; color:#e6edf3; min-height:100vh; }
+        nav { background:#161b22; border-bottom:3px solid #4a90e2; padding:14px 40px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; }
+        .nav-logo { font-size:18px; font-weight:700; color:white; }
+        .nav-links { display:flex; gap:16px; }
+        .nav-links a { color:#8b949e; text-decoration:none; font-size:14px; font-weight:600; transition:0.2s; }
+        .nav-links a:hover { color:white; }
+        .login-btn { background:#4a90e2; color:white !important; padding:8px 20px; border-radius:8px; }
+        .container { max-width:1100px; margin:0 auto; padding:60px 40px; }
+        .page-header { text-align:center; margin-bottom:48px; }
+        .page-header h1 { font-size:36px; font-weight:800; color:white; margin-bottom:12px; }
+        .page-header p { font-size:15px; color:#8b949e; }
+        .section-tag { display:inline-block; background:rgba(74,144,226,0.15); color:#4a90e2; font-size:12px; font-weight:700; padding:4px 14px; border-radius:20px; margin-bottom:12px; }
+        .clubs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; }
+        .club-card { background:#161b22; border:1px solid #30363d; border-radius:14px; padding:28px 24px; transition:0.3s; }
+        .club-card:hover { border-color:#4a90e2; transform:translateY(-4px); box-shadow:0 8px 30px rgba(74,144,226,0.15); }
+        .club-icon { font-size:40px; margin-bottom:16px; }
+        .club-name { font-size:18px; font-weight:700; color:white; margin-bottom:8px; }
+        .club-info { font-size:13px; color:#8b949e; margin-bottom:4px; }
+        .club-badge { display:inline-block; background:rgba(74,144,226,0.15); color:#4a90e2; border:1px solid rgba(74,144,226,0.3); padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; margin-top:12px; }
+        .empty { text-align:center; color:#8b949e; padding:60px; font-size:16px; }
+        footer { background:#161b22; border-top:1px solid #30363d; padding:24px 40px; text-align:center; color:#475569; font-size:12px; margin-top:60px; }
+        @@media(max-width:768px) {
+            nav { padding:12px 20px; }
+            .container { padding:40px 20px; }
+            .page-header h1 { font-size:26px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-logo">🥋 منصة الكاراتيه الفلسطينية</div>
+        <div class="nav-links">
+            <a href="/Home/Index">الرئيسية</a>
+            <a href="/Club/Index">الأندية</a>
+            <a href="/Account/Login" class="login-btn">🔐 تسجيل الدخول</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <div class="section-tag">🏟️ الأندية</div>
+            <h1>أندية الكاراتيه الفلسطينية</h1>
+            <p>تعرف على الأندية المنضمة لمنصة الكاراتيه الفلسطينية</p>
+        </div>
+
+        <div class="clubs-grid">
+            @if (clubs != null && clubs.Any())
+            {
+
+                foreach (var c in clubs)
+
+                {
+                    <div class="club-card">
+                        <div class="club-icon">🥋</div>
+                        <div class="club-name">@c.Name</div>
+                        @if (!string.IsNullOrEmpty(c.City))
+
+                        {
+                            <div class="club-info">📍 @c.City</div>
+                        }
+                        @if (!string.IsNullOrEmpty(c.Category))
+
+                        {
+                            <div class="club-info">🏷️ @c.Category</div>
+                        }
+                        @if (!string.IsNullOrEmpty(c.Description))
+
+                        {
+                            <div class="club-info" style="margin-top:8px;">@c.Description</div>
+                        }
+                        @if (c.FoundedYear > 0)
+
+                        {
+                            <div class="club-badge">تأسس @c.FoundedYear</div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty" style="grid-column:1/-1;">لا توجد أندية مسجلة بعد</div>
+            }
+        </div>
+    </div>
+
+    <footer>© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة</footer>
+</body>
+</html>
