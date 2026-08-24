@@ -1,0 +1,77 @@
+﻿@{
+    Layout = null;
+    var official = ViewBag.Official as KarateFinal.Models.Official;
+    var officialRole = Context.Session.GetString("OfficialRole");
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ملفي الشخصي</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#eef3f8; min-height:100vh; }
+        nav { background:#1e2a38; color:white; padding:14px 24px; display:flex; justify-content:center; align-items:center; border-bottom:4px solid #4a90e2; position:sticky; top:0; z-index:100; }
+        .nav-header { text-align:center; }
+        .nav-header h1 { font-size:20px; color:#fff; }
+        nav ul { position:absolute; left:24px; display:flex; list-style:none; gap:16px; }
+        nav ul li a { color:white; text-decoration:none; font-size:13px; font-weight:bold; }
+        nav ul li a:hover { color:#81b3f7; }
+        .logout-btn { background:#2c3e50; padding:7px 18px; border-radius:5px; }
+        .container { max-width:700px; margin:30px auto; padding:0 20px; }
+        .profile-card { background:white; border-radius:16px; padding:28px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+        .profile-title { font-size:18px; font-weight:800; color:#1e2a38; margin-bottom:20px; border-bottom:2px solid #eef3f8; padding-bottom:10px; }
+        .info-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f5f5f5; font-size:13px; }
+        .info-label { color:#888; }
+        .info-value { font-weight:700; color:#1e2a38; }
+        .badge { display:inline-block; background:rgba(74,144,226,0.15); color:#4a90e2; border:1px solid rgba(74,144,226,0.3); padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
+        .results-table { width:100%; border-collapse:collapse; }
+        .results-table th { padding:10px; background:#f8fafc; font-size:11px; color:#888; text-align:right; }
+        .results-table td { padding:10px; border-bottom:1px solid #f5f5f5; font-size:12px; }
+        .empty { text-align:center; color:#888; padding:20px; font-size:13px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header"><h1>منصة الكاراتيه الفلسطينية</h1></div>
+        <ul>
+            <li><a href="/Official/Dashboard">← الرئيسية</a></li>
+            <li><a href="/Account/Logout" class="logout-btn">تسجيل خروج</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="profile-card">
+            <div class="profile-title">👤 بياناتي الشخصية</div>
+            <div class="info-row"><span class="info-label">الاسم</span><span class="info-value">@official?.Name</span></div>
+            <div class="info-row"><span class="info-label">الدور</span><span class="info-value"><span class="badge">@official?.Role</span></span></div>
+            <div class="info-row"><span class="info-label">العمر</span><span class="info-value">@official?.Age سنة</span></div>
+            <div class="info-row"><span class="info-label">الجنس</span><span class="info-value">@official?.Gender</span></div>
+            <div class="info-row"><span class="info-label">التصنيف</span><span class="info-value">@(official?.Classification ?? "—")</span></div>
+            <div class="info-row"><span class="info-label">التخصص</span><span class="info-value">@(official?.Specialty ?? "—")</span></div>
+            <div class="info-row"><span class="info-label">الدرجة</span><span class="info-value">@(official?.Degree ?? "—")</span></div>
+            <div class="info-row"><span class="info-label">تاريخ انتهاء الترخيص</span><span class="info-value">@(official?.LicenseExpiry?.ToString("yyyy/MM/dd") ?? "—")</span></div>
+        </div>
+        <div class="profile-card">
+            <div class="profile-title">🏆 البطولات التي شاركت فيها</div>
+            @if (ViewBag.Results != null && ((IEnumerable<dynamic>)ViewBag.Results).Any())
+            {
+                <table class="results-table">
+                    <thead><tr><th>البطولة</th><th>المركز</th><th>النقاط</th></tr></thead>
+                    <tbody>
+                        @foreach (var r in ViewBag.Results)
+                        {
+                            var medal = r.Rank == 1 ? "🥇" : r.Rank == 2 ? "🥈" : r.Rank == 3 ? "🥉" : "🏅";
+                            <tr><td>@r.TournamentName</td><td>@medal @r.Rank</td><td>@r.Points ⭐</td></tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="empty">لا توجد نتائج بعد</div>
+            }
+        </div>
+    </div>
+</body>
+</html>

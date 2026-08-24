@@ -133,6 +133,15 @@ namespace KarateFinal.Controllers
             if (role != "Official") return RedirectToAction("Login", "Account");
             return View();
         }
+        public IActionResult MyProfile()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var official = _context.Officials.FirstOrDefault(o => o.Username == username);
+            if (official == null) return RedirectToAction("Dashboard");
+            ViewBag.Official = official;
+            ViewBag.Results = new List<dynamic>(); // بنضيف نتائج لاحقاً
+            return View();
+        }
     }
 
     public class ApproveOfficialRequest
