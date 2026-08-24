@@ -18,5 +18,12 @@
         public string Status { get; set; } = "بانتظار الموافقة"; // بانتظار الموافقة، موافق، مرفوض
         public string? AdminNote { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string? Username { get; set; }
+        public string? Password { get; set; }
+        public bool MustChangePassword { get; set; } = true;
+        public DateTime? LastLogin { get; set; }
+        // للترخيص
+        public DateTime? LicenseExpiry { get; set; }
+        public string? LicenseFile { get; set; }
     }
 }
