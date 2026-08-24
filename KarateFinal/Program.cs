@@ -59,6 +59,11 @@ app.Use(async (context, next) =>
         context.Response.Redirect("/Account/Login");
         return;
     }
+    if (path != null && path.StartsWith("/official") && role != "Official" && role != "Admin" && role != "Club")
+    {
+        context.Response.Redirect("/Account/Login");
+        return;
+    }
     if (path != null && (path == "/tournament/index" || path == "/tournament"))
     {
         await next();
