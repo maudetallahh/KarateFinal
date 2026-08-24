@@ -852,14 +852,7 @@
             if (navLinks[3]) navLinks[3].textContent = t.nav_logout;
             document.querySelector(".titles h1").textContent = "🥋 " + t.title;
             document.querySelector(".slogan").textContent = t.slogan;
-            const cards = document.querySelectorAll(".info-card");
-            ["card1", "card2", "card3", "card4", "card5"].forEach((k, i) => {
-                if (cards[i]) {
-                    cards[i].querySelector("h3").textContent = t[k + "_title"];
-                    cards[i].querySelector("p").textContent = t[k + "_desc"];
-                    cards[i].querySelector(".card-btn").textContent = t[k + "_btn"];
-                }
-            });
+            
             const labels = document.querySelectorAll(".player-label");
             if (labels[0]) labels[0].textContent = t.female_label;
             if (labels[1]) labels[1].textContent = t.logo_label;
