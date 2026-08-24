@@ -142,6 +142,31 @@ namespace KarateFinal.Controllers
             ViewBag.Results = new List<dynamic>(); // بنضيف نتائج لاحقاً
             return View();
         }
+        public IActionResult License()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var official = _context.Officials.FirstOrDefault(o => o.Username == username);
+            ViewBag.Official = official;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateLicense(DateTime LicenseExpiry, IFormFile? LicenseFile)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var official = _context.Officials.FirstOrDefault(o => o.Username == username);
+            if (official == null) return RedirectToAction("Dashboard");
+            official.LicenseExpiry = LicenseExpiry;
+            if (LicenseFile != null && LicenseFile.Length > 0)
+            {
+                using var ms = new MemoryStream();
+                await LicenseFile.CopyToAsync(ms);
+                official.LicenseFile = Convert.ToBase64String(ms.ToArray());
+            }
+            _context.SaveChanges();
+            TempData["Success"] = "تم تجديد الترخيص بنجاح";
+            return RedirectToAction("License");
+        }
     }
 
     public class ApproveOfficialRequest
