@@ -1,0 +1,446 @@
+﻿@{
+    Layout = null;
+    var officials = ViewBag.Officials as IEnumerable<KarateFinal.Models.Official>;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المسؤولون — منصة الكاراتيه</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI',Tahoma,sans-serif;
+        }
+
+        body {
+            background: #eef3f8;
+            min-height: 100vh;
+        }
+
+        nav {
+            background: #1e2a38;
+            color: white;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 4px solid #4a90e2;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-header {
+            text-align: center;
+        }
+
+            .nav-header h1 {
+                font-size: 20px;
+                color: #fff;
+            }
+
+            .nav-header h2 {
+                font-size: 12px;
+                color: #d1d5db;
+                font-weight: normal;
+            }
+
+        nav ul {
+            position: absolute;
+            left: 24px;
+            display: flex;
+            list-style: none;
+            gap: 16px;
+        }
+
+            nav ul li a {
+                color: white;
+                text-decoration: none;
+                font-size: 13px;
+                font-weight: bold;
+            }
+
+                nav ul li a:hover {
+                    color: #81b3f7;
+                }
+
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1e2a38;
+            margin-bottom: 20px;
+        }
+
+        .add-btn {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .modal-overlay.show {
+                display: flex;
+            }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            width: 500px;
+            max-width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+            .modal h3 {
+                font-size: 16px;
+                font-weight: 700;
+                margin-bottom: 20px;
+                color: #1e2a38;
+            }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+            .form-group label {
+                font-size: 12px;
+                font-weight: 700;
+                color: #666;
+                display: block;
+                margin-bottom: 4px;
+            }
+
+            .form-group input, .form-group select {
+                width: 100%;
+                padding: 8px 10px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-family: inherit;
+                font-size: 13px;
+            }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .full {
+            grid-column: 1/-1;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .btn-save {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .btn-cancel {
+            background: #eee;
+            color: #555;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .officials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill,minmax(260px,1fr));
+            gap: 16px;
+        }
+
+        .official-card {
+            background: white;
+            border: 1px solid #e0e6ed;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .official-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e2a38;
+            margin-bottom: 6px;
+        }
+
+        .official-role {
+            display: inline-block;
+            background: rgba(74,144,226,0.15);
+            color: #4a90e2;
+            border: 1px solid rgba(74,144,226,0.3);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .official-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffc107;
+        }
+
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #28a745;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #dc3545;
+        }
+
+        .delete-btn {
+            float: left;
+            background: #fee2e2;
+            color: #da3633;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 13px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #28a745;
+        }
+
+        .empty {
+            text-align: center;
+            color: #888;
+            padding: 40px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header">
+            <h1>منصة الكاراتيه الفلسطينية</h1>
+            <h2>اصنع تاريخك ...وكن بطلاً</h2>
+        </div>
+        <ul>
+            <li><a href="/Club/Dashboard">الرئيسية</a></li>
+            <li><a href="/Club/Tournaments">البطولات</a></li>
+            <li><a href="/Club/Profile">⚙️ معلوماتي</a></li>
+            <li><a href="/Account/Logout">تسجيل خروج</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="page-title">👤 المسؤولون والكوادر الفنية</div>
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">✅ @TempData["Success"]</div>
+        }
+        <button class="add-btn" onclick="document.getElementById('addModal').classList.add('show')">➕ إضافة مسؤول</button>
+        <div class="officials-grid">
+            @if (officials != null && officials.Any())
+            {
+                foreach (var o in officials)
+                {
+                    <div class="official-card">
+                        <div class="official-name">@o.Name</div>
+                        <div class="official-role">@o.Role</div>
+                        <div class="official-info">👤 @o.Gender — @o.Age سنة</div>
+                        @if (!string.IsNullOrEmpty(o.Classification))
+                        {
+                            <div class="official-info">🏅 @o.Classification</div>
+                        }
+                        @if (!string.IsNullOrEmpty(o.Specialty))
+                        {
+                            <div class="official-info">🥋 @o.Specialty</div>
+                        }
+                        @if (!string.IsNullOrEmpty(o.Degree))
+                        {
+                            <div class="official-info">📜 @o.Degree</div>
+                        }
+                        <div class="status-badge @(o.Status == "موافق" ? "status-approved" : o.Status == "مرفوض" ? "status-rejected" : "status-pending")">
+                            @o.Status
+                        </div>
+                        @if (!string.IsNullOrEmpty(o.AdminNote))
+                        {
+                            <div class="official-info" style="margin-top:6px;color:#da3633;">📋 @o.AdminNote</div>
+                        }
+                        <form method="post" action="/Official/Delete/@o.Id" style="display:inline;">
+                            <button type="submit" class="delete-btn" onclick="return confirm('هل أنت متأكد؟')">🗑️ حذف</button>
+                        </form>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty" style="grid-column:1/-1;">لا يوجد مسؤولون مضافون بعد</div>
+            }
+        </div>
+    </div>
+    <!-- Modal إضافة -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <h3>➕ إضافة مسؤول جديد</h3>
+            <form method="post" action="/Official/Add">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>الاسم الكامل *</label>
+                        <input type="text" name="Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>الدور *</label>
+                        <select name="Role" required onchange="updateFields(this.value)">
+                            <option value="">-- اختر --</option>
+                            <option value="حكم">حكم</option>
+                            <option value="مدرب">مدرب</option>
+                            <option value="مساعد مدرب">مساعد مدرب</option>
+                            <option value="إداري">إداري</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الجنس *</label>
+                        <select name="Gender" required>
+                            <option value="ذكر">ذكر</option>
+                            <option value="أنثى">أنثى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>العمر *</label>
+                        <input type="number" name="Age" min="18" max="99" required>
+                    </div>
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" name="Email">
+                    </div>
+                    <div class="form-group" id="classificationGroup">
+                        <label>التصنيف</label>
+                        <select name="Classification" onchange="updateSpecialty(this.value)">
+                            <option value="">-- اختر --</option>
+                            <option value="دولي">دولي</option>
+                            <option value="آسيوي">آسيوي</option>
+                            <option value="عربي">عربي</option>
+                            <option value="وطني">وطني</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="specialtyGroup" style="display:none;">
+                        <label>التخصص</label>
+                        <select name="Specialty">
+                            <option value="">-- اختر --</option>
+                            <option value="كاتا">كاتا</option>
+                            <option value="كوميتيه">كوميتيه</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الدرجة</label>
+                        <select name="Degree">
+                            <option value="">-- اختر --</option>
+                            <option value="الدرجة الأولى">الدرجة الأولى</option>
+                            <option value="الدرجة الثانية">الدرجة الثانية</option>
+                            <option value="الدرجة الثالثة">الدرجة الثالثة</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>تاريخ الانضمام</label>
+                        <input type="date" name="JoinDate">
+                    </div>
+                </div>
+                <div class="modal-btns">
+                    <button type="button" class="btn-cancel" onclick="document.getElementById('addModal').classList.remove('show')">إلغاء</button>
+                    <button type="submit" class="btn-save">💾 إرسال الطلب</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function updateFields(role) {
+            const classGroup = document.getElementById('classificationGroup');
+            const specGroup = document.getElementById('specialtyGroup');
+            if (role === 'إداري') {
+                classGroup.style.display = 'none';
+                specGroup.style.display = 'none';
+            } else {
+                classGroup.style.display = 'block';
+            }
+        }
+        function updateSpecialty(classification) {
+            const specGroup = document.getElementById('specialtyGroup');
+            const role = document.querySelector('select[name="Role"]').value;
+            if ((classification === 'دولي' || classification === 'آسيوي') && role !== 'إداري') {
+                specGroup.style.display = 'block';
+            } else {
+                specGroup.style.display = 'none';
+            }
+        }
+        document.getElementById('addModal').addEventListener('click', function (e) {
+            if (e.target === this) this.classList.remove('show');
+        });
+    </script>
+</body>
+</html>
