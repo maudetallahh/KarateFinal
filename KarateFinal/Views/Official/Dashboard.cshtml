@@ -1,0 +1,96 @@
+﻿@{
+    Layout = null;
+    var username = Context.Session.GetString("Username");
+    var officialRole = Context.Session.GetString("OfficialRole");
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم — @officialRole</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#eef3f8; min-height:100vh; display:flex; flex-direction:column; }
+        nav { background:#1e2a38; color:white; padding:14px 24px; display:flex; justify-content:center; align-items:center; border-bottom:4px solid #4a90e2; position:sticky; top:0; z-index:100; }
+        .nav-header { text-align:center; }
+        .nav-header h1 { font-size:20px; color:#fff; }
+        .nav-header h2 { font-size:12px; color:#d1d5db; font-weight:normal; }
+        nav ul { position:absolute; left:24px; display:flex; list-style:none; gap:16px; }
+        nav ul li a { color:white; text-decoration:none; font-size:13px; font-weight:bold; }
+        nav ul li a:hover { color:#81b3f7; }
+        .logout-btn { background:#2c3e50; padding:7px 18px; border-radius:5px; }
+        .container { max-width:900px; margin:40px auto; padding:0 20px; flex:1; }
+        .welcome { background:linear-gradient(135deg,#1e2a38,#2c3e50); color:white; border-radius:16px; padding:30px; margin-bottom:24px; text-align:center; }
+        .welcome h2 { font-size:24px; margin-bottom:8px; }
+        .welcome p { color:#94a3b8; font-size:14px; }
+        .role-badge { display:inline-block; background:rgba(74,144,226,0.3); border:1px solid rgba(74,144,226,0.5); color:#81b3f7; padding:6px 16px; border-radius:20px; font-size:13px; font-weight:700; margin-top:12px; }
+        .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:20px; }
+        .card { background:white; border:2px solid #e0e6ed; border-radius:14px; padding:24px; text-align:center; transition:0.3s; text-decoration:none; color:inherit; display:block; }
+        .card:hover { border-color:#4a90e2; transform:translateY(-4px); box-shadow:0 8px 20px rgba(0,0,0,0.1); }
+        .card .icon { font-size:36px; margin-bottom:12px; }
+        .card h3 { font-size:16px; font-weight:700; color:#1e2a38; margin-bottom:8px; }
+        .card p { font-size:12px; color:#666; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header">
+            <h1>منصة الكاراتيه الفلسطينية</h1>
+            <h2>اصنع تاريخك ...وكن بطلاً</h2>
+        </div>
+        <ul>
+            <li><a href="/Official/Dashboard">الرئيسية</a></li>
+            <li><a href="/Account/Logout" class="logout-btn">تسجيل خروج</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="welcome">
+            <h2>👋 مرحباً @username</h2>
+            <p>أنت مسجّل في منصة الكاراتيه الفلسطينية</p>
+            <div class="role-badge">@officialRole</div>
+        </div>
+        <div class="cards-grid">
+            @if (officialRole == "مساعد مدرب")
+            {
+                <a href="/Club/AddPlayer" class="card">
+                    <div class="icon">➕</div>
+                    <h3>إضافة لاعب</h3>
+                    <p>تسجيل لاعب جديد في النادي</p>
+                </a>
+                <a href="/Club/Entitlements" class="card">
+                    <div class="icon">📋</div>
+                    <h3>الاستحقاقات</h3>
+                    <p>متابعة استحقاقات اللاعبين</p>
+                </a>
+            }
+            else if (officialRole == "إداري")
+            {
+                <a href="/Club/Tournaments" class="card">
+                    <div class="icon">🏆</div>
+                    <h3>البطولات</h3>
+                    <p>عرض البطولات المتاحة</p>
+                </a>
+                <a href="/Club/Best" class="card">
+                    <div class="icon">👥</div>
+                    <h3>اللاعبون</h3>
+                    <p>عرض بطاقات اللاعبين</p>
+                </a>
+            }
+            else if (officialRole == "حكم" || officialRole == "مدرب")
+            {
+                <a href="/Official/MyProfile" class="card">
+                    <div class="icon">📄</div>
+                    <h3>ملفي الشخصي</h3>
+                    <p>بياناتي والبطولات التي شاركت فيها</p>
+                </a>
+                <a href="/Official/License" class="card">
+                    <div class="icon">📜</div>
+                    <h3>الترخيص</h3>
+                    <p>تجديد شهادة @(officialRole == "حكم" ? "التحكيم" : "التدريب")</p>
+                </a>
+            }
+        </div>
+    </div>
+</body>
+</html>

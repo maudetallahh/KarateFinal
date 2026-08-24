@@ -126,6 +126,13 @@ namespace KarateFinal.Controllers
 
             return Json(new { success = true });
         }
+        public IActionResult Dashboard()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var role = HttpContext.Session.GetString("Role");
+            if (role != "Official") return RedirectToAction("Login", "Account");
+            return View();
+        }
     }
 
     public class ApproveOfficialRequest
