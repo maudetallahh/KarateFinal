@@ -54,6 +54,12 @@ namespace KarateFinal.Controllers
             ViewBag.UnpaidCount = memberships.Count(m => m.Status == "غير مدفوع");
             return View();
         }
+        public IActionResult Archive()
+        {
+            var archivedClubs = _context.Clubs.Where(c => c.IsDeleted).ToList();
+            ViewBag.ArchivedClubs = archivedClubs;
+            return View();
+        }
         public IActionResult Index()
         {
             ViewBag.ClubsCount = _context.Clubs.Count(c => !c.IsDeleted);
