@@ -277,9 +277,21 @@
         </div>
     </div>
     <script>
-        const allResults = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
-            results?.Select(r => new { r.PlayerId, r.TournamentName, r.Rank, r.Points }) ?? new List<object>()
-            ));
+        const allResults = [
+        @if (results != null)
+        {
+            bool first = true;
+            foreach (var r in results)
+            {
+                if (!first)
+                {
+                    <text>,</text>
+                }
+                <text>{"playerId":@r.PlayerId,"tournamentName":"@r.TournamentName","rank":@r.Rank,"points":@r.Points}</text>
+                first = false;
+            }
+        }
+        ];
         function filter() {
             const q = document.getElementById('search').value.toLowerCase();
             const club = document.getElementById('clubFilter').value;
