@@ -14,6 +14,12 @@ namespace KarateFinal.Controllers
             _context = context;
             _emailService = emailService;
         }
+        public IActionResult Clubs()
+        {
+            var clubs = _context.Clubs.Where(c => !c.IsDeleted).ToList();
+            ViewBag.Clubs = clubs;
+            return View();
+        }
         public IActionResult Index()
         {
             ViewBag.ClubsCount = _context.Clubs.Count(c => !c.IsDeleted);
