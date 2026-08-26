@@ -1,0 +1,197 @@
+﻿@{
+    Layout = null;
+    var tournaments = ViewBag.Tournaments as List<KarateFinal.Models.Tournament>;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البطولات</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#0f1923; color:#f1f5f9; min-height:100vh; }
+        nav { background:#1a2535; border-bottom:2px solid #3b82f6; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+        .nav-title { font-size:16px; font-weight:700; }
+        .back-btn { background:rgba(59,130,246,0.15); color:#3b82f6; border:1px solid rgba(59,130,246,0.3); padding:7px 16px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:700; }
+        .container { max-width:1100px; margin:24px auto; padding:0 20px; }
+        .section-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px; }
+        .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; border:none; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; text-decoration:none; }
+        .btn-primary { background:#3b82f6; color:#fff; }
+        .btn-success { background:#10b981; color:#fff; }
+        .btn-danger { background:#ef4444; color:#fff; }
+        .btn-info { background:rgba(59,130,246,0.15); color:#3b82f6; border:1px solid rgba(59,130,246,0.3); }
+        .btn-warning { background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); }
+        .btn-sm { padding:5px 10px; font-size:11px; border-radius:6px; }
+        .table-wrap { background:#1a2535; border:1px solid #2d3f55; border-radius:12px; overflow:hidden; overflow-x:auto; }
+        .tbl-toolbar { padding:12px 16px; border-bottom:1px solid #2d3f55; display:flex; gap:8px; align-items:center; }
+        .tbl-toolbar input { padding:6px 10px; border-radius:6px; border:1px solid #2d3f55; background:#0f1923; color:#f1f5f9; font-family:inherit; font-size:12px; width:220px; }
+        table { width:100%; border-collapse:collapse; min-width:600px; }
+        thead th { padding:10px 14px; font-size:11px; font-weight:700; color:#94a3b8; text-align:right; background:#223044; border-bottom:1px solid #2d3f55; }
+        tbody tr { border-bottom:1px solid #2d3f55; }
+        tbody tr:hover { background:rgba(255,255,255,0.03); }
+        tbody td { padding:10px 14px; font-size:12px; }
+        .badge { display:inline-block; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:700; }
+        .badge-open { background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
+        .badge-closed { background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); }
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; padding:16px; }
+        .modal-overlay.show { display:flex; }
+        .modal { background:#1a2535; border:1px solid #2d3f55; border-radius:16px; width:540px; max-width:100%; max-height:90vh; overflow-y:auto; padding:24px; }
+        .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+        .form-grid .full { grid-column:1/-1; }
+        .form-group { display:flex; flex-direction:column; gap:5px; }
+        .form-group label { font-size:11px; font-weight:700; color:#94a3b8; }
+        .form-group input, .form-group select, .form-group textarea { padding:8px 10px; border-radius:8px; border:1px solid #2d3f55; background:#0f1923; color:#f1f5f9; font-family:inherit; font-size:12px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-title">🏆 البطولات</div>
+        <a href="/Admin/Index" class="back-btn">← الرئيسية</a>
+    </nav>
+    <div class="container">
+        <div class="section-hd">
+            <h3>جميع البطولات</h3>
+            <button class="btn btn-primary" onclick="document.getElementById('tournamentModal').classList.add('show')">➕ إضافة بطولة</button>
+        </div>
+        <div class="table-wrap">
+            <div class="tbl-toolbar">
+                <input type="text" id="search" placeholder="ابحث..." oninput="filter()">
+                <span id="count" style="font-size:11px;color:#94a3b8;"></span>
+            </div>
+            <table>
+                <thead><tr><th>#</th><th>اسم البطولة</th><th>التاريخ</th><th>المدينة</th><th>الرسوم</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                <tbody id="tournamentsBody">
+                    @if (tournaments != null)
+                    {
+                        int i = 1;
+                        foreach (var t in tournaments)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@t.Title</td>
+                                <td>@t.Date.ToString("yyyy/MM/dd")</td>
+                                <td>@t.City</td>
+                                <td>@t.RegistrationFee ₪</td>
+                                <td><span class="badge @(t.RegistrationClosed ? "badge-closed" : "badge-open")">@(t.RegistrationClosed ? "🔒 مغلق" : "🟢 مفتوح")</span></td>
+                                <td style="display:flex;gap:4px;flex-wrap:wrap;">
+                                    <button class="btn btn-info btn-sm" onclick="showDetails(@t.Id)">📋</button>
+                                    <button class="btn btn-warning btn-sm" onclick="toggleReg(@t.Id)">@(t.RegistrationClosed ? "🔓" : "🔒")</button>
+                                    <button class="btn btn-info btn-sm" onclick="showEdit(@t.Id,'@t.Title','@t.Date.ToString("yyyy-MM-dd")','@t.City','@(t.Location??"")', @t.RegistrationFee,@t.MaxPlayersPerClub,'@(t.Categories??"")')">✏️</button>
+                                    <a href="/Admin/DeleteTournament/@t.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد؟')">🗑️</a>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Modal إضافة -->
+    <div class="modal-overlay" id="tournamentModal">
+        <div class="modal">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h3 style="font-size:15px;font-weight:700;">➕ إضافة بطولة</h3>
+                <button onclick="document.getElementById('tournamentModal').classList.remove('show')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:20px;">×</button>
+            </div>
+            <form method="post" action="/Admin/AddTournament">
+                <div class="form-grid">
+                    <div class="form-group full"><label>اسم البطولة *</label><input type="text" name="Title" required></div>
+                    <div class="form-group"><label>التاريخ *</label><input type="date" name="Date" required></div>
+                    <div class="form-group"><label>المدينة *</label><select name="City" required><option value="">-- اختر --</option><option>نابلس</option><option>رام الله</option><option>القدس</option><option>الخليل</option><option>جنين</option><option>طولكرم</option><option>بيت لحم</option><option>غزة</option><option>أريحا</option></select></div>
+                    <div class="form-group full"><label>مكان البطولة *</label><input type="text" name="Location" required></div>
+                    <div class="form-group full"><label>الوصف</label><textarea name="Description" rows="2"></textarea></div>
+                    <div class="form-group"><label>رسوم التسجيل (₪)</label><input type="number" name="RegistrationFee" min="0" value="0"></div>
+                    <div class="form-group"><label>آخر موعد للتسجيل *</label><input type="date" name="RegistrationDeadline" required></div>
+                    <div class="form-group"><label>الحد الأقصى من كل نادي</label><input type="number" name="MaxPlayersPerClub" min="1" value="5"></div>
+                    <div class="form-group full"><label>الفئات</label><input type="text" name="Categories" placeholder="أشبال، ناشئين، شباب"></div>
+                </div>
+                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+                    <button type="button" onclick="document.getElementById('tournamentModal').classList.remove('show')" style="background:#2d3f55;color:#94a3b8;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">إلغاء</button>
+                    <button type="submit" class="btn btn-success">💾 حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Modal تعديل -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h3 style="font-size:15px;font-weight:700;">✏️ تعديل البطولة</h3>
+                <button onclick="document.getElementById('editModal').classList.remove('show')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:20px;">×</button>
+            </div>
+            <input type="hidden" id="editId">
+            <div class="form-grid">
+                <div class="form-group full"><label>اسم البطولة</label><input type="text" id="editTitle"></div>
+                <div class="form-group"><label>التاريخ</label><input type="date" id="editDate"></div>
+                <div class="form-group"><label>المدينة</label><select id="editCity"><option>نابلس</option><option>رام الله</option><option>القدس</option><option>الخليل</option><option>جنين</option><option>طولكرم</option><option>بيت لحم</option><option>غزة</option><option>أريحا</option></select></div>
+                <div class="form-group full"><label>المكان</label><input type="text" id="editLocation"></div>
+                <div class="form-group"><label>رسوم التسجيل (₪)</label><input type="number" id="editFee" min="0"></div>
+                <div class="form-group"><label>الحد الأقصى</label><input type="number" id="editMax" min="1"></div>
+                <div class="form-group full"><label>الفئات</label><input type="text" id="editCategories"></div>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+                <button onclick="document.getElementById('editModal').classList.remove('show')" style="background:#2d3f55;color:#94a3b8;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">إلغاء</button>
+                <button class="btn btn-success" onclick="saveEdit()">💾 حفظ</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal تفاصيل -->
+    <div class="modal-overlay" id="detailsModal">
+        <div class="modal">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h3 style="font-size:15px;font-weight:700;">📋 تفاصيل التسجيلات</h3>
+                <button onclick="document.getElementById('detailsModal').classList.remove('show')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:20px;">×</button>
+            </div>
+            <div id="detailsContent"><p style="color:#94a3b8;text-align:center;">جاري التحميل...</p></div>
+            <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+                <button onclick="document.getElementById('detailsModal').classList.remove('show')" style="background:#2d3f55;color:#94a3b8;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">إغلاق</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function filter() {
+            const q = document.getElementById('search').value.toLowerCase();
+            const rows = document.querySelectorAll('#tournamentsBody tr');
+            let count = 0;
+            rows.forEach(row => { const show = row.textContent.toLowerCase().includes(q); row.style.display = show ? '' : 'none'; if(show) count++; });
+            document.getElementById('count').textContent = count + ' بطولة';
+        }
+        function toggleReg(id) {
+            fetch('/Admin/ToggleTournamentRegistration', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tournamentId: id }) })
+                .then(r => r.json()).then(data => { if (data.success) location.reload(); });
+        }
+        function showEdit(id, title, date, city, location, fee, max, categories) {
+            document.getElementById('editId').value = id;
+            document.getElementById('editTitle').value = title;
+            document.getElementById('editDate').value = date;
+            document.getElementById('editCity').value = city;
+            document.getElementById('editLocation').value = location;
+            document.getElementById('editFee').value = fee;
+            document.getElementById('editMax').value = max;
+            document.getElementById('editCategories').value = categories;
+            document.getElementById('editModal').classList.add('show');
+        }
+        function saveEdit() {
+            fetch('/Admin/UpdateTournament', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: parseInt(document.getElementById('editId').value), title: document.getElementById('editTitle').value, date: document.getElementById('editDate').value, city: document.getElementById('editCity').value, location: document.getElementById('editLocation').value, registrationFee: parseFloat(document.getElementById('editFee').value) || 0, maxPlayersPerClub: parseInt(document.getElementById('editMax').value) || 0, categories: document.getElementById('editCategories').value }) })
+                .then(r => r.json()).then(data => { if (data.success) { document.getElementById('editModal').classList.remove('show'); location.reload(); } });
+        }
+        function showDetails(id) {
+            document.getElementById('detailsContent').innerHTML = '<p style="color:#94a3b8;text-align:center;">جاري التحميل...</p>';
+            document.getElementById('detailsModal').classList.add('show');
+            fetch('/Admin/TournamentDetails?id=' + id).then(r => r.json()).then(data => {
+                if (data.length === 0) { document.getElementById('detailsContent').innerHTML = '<p style="color:#94a3b8;text-align:center;">لا يوجد تسجيلات</p>'; return; }
+                let html = '<table style="width:100%;border-collapse:collapse;"><thead><tr><th style="padding:8px;background:#223044;text-align:right;">النادي</th><th style="padding:8px;background:#223044;text-align:right;">الحالة</th><th style="padding:8px;background:#223044;text-align:right;">إجراءات</th></tr></thead><tbody>';
+                data.forEach(r => { html += `<tr><td style="padding:8px;border-bottom:1px solid #2d3f55;">${r.clubName}</td><td style="padding:8px;border-bottom:1px solid #2d3f55;">${r.status}</td><td style="padding:8px;border-bottom:1px solid #2d3f55;">${r.status === 'بانتظار الموافقة' ? `<div style="display:flex;gap:4px;"><button onclick="approveReg(${r.id})" style="background:#10b981;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;">✅</button><button onclick="rejectReg(${r.id})" style="background:#ef4444;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;">❌</button></div>` : r.status}</td></tr>`; });
+                html += '</tbody></table>';
+                document.getElementById('detailsContent').innerHTML = html;
+            });
+        }
+        function approveReg(id) { fetch('/Admin/ApproveTournamentRegistration', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ registrationId: id }) }).then(r => r.json()).then(d => { if (d.success) location.reload(); }); }
+        function rejectReg(id) { const note = prompt('سبب الرفض:'); if (note === null) return; fetch('/Admin/RejectTournamentRegistration', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ registrationId: id, note }) }).then(r => r.json()).then(d => { if (d.success) location.reload(); }); }
+        document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('show'); }));
+        filter();
+    </script>
+</body>
+</html>

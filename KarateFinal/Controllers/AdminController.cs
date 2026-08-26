@@ -28,6 +28,12 @@ namespace KarateFinal.Controllers
             ViewBag.Clubs = clubs;
             return View();
         }
+        public IActionResult Tournaments()
+        {
+            var tournaments = _context.Tournaments.ToList();
+            ViewBag.Tournaments = tournaments;
+            return View();
+        }
         public IActionResult Index()
         {
             ViewBag.ClubsCount = _context.Clubs.Count(c => !c.IsDeleted);
