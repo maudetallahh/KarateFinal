@@ -101,8 +101,8 @@ namespace KarateFinal.Controllers
                 };
                 var username = prefix + official.Id;
                 official.Username = username;
-                official.Password = plainPassword;
-                official.MustChangePassword = true;
+                official.Password = BCrypt.Net.BCrypt.HashPassword(plainPassword);
+                official.MustChangePassword = false;
                 _context.SaveChanges();
 
                 if (!string.IsNullOrEmpty(official.Email))
