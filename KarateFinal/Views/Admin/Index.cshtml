@@ -9,98 +9,759 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة تحكم الإدارة - منصة الكاراتيه</title>
     <style>
-        :root { --bg:#0f1923;--surface:#1a2535;--surface2:#223044;--border:#2d3f55;--accent:#3b82f6;--accent2:#2563eb;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--text:#f1f5f9;--muted:#94a3b8;--sidebar-w:240px;--sidebar-active-bg:rgba(59,130,246,0.12); }
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
-        .sidebar{width:var(--sidebar-w);background:linear-gradient(180deg,#1a2535,#0f1923);border-left:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;right:0;bottom:0;z-index:200;transition:transform 0.3s ease;}
-        .sidebar-logo{padding:20px 16px;border-bottom:1px solid var(--border);}
-        .sidebar-logo .belt{font-size:26px;margin-bottom:4px;}
-        .sidebar-logo h2{font-size:13px;font-weight:700;color:var(--text);line-height:1.3;}
-        .sidebar-logo span{font-size:11px;color:var(--muted);}
-        .sidebar-nav{flex:1;padding:12px 0;overflow-y:auto;}
-        .nav-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.08em;padding:10px 16px 4px;text-transform:uppercase;}
-        .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;color:var(--muted);font-size:13px;font-weight:600;transition:all 0.15s;border-right:3px solid transparent;}
-        .nav-item:hover{color:var(--text);background:rgba(255,255,255,0.04);}
-        .nav-item.active{color:var(--accent);background:var(--sidebar-active-bg);border-right-color:var(--accent);border-radius:0 8px 8px 0;}
-        .nav-item .icon{font-size:16px;width:18px;text-align:center;}
-        .sidebar-footer{padding:12px 16px;border-top:1px solid var(--border);}
-        .admin-chip{display:flex;align-items:center;gap:8px;background:var(--surface2);border-radius:8px;padding:8px 10px;}
-        .admin-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0;}
-        .admin-info .name{font-size:12px;font-weight:700;}
-        .admin-info .role{font-size:10px;color:var(--accent);}
-        .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:150;}
-        .sidebar-overlay.show{display:block;}
-        .hamburger-btn{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:18px;line-height:1;}
-        .main{margin-right:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-width:0;}
-        .topbar{background:linear-gradient(90deg,#1a2535,#223044);border-bottom:2px solid var(--accent);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;flex-wrap:wrap;gap:8px;}
-        .topbar-title{font-size:15px;font-weight:700;}
-        .topbar-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-        .topbar-badge{background:rgba(74,144,226,0.15);color:var(--accent);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid rgba(74,144,226,0.3);}
-        .logout-btn{background:rgba(218,54,51,0.15);color:#f85149;border:1px solid rgba(218,54,51,0.3);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;}
-        .last-login-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:11px;}
-        .ll-title{font-size:10px;font-weight:700;color:var(--accent);margin-bottom:3px;}
-        .ll-row{display:flex;justify-content:space-between;gap:12px;}
-        .ll-label{color:var(--muted);font-size:10px;}
-        .ll-val{color:var(--text);font-weight:600;font-family:monospace;font-size:10px;}
-        .lang-btn{background:rgba(74,144,226,0.15);border:1px solid rgba(74,144,226,0.3);color:#4a90e2;padding:5px 12px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:700;font-family:'Cairo',sans-serif;white-space:nowrap;}
-        .content{padding:20px;flex:1;min-width:0;}
-        .page{display:none;animation:fadeIn 0.25s ease;}
-        .page.active{display:block;}
-        @@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-        @@keyframes modalIn{from{opacity:0;transform:scale(0.93)}to{opacity:1;transform:none}}
-        @@keyframes slideDown{from{opacity:0;transform:translateX(-50%) translateY(-20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-        .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
-        .stat-card{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px;transition:0.2s;}
-        .stat-card:hover{background:var(--surface2);}
-        .stat-card .sc-label{font-size:11px;color:var(--muted);font-weight:600;}
-        .stat-card .sc-value{font-size:28px;font-weight:900;color:var(--text);line-height:1;}
-        .stat-card .sc-change{font-size:11px;color:var(--muted);}
-        .section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
-        .section-hd h3{font-size:15px;font-weight:700;}
-        .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:none;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.15s;text-decoration:none;white-space:nowrap;}
-        .btn-primary{background:var(--accent);color:#fff;}.btn-primary:hover{background:var(--accent2);}
-        .btn-success{background:var(--green);color:#fff;}
-        .btn-danger{background:var(--red);color:#fff;}
-        .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
-        .btn-info{background:rgba(74,144,226,0.15);color:var(--accent);border:1px solid rgba(74,144,226,0.3);}
-        .btn-sm{padding:5px 10px;font-size:11px;border-radius:6px;}
-        .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;overflow-x:auto;}
-        .tbl-toolbar{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-        .tbl-toolbar input,.tbl-toolbar select{padding:6px 10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;font-size:12px;}
-        .tbl-count{font-size:11px;color:var(--muted);margin-right:auto;}
-        table{width:100%;border-collapse:collapse;min-width:500px;}
-        thead th{padding:10px 14px;font-size:11px;font-weight:700;color:var(--muted);text-align:right;background:var(--surface2);border-bottom:1px solid var(--border);white-space:nowrap;}
-        tbody tr{border-bottom:1px solid var(--border);transition:background 0.15s;}
-        tbody tr:hover{background:rgba(255,255,255,0.03);}
-        tbody td{padding:10px 14px;font-size:12px;color:var(--text);text-align:right;}
-        .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;}
-        .badge-active{background:rgba(46,160,67,0.15);color:#3fb950;border:1px solid rgba(46,160,67,0.3);}
-        .badge-inactive{background:rgba(218,54,51,0.12);color:#f85149;border:1px solid rgba(218,54,51,0.25);}
-        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;padding:16px;}
-        .modal-overlay.show{display:flex;}
-        .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:520px;max-width:100%;max-height:90vh;overflow-y:auto;animation:modalIn 0.25s ease;}
-        .modal-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-        .modal-header h3{font-size:15px;font-weight:700;}
-        .modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;}
-        .modal-close:hover{color:var(--text);}
-        .modal-body{padding:20px;}
-        .modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
-        .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-        .form-grid .full{grid-column:1/-1;}
-        .form-group{display:flex;flex-direction:column;gap:5px;}
-        .form-group label{font-size:11px;font-weight:700;color:var(--muted);}
-        .form-group input,.form-group select,.form-group textarea{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;font-size:12px;}
-        .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--accent);}
-        .creds-box{background:var(--bg);border:1px solid var(--accent);border-radius:10px;padding:12px 14px;margin-top:10px;}
-        .creds-box .creds-title{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;}
-        .mem-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
-        .mem-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
-        .mem-card .mc-label{font-size:11px;color:var(--muted);font-weight:600;}
-        .mem-card .mc-value{font-size:26px;font-weight:900;line-height:1;}
-        .name-error{color:#e74c3c;font-size:11px;margin-top:2px;display:none;}
-        @@media(max-width:1024px){.stats-grid{grid-template-columns:repeat(2,1fr);}.last-login-box{display:none;}}
-        @@media(max-width:768px){.sidebar{transform:translateX(100%);}.sidebar.open{transform:translateX(0);}.hamburger-btn{display:flex;align-items:center;justify-content:center;}.main{margin-right:0;}.stats-grid{grid-template-columns:repeat(2,1fr);gap:10px;}.mem-summary{grid-template-columns:repeat(2,1fr);}.content{padding:14px;}.topbar{padding:8px 14px;}.form-grid{grid-template-columns:1fr;}.form-grid .full{grid-column:1;}.section-hd{flex-direction:column;align-items:flex-start;}}
-        @@media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr;gap:8px;}.stat-card .sc-value{font-size:22px;}.mem-summary{grid-template-columns:1fr;}.topbar-badge{display:none;}.topbar-title{font-size:13px;}}
+        :root {
+            --bg: #0f1923;
+            --surface: #1a2535;
+            --surface2: #223044;
+            --border: #2d3f55;
+            --accent: #3b82f6;
+            --accent2: #2563eb;
+            --green: #10b981;
+            --red: #ef4444;
+            --amber: #f59e0b;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --sidebar-w: 240px;
+            --sidebar-active-bg: rgba(59,130,246,0.12);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo',sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            width: var(--sidebar-w);
+            background: linear-gradient(180deg,#1a2535,#0f1923);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 200;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-logo {
+            padding: 20px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+            .sidebar-logo .belt {
+                font-size: 26px;
+                margin-bottom: 4px;
+            }
+
+            .sidebar-logo h2 {
+                font-size: 13px;
+                font-weight: 700;
+                color: var(--text);
+                line-height: 1.3;
+            }
+
+            .sidebar-logo span {
+                font-size: 11px;
+                color: var(--muted);
+            }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 12px 0;
+            overflow-y: auto;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--muted);
+            letter-spacing: .08em;
+            padding: 10px 16px 4px;
+            text-transform: uppercase;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.15s;
+            border-right: 3px solid transparent;
+        }
+
+            .nav-item:hover {
+                color: var(--text);
+                background: rgba(255,255,255,0.04);
+            }
+
+            .nav-item.active {
+                color: var(--accent);
+                background: var(--sidebar-active-bg);
+                border-right-color: var(--accent);
+                border-radius: 0 8px 8px 0;
+            }
+
+            .nav-item .icon {
+                font-size: 16px;
+                width: 18px;
+                text-align: center;
+            }
+
+        .sidebar-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .admin-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface2);
+            border-radius: 8px;
+            padding: 8px 10px;
+        }
+
+        .admin-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg,var(--accent),var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .admin-info .name {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .admin-info .role {
+            font-size: 10px;
+            color: var(--accent);
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 150;
+        }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+        .hamburger-btn {
+            display: none;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .main {
+            margin-right: var(--sidebar-w);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .topbar {
+            background: linear-gradient(90deg,#1a2535,#223044);
+            border-bottom: 2px solid var(--accent);
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .topbar-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .topbar-badge {
+            background: rgba(74,144,226,0.15);
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(74,144,226,0.3);
+        }
+
+        .logout-btn {
+            background: rgba(218,54,51,0.15);
+            color: #f85149;
+            border: 1px solid rgba(218,54,51,0.3);
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .last-login-box {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+
+        .ll-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 3px;
+        }
+
+        .ll-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .ll-label {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .ll-val {
+            color: var(--text);
+            font-weight: 600;
+            font-family: monospace;
+            font-size: 10px;
+        }
+
+        .lang-btn {
+            background: rgba(74,144,226,0.15);
+            border: 1px solid rgba(74,144,226,0.3);
+            color: #4a90e2;
+            padding: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Cairo',sans-serif;
+            white-space: nowrap;
+        }
+
+        .content {
+            padding: 20px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+            .page.active {
+                display: block;
+            }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @@keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.93)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @@keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0)
+            }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: 0.2s;
+        }
+
+            .stat-card:hover {
+                background: var(--surface2);
+            }
+
+            .stat-card .sc-label {
+                font-size: 11px;
+                color: var(--muted);
+                font-weight: 600;
+            }
+
+            .stat-card .sc-value {
+                font-size: 28px;
+                font-weight: 900;
+                color: var(--text);
+                line-height: 1;
+            }
+
+            .stat-card .sc-change {
+                font-size: 11px;
+                color: var(--muted);
+            }
+
+        .section-hd {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+            .section-hd h3 {
+                font-size: 15px;
+                font-weight: 700;
+            }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: none;
+            font-family: 'Cairo',sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+            .btn-primary:hover {
+                background: var(--accent2);
+            }
+
+        .btn-success {
+            background: var(--green);
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: var(--red);
+            color: #fff;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-info {
+            background: rgba(74,144,226,0.15);
+            color: var(--accent);
+            border: 1px solid rgba(74,144,226,0.3);
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+        }
+
+        .table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        .tbl-toolbar {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+            .tbl-toolbar input, .tbl-toolbar select {
+                padding: 6px 10px;
+                border-radius: 6px;
+                border: 1px solid var(--border);
+                background: var(--bg);
+                color: var(--text);
+                font-family: 'Cairo',sans-serif;
+                font-size: 12px;
+            }
+
+        .tbl-count {
+            font-size: 11px;
+            color: var(--muted);
+            margin-right: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
+        }
+
+        thead th {
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            text-align: right;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+
+            tbody tr:hover {
+                background: rgba(255,255,255,0.03);
+            }
+
+        tbody td {
+            padding: 10px 14px;
+            font-size: 12px;
+            color: var(--text);
+            text-align: right;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .badge-active {
+            background: rgba(46,160,67,0.15);
+            color: #3fb950;
+            border: 1px solid rgba(46,160,67,0.3);
+        }
+
+        .badge-inactive {
+            background: rgba(218,54,51,0.12);
+            color: #f85149;
+            border: 1px solid rgba(218,54,51,0.25);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+            .modal-overlay.show {
+                display: flex;
+            }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 520px;
+            max-width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalIn 0.25s ease;
+        }
+
+        .modal-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+            .modal-header h3 {
+                font-size: 15px;
+                font-weight: 700;
+            }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+            .modal-close:hover {
+                color: var(--text);
+            }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+            .form-grid .full {
+                grid-column: 1/-1;
+            }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+            .form-group label {
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--muted);
+            }
+
+            .form-group input, .form-group select, .form-group textarea {
+                padding: 8px 10px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                background: var(--bg);
+                color: var(--text);
+                font-family: 'Cairo',sans-serif;
+                font-size: 12px;
+            }
+
+                .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+                    outline: none;
+                    border-color: var(--accent);
+                }
+
+        .creds-box {
+            background: var(--bg);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-top: 10px;
+        }
+
+            .creds-box .creds-title {
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--accent);
+                margin-bottom: 4px;
+            }
+
+        .mem-summary {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .mem-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 18px;
+        }
+
+            .mem-card .mc-label {
+                font-size: 11px;
+                color: var(--muted);
+                font-weight: 600;
+            }
+
+            .mem-card .mc-value {
+                font-size: 26px;
+                font-weight: 900;
+                line-height: 1;
+            }
+
+        .name-error {
+            color: #e74c3c;
+            font-size: 11px;
+            margin-top: 2px;
+            display: none;
+        }
+
+        @@media(max-width:1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .last-login-box {
+                display: none;
+            }
+        }
+
+        @@media(max-width:768px) {
+            .sidebar {
+                transform: translateX(100%);
+            }
+
+                .sidebar.open {
+                    transform: translateX(0);
+                }
+
+            .hamburger-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .main {
+                margin-right: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2,1fr);
+                gap: 10px;
+            }
+
+            .mem-summary {
+                grid-template-columns: repeat(2,1fr);
+            }
+
+            .content {
+                padding: 14px;
+            }
+
+            .topbar {
+                padding: 8px 14px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+                .form-grid .full {
+                    grid-column: 1;
+                }
+
+            .section-hd {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @@media(max-width:480px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+
+            .stat-card .sc-value {
+                font-size: 22px;
+            }
+
+            .mem-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar-badge {
+                display: none;
+            }
+
+            .topbar-title {
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -175,48 +836,143 @@
                     <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;"><div style="font-size:13px;font-weight:700;margin-bottom:16px;">💰 حالة العضويات</div><canvas id="membershipChart" height="200"></canvas></div>
                 </div>
                 <div class="section-hd"><h3 id="topClubsTitle">🏆 أفضل الأندية</h3></div>
-                <div class="table-wrap" style="margin-bottom:20px;"><table><thead><tr><th>#</th><th>النادي</th><th>النقاط</th><th>🥇</th></tr></thead><tbody>
-                    @if (ViewBag.TopClubs != null){int r=1;foreach(var c in ViewBag.TopClubs){var medal=r==1?"🥇":r==2?"🥈":r==3?"🥉":"🏅";<tr><td>@medal @r</td><td>@c.ClubName</td><td><strong>@c.TotalPoints ⭐</strong></td><td>@c.GoldCount</td></tr>r++;}}
-                    else{<tr><td colspan="4" style="text-align:center;color:var(--muted);">لا توجد بيانات بعد</td></tr>}
-                </tbody></table></div>
+                <div class="table-wrap" style="margin-bottom:20px;">
+                    <table>
+                        <thead><tr><th>#</th><th>النادي</th><th>النقاط</th><th>🥇</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.TopClubs != null)
+                            {
+                                int r = 1; foreach (var c in ViewBag.TopClubs)
+                                {
+                                    var medal = r == 1 ? "🥇" : r == 2 ? "🥈" : r == 3 ? "🥉" : "🏅";
+                                    <tr><td>@medal @r</td><td>@c.ClubName</td><td><strong>@c.TotalPoints ⭐</strong></td><td>@c.GoldCount</td></tr>
+                                    r++;
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="4" style="text-align:center;color:var(--muted);">لا توجد بيانات بعد</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
                 <div class="section-hd"><h3 id="topPlayersTitle">🥋 أكثر اللاعبين نقاطاً</h3></div>
-                <div class="table-wrap" style="margin-bottom:20px;"><table><thead><tr><th>#</th><th>اللاعب</th><th>النادي</th><th>الحزام</th><th>النقاط</th></tr></thead><tbody>
-                    @if (ViewBag.TopPlayers != null){int r=1;foreach(var p in ViewBag.TopPlayers){var medal=r==1?"🥇":r==2?"🥈":r==3?"🥉":"🏅";<tr><td>@medal @r</td><td>@p.PlayerName</td><td>@p.ClubName</td><td>@p.Belt</td><td><strong>@p.TotalPoints ⭐</strong></td></tr>r++;}}
-                    else{<tr><td colspan="5" style="text-align:center;color:var(--muted);">لا توجد بيانات بعد</td></tr>}
-                </tbody></table></div>
+                <div class="table-wrap" style="margin-bottom:20px;">
+                    <table>
+                        <thead><tr><th>#</th><th>اللاعب</th><th>النادي</th><th>الحزام</th><th>النقاط</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.TopPlayers != null)
+                            {
+                                int r = 1; foreach (var p in ViewBag.TopPlayers)
+                                {
+                                    var medal = r == 1 ? "🥇" : r == 2 ? "🥈" : r == 3 ? "🥉" : "🏅";
+                                    <tr><td>@medal @r</td><td>@p.PlayerName</td><td>@p.ClubName</td><td>@p.Belt</td><td><strong>@p.TotalPoints ⭐</strong></td></tr>
+                                    r++;
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="5" style="text-align:center;color:var(--muted);">لا توجد بيانات بعد</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
                 <div class="section-hd"><h3 id="recentClubsTitle">آخر الأندية المضافة</h3></div>
-                <div class="table-wrap"><table><thead><tr><th>اسم النادي</th><th>المسؤول</th><th>المدينة</th><th>التصنيف</th><th>الحالة</th></tr></thead><tbody>
-                    @if (ViewBag.Clubs != null){foreach(var c in ViewBag.Clubs){<tr><td>@c.Name</td><td>@c.ManagerName</td><td>@c.City</td><td>@c.Category</td><td><span class="badge badge-active">نشط</span></td></tr>}}
-                </tbody></table></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>اسم النادي</th><th>المسؤول</th><th>المدينة</th><th>التصنيف</th><th>الحالة</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.Clubs != null)
+                            {
+                                foreach (var c in ViewBag.Clubs)
+                                {
+                                    <tr><td>@c.Name</td><td>@c.ManagerName</td><td>@c.City</td><td>@c.Category</td><td><span class="badge badge-active">نشط</span></td></tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <!-- CLUBS -->
             <div class="page" id="page-clubs">
                 <div class="section-hd"><h3>إدارة الأندية</h3><div style="display:flex;gap:8px;flex-wrap:wrap;"><a href="/Admin/ExportClubsExcel" class="btn btn-success">📊 تصدير Excel</a><button class="btn btn-primary" onclick="document.getElementById('clubModal').classList.add('show')">➕ إضافة نادي</button></div></div>
-                <div class="table-wrap"><div class="tbl-toolbar"><input type="text" id="clubSearch" placeholder="ابحث عن نادٍ..." oninput="filterClubs()"><span class="tbl-count" id="clubsCount"></span></div>
-                <table><thead><tr><th>#</th><th>اسم النادي</th><th>المسؤول</th><th>المدينة</th><th>التصنيف</th><th>إجراءات</th></tr></thead><tbody id="clubsTableBody">
-                    @if (ViewBag.Clubs != null){int i=1;foreach(var c in ViewBag.Clubs){<tr><td>@i</td><td>@c.Name</td><td>@c.ManagerName</td><td>@c.City</td><td>@c.Category</td><td style="display:flex;gap:4px;flex-wrap:wrap;"><button class="btn btn-info btn-sm" onclick="showClubDetails(@c.Id,'@c.Name','@c.ManagerName')">📋</button><a href="/Admin/DeleteClub/@c.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد؟')">🗑️</a></td></tr>i++;}}
-                </tbody></table></div>
+                <div class="table-wrap">
+                    <div class="tbl-toolbar"><input type="text" id="clubSearch" placeholder="ابحث عن نادٍ..." oninput="filterClubs()"><span class="tbl-count" id="clubsCount"></span></div>
+                    <table>
+                        <thead><tr><th>#</th><th>اسم النادي</th><th>المسؤول</th><th>المدينة</th><th>التصنيف</th><th>إجراءات</th></tr></thead>
+                        <tbody id="clubsTableBody">
+                            @if (ViewBag.Clubs != null)
+                            {
+                                int i = 1; foreach (var c in ViewBag.Clubs)
+                                {
+                                    <tr><td>@i</td><td>@c.Name</td><td>@c.ManagerName</td><td>@c.City</td><td>@c.Category</td><td style="display:flex;gap:4px;flex-wrap:wrap;"><button class="btn btn-info btn-sm" onclick="showClubDetails(@c.Id,'@c.Name','@c.ManagerName')">📋</button><a href="/Admin/DeleteClub/@c.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد؟')">🗑️</a></td></tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <!-- PLAYERS -->
             <div class="page" id="page-players">
                 <div class="section-hd"><h3>اللاعبون</h3><a href="/Admin/ExportPlayersExcel" class="btn btn-success">📊 تصدير Excel</a></div>
-                <div class="table-wrap"><table><thead><tr><th>#</th><th>الاسم</th><th>النادي</th><th>الحزام</th><th>العمر</th><th>إجراءات</th></tr></thead><tbody>
-                    @if (ViewBag.Players != null){int i=1;foreach(var p in ViewBag.Players){<tr><td>@i</td><td>@p.Name</td><td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == p.ClubId)?.Name ?? "—" : "—")</td><td>@p.Belt</td><td>@p.Age</td><td><a href="/Club/PlayerCard?id=@p.Id" class="btn btn-info btn-sm">🪪</a></td></tr>i++;}}
-                </tbody></table></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>الاسم</th><th>النادي</th><th>الحزام</th><th>العمر</th><th>إجراءات</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.Players != null)
+                            {
+                                int i = 1; foreach (var p in ViewBag.Players)
+                                {
+                                    <tr><td>@i</td><td>@p.Name</td><td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == p.ClubId)?.Name ?? "—" : "—")</td><td>@p.Belt</td><td>@p.Age</td><td><a href="/Club/PlayerCard?id=@p.Id" class="btn btn-info btn-sm">🪪</a></td></tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <!-- TOURNAMENTS -->
             <div class="page" id="page-tournaments">
                 <div class="section-hd"><h3>البطولات</h3><button class="btn btn-primary" onclick="document.getElementById('tournamentModal').classList.add('show')">➕ إضافة بطولة</button></div>
-                <div class="table-wrap"><table><thead><tr><th>#</th><th>اسم البطولة</th><th>التاريخ</th><th>المدينة</th><th>إجراءات</th></tr></thead><tbody>
-                    @if (ViewBag.Tournaments != null){int i=1;foreach(var t in ViewBag.Tournaments){<tr><td>@i</td><td>@t.Title</td><td>@t.Date.ToString("yyyy-MM-dd")</td><td>@t.City</td><td style="display:flex;gap:4px;flex-wrap:wrap;"><button class="btn btn-info btn-sm" onclick="showTournamentDetails(@t.Id)">📋</button><button class="btn btn-sm @(t.RegistrationClosed?"btn-success":"btn-danger")" onclick="toggleTournamentReg(@t.Id)">@(t.RegistrationClosed ? "🔓" : "🔒")</button><button class="btn btn-info btn-sm" onclick="showEditTournament(@t.Id,'@t.Title','@t.Date.ToString("yyyy-MM-dd")','@t.City','@(t.Location??"")','@(t.Description??"")' ,@t.RegistrationFee,@t.MaxPlayersPerClub,'@(t.Categories??"")')">✏️</button><a href="/Admin/DeleteTournament/@t.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد؟')">🗑️</a></td></tr>i++;}}
-                </tbody></table></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>اسم البطولة</th><th>التاريخ</th><th>المدينة</th><th>إجراءات</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.Tournaments != null)
+                            {
+                                int i = 1; foreach (var t in ViewBag.Tournaments)
+                                {
+                                    <tr><td>@i</td><td>@t.Title</td><td>@t.Date.ToString("yyyy-MM-dd")</td><td>@t.City</td><td style="display:flex;gap:4px;flex-wrap:wrap;"><button class="btn btn-info btn-sm" onclick="showTournamentDetails(@t.Id)">📋</button><button class="btn btn-sm @(t.RegistrationClosed?"btn-success":"btn-danger")" onclick="toggleTournamentReg(@t.Id)">@(t.RegistrationClosed ? "🔓" : "🔒")</button><button class="btn btn-info btn-sm" onclick="showEditTournament(@t.Id,'@t.Title','@t.Date.ToString("yyyy-MM-dd")','@t.City','@(t.Location??"")','@(t.Description??"")' ,@t.RegistrationFee,@t.MaxPlayersPerClub,'@(t.Categories??"")')">✏️</button><a href="/Admin/DeleteTournament/@t.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد؟')">🗑️</a></td></tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <!-- PARTICIPATIONS -->
             <div class="page" id="page-participations">
-                <div class="section-hd"><h3>المشاركات</h3><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;"><select id="yearFilter" onchange="filterByYear()" style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;font-size:12px;">@for (int y = DateTime.Now.Year; y >= 2020; y--){<option value="@y">@y</option>}<option value="0">كل السنوات</option></select><a href="/Admin/AddParticipation" class="btn btn-primary">➕ إضافة نتيجة</a></div></div>
-                <div class="table-wrap"><table><thead><tr><th>#</th><th>النادي</th><th>البطولة</th><th>المركز</th><th>النقاط</th><th>السنة</th><th>إجراءات</th></tr></thead><tbody id="participationsBody">
-                    @if (ViewBag.Participations != null){int i=1;foreach(var p in ViewBag.Participations){var medal=p.Rank==1?"🥇":p.Rank==2?"🥈":p.Rank==3?"🥉":"";var year=p.GetType().GetProperty("Year")!=null?(int)p.Year:DateTime.Now.Year;<tr data-year="@year"><td>@i</td><td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == p.ClubId)?.Name ?? "—" : "—")</td><td>@(ViewBag.Tournaments != null ? ((IEnumerable<dynamic>)ViewBag.Tournaments).FirstOrDefault(t => t.Id == p.TournamentId)?.Title ?? "—" : "—")</td><td>@medal @p.Rank</td><td>@p.Points ⭐</td><td>@year</td><td><a href="/Admin/DeleteParticipation/@p.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد؟')">🗑️</a></td></tr>i++;}}
-                </tbody></table></div>
+                <div class="section-hd"><h3>المشاركات</h3><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;"><select id="yearFilter" onchange="filterByYear()" style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;font-size:12px;">@for (int y = DateTime.Now.Year; y >= 2020; y--)
+                            {
+                                <option value="@y">@y</option>
+                            }<option value="0">كل السنوات</option></select><a href="/Admin/AddParticipation" class="btn btn-primary">➕ إضافة نتيجة</a></div></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>النادي</th><th>البطولة</th><th>المركز</th><th>النقاط</th><th>السنة</th><th>إجراءات</th></tr></thead>
+                        <tbody id="participationsBody">
+                            @if (ViewBag.Participations != null)
+                            {
+                                int i = 1; foreach (var p in ViewBag.Participations)
+                                {
+                                    var medal = p.Rank == 1 ? "🥇" : p.Rank == 2 ? "🥈" : p.Rank == 3 ? "🥉" : ""; var year = p.GetType().GetProperty("Year") != null ? (int)p.Year : DateTime.Now.Year;
+                                    <tr data-year="@year"><td>@i</td><td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == p.ClubId)?.Name ?? "—" : "—")</td><td>@(ViewBag.Tournaments != null ? ((IEnumerable<dynamic>)ViewBag.Tournaments).FirstOrDefault(t => t.Id == p.TournamentId)?.Title ?? "—" : "—")</td><td>@medal @p.Rank</td><td>@p.Points ⭐</td><td>@year</td><td><a href="/Admin/DeleteParticipation/@p.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد؟')">🗑️</a></td></tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <!-- MEMBERSHIPS -->
             <div class="page" id="page-memberships">
@@ -226,17 +982,45 @@
                     <div class="mem-card"><div class="mc-label">مدفوعة</div><div class="mc-value" style="color:var(--green)">@ViewBag.PaidCount</div></div>
                     <div class="mem-card"><div class="mc-label">غير مدفوعة</div><div class="mc-value" style="color:var(--amber)">@ViewBag.UnpaidCount</div></div>
                 </div>
-                <div class="table-wrap"><table><thead><tr><th>#</th><th>النادي</th><th>السنة</th><th>الرسوم</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody>
-                    @if (ViewBag.Memberships != null){int i=1;foreach(var m in ViewBag.Memberships){var isPaid=m.Status=="مدفوع";<tr id="mem-row-@m.Id" style="@(isPaid?"background:rgba(46,160,67,0.08);":"")"><td>@i</td><td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == m.ClubId)?.Name ?? "—" : "—")</td><td>@m.Year</td><td>@m.Fee ₪</td><td><span class="badge @(isPaid?"badge-active":"badge-inactive")" id="mem-badge-@m.Id">@m.Status</span></td><td><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="btn btn-sm btn-success" id="mem-btn-@m.Id" style="@(isPaid?"display:none;":"")" onclick="toggleMembership(@m.Id)">✅</button><button class="btn btn-sm btn-info" onclick="openClubFeeModal(@m.Id,@m.Fee)">💰</button></div></td></tr>i++;}}
-                </tbody></table></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>النادي</th><th>السنة</th><th>الرسوم</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.Memberships != null)
+                            {
+                                int i = 1; foreach (var m in ViewBag.Memberships)
+                                {
+                                    var isPaid = m.Status == "مدفوع";
+                                    <tr id="mem-row-@m.Id" style="@(isPaid?"background:rgba(46,160,67,0.08);":"")"><td>@i</td><td>@(ViewBag.Clubs != null ? ((IEnumerable<dynamic>)ViewBag.Clubs).FirstOrDefault(c => c.Id == m.ClubId)?.Name ?? "—" : "—")</td><td>@m.Year</td><td>@m.Fee ₪</td><td><span class="badge @(isPaid?"badge-active":"badge-inactive")" id="mem-badge-@m.Id">@m.Status</span></td><td><div style="display:flex;gap:4px;flex-wrap:wrap;"><button class="btn btn-sm btn-success" id="mem-btn-@m.Id" style="@(isPaid?"display:none;":"")" onclick="toggleMembership(@m.Id)">✅</button><button class="btn btn-sm btn-info" onclick="openClubFeeModal(@m.Id,@m.Fee)">💰</button></div></td></tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <!-- ARCHIVE -->
             <div class="page" id="page-archive">
                 <div class="section-hd"><h3>🗃️ أرشيف الأندية المحذوفة</h3></div>
-                <div class="table-wrap"><table><thead><tr><th>#</th><th>اسم النادي</th><th>المسؤول</th><th>المدينة</th><th>التصنيف</th><th>تاريخ الحذف</th></tr></thead><tbody>
-                    @if (ViewBag.ArchivedClubs != null){int i=1;foreach(var c in ViewBag.ArchivedClubs){<tr><td>@i</td><td>@c.Name</td><td>@c.ManagerName</td><td>@c.City</td><td>@c.Category</td><td>@(c.DeletedAt != null ? ((DateTime)c.DeletedAt).ToString("yyyy/MM/dd") : "—")</td></tr>i++;}}
-                    else{<tr><td colspan="6" style="text-align:center;color:var(--muted);">لا توجد أندية محذوفة</td></tr>}
-                </tbody></table></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>#</th><th>اسم النادي</th><th>المسؤول</th><th>المدينة</th><th>التصنيف</th><th>تاريخ الحذف</th></tr></thead>
+                        <tbody>
+                            @if (ViewBag.ArchivedClubs != null)
+                            {
+                                int i = 1; foreach (var c in ViewBag.ArchivedClubs)
+                                {
+                                    <tr><td>@i</td><td>@c.Name</td><td>@c.ManagerName</td><td>@c.City</td><td>@c.Category</td><td>@(c.DeletedAt != null ? ((DateTime)c.DeletedAt).ToString("yyyy/MM/dd") : "—")</td></tr>
+                                    i++;
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="6" style="text-align:center;color:var(--muted);">لا توجد أندية محذوفة</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>
@@ -249,45 +1033,58 @@
     <div class="modal-overlay" id="feeModal"><div class="modal"><div class="modal-header"><h3>⚙️ تعديل رسوم العضوية</h3><button class="modal-close" onclick="document.getElementById('feeModal').classList.remove('show')">×</button></div><div class="modal-body"><div class="form-group"><label>الرسوم (₪)</label><input type="number" id="feeInput" min="0" placeholder="600"></div><p style="font-size:11px;color:var(--muted);margin-top:8px;">⚠️ ستُطبَّق على الأندية الجديدة فقط</p></div><div class="modal-footer"><button class="btn btn-ghost" onclick="document.getElementById('feeModal').classList.remove('show')">إلغاء</button><button class="btn btn-success" onclick="saveFee()">💾 حفظ</button></div></div></div>
     <div class="modal-overlay" id="clubFeeModal"><div class="modal"><div class="modal-header"><h3>💰 تعديل رسوم النادي</h3><button class="modal-close" onclick="document.getElementById('clubFeeModal').classList.remove('show')">×</button></div><div class="modal-body"><input type="hidden" id="clubFeeId"><div class="form-group"><label>الرسوم الجديدة (₪)</label><input type="number" id="clubFeeInput" min="0" placeholder="600"></div><p style="font-size:11px;color:var(--muted);margin-top:8px;">⚠️ لهذا النادي فقط</p></div><div class="modal-footer"><button class="btn btn-ghost" onclick="document.getElementById('clubFeeModal').classList.remove('show')">إلغاء</button><button class="btn btn-success" onclick="saveClubFee()">💾 حفظ</button></div></div></div>
     <script>
-        function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('show');}
-        function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('show');}
-        document.getElementById('dateLabel').textContent=new Date().toLocaleDateString('ar-SA',{year:'numeric',month:'long',day:'numeric'});
-        const pageTitles={dashboard:'لوحة التحكم',clubs:'الأندية',players:'اللاعبون',tournaments:'البطولات',participations:'المشاركات',memberships:'العضويات'};
-        function showPage(id,navEl){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.getElementById('page-'+id).classList.add('active');if(navEl)navEl.classList.add('active');document.getElementById('pageTitle').textContent=pageTitles[id]||id;}
-        function filterByYear(){const year=document.getElementById('yearFilter').value;document.querySelectorAll('#participationsBody tr').forEach(row=>{row.style.display=year==='0'||row.dataset.year===year?'':' none';});}
-        function filterClubs(){const q=document.getElementById('clubSearch').value.toLowerCase();const rows=document.querySelectorAll('#clubsTableBody tr');let count=0;rows.forEach(row=>{const text=row.textContent.toLowerCase();if(text.includes(q)){row.style.display='';count++;}else row.style.display='none';});document.getElementById('clubsCount').textContent=count+' نادٍ';}
-        let currentClubId=null;
-        function showClubDetails(id,name,manager){currentClubId=id;document.getElementById('detailName').value=name;document.getElementById('detailManager').value=manager;document.getElementById('newPasswordInput').value='';document.getElementById('clubDetailsModal').classList.add('show');}
-        function resetClubPassword(){const newPass=document.getElementById('newPasswordInput').value.trim();if(!newPass){toast('أدخل كلمة مرور جديدة','error');return;}fetch('/Admin/ResetClubPassword',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clubId:currentClubId,newPassword:newPass})}).then(r=>r.json()).then(data=>{if(data.success){toast('✅ تم تغيير كلمة المرور','success');}});}
-        function toggleMembership(id){fetch('/Admin/ToggleMembership',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({membershipId:id})}).then(r=>r.json()).then(data=>{if(data.success){const isPaid=data.status==='مدفوع';const badge=document.getElementById('mem-badge-'+id);const btn=document.getElementById('mem-btn-'+id);const row=document.getElementById('mem-row-'+id);badge.textContent=data.status;badge.className='badge '+(isPaid?'badge-active':'badge-inactive');btn.style.display=isPaid?'none':'';row.style.background=isPaid?'rgba(46,160,67,0.08)':'';toast(isPaid?'✅ تم تحديد العضوية كمدفوعة':'⚠️ تم تغيير الحالة',isPaid?'success':'info');}});}
-        function showTournamentDetails(id){document.getElementById('tournamentDetailsContent').innerHTML='<p style="color:var(--muted);text-align:center;">جاري التحميل...</p>';document.getElementById('tournamentDetailsModal').classList.add('show');fetch('/Admin/TournamentDetails?id='+id).then(r=>r.json()).then(data=>{if(data.length===0){document.getElementById('tournamentDetailsContent').innerHTML='<p style="color:var(--muted);text-align:center;">لا يوجد أندية مسجّلة</p>';return;}let html='<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;min-width:400px;"><thead><tr><th style="padding:8px;background:var(--surface2);text-align:right;">النادي</th><th style="padding:8px;background:var(--surface2);text-align:right;">اللاعبين</th><th style="padding:8px;background:var(--surface2);text-align:right;">الحالة</th><th style="padding:8px;background:var(--surface2);text-align:right;">إجراءات</th></tr></thead><tbody>';data.forEach(r=>{const statusColor=r.status==='موافق'?'#3fb950':r.status==='مرفوض'?'#f85149':'#e3b341';html+=`<tr><td style="padding:8px;border-bottom:1px solid var(--border);">${r.clubName}</td><td style="padding:8px;border-bottom:1px solid var(--border);">${r.approvedPlayers&&r.approvedPlayers.length>0?r.approvedPlayers.join(' — '):r.playersCount+' لاعب'}</td><td style="padding:8px;border-bottom:1px solid var(--border);color:${statusColor};font-weight:bold;">${r.status}</td><td style="padding:8px;border-bottom:1px solid var(--border);">${r.status==='بانتظار الموافقة'?`<div style="display:flex;gap:4px;"><button class="btn btn-success btn-sm" onclick="approveReg(${r.id})">✅</button><button class="btn btn-danger btn-sm" onclick="openRejectModal(${r.id})">❌</button></div>`:r.status==='مرفوض'&&r.adminNote?`<span style="font-size:11px;color:var(--muted);">📋 ${r.adminNote}</span>`:'—'}</td></tr>`;});html+='</tbody></table></div>';document.getElementById('tournamentDetailsContent').innerHTML=html;});}
-        function approveReg(id){fetch('/Admin/ApproveTournamentRegistration',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({registrationId:id})}).then(r=>r.json()).then(data=>{if(data.success){toast('✅ تم قبول التسجيل','success');location.reload();}});}
-        function openRejectModal(id){const note=prompt('أدخل سبب الرفض:');if(note===null)return;fetch('/Admin/RejectTournamentRegistration',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({registrationId:id,note:note})}).then(r=>r.json()).then(data=>{if(data.success){toast('تم رفض التسجيل','info');location.reload();}});}
-        document.querySelectorAll('.modal-overlay').forEach(overlay=>{overlay.addEventListener('click',function(e){if(e.target===this)this.classList.remove('show');});});
-        function toast(msg,type='info'){const icons={success:'✅',error:'❌',info:'ℹ️',warning:'⚠️'};const colors={success:{bg:'#f0fdf4',border:'#2ea043',text:'#166534'},error:{bg:'#fef2f2',border:'#da3633',text:'#991b1b'},info:{bg:'#eff6ff',border:'#4a90e2',text:'#1e40af'},warning:{bg:'#fffbeb',border:'#d29922',text:'#92400e'}};const c=colors[type]||colors.info;const el=document.createElement('div');el.style.cssText=`position:fixed;top:24px;left:50%;transform:translateX(-50%);background:${c.bg};border:2px solid ${c.border};color:${c.text};border-radius:12px;padding:14px 20px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;z-index:99999;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:260px;max-width:90vw;font-family:'Cairo',sans-serif;direction:rtl;animation:slideDown 0.3s ease;`;el.innerHTML=`<span style="font-size:20px;">${icons[type]||'ℹ️'}</span><span style="flex:1;">${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:16px;color:${c.text};">×</button>`;document.body.appendChild(el);setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity 0.3s';setTimeout(()=>el.remove(),300);},4000);}
-        function toggleTournamentReg(id){fetch('/Admin/ToggleTournamentRegistration',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tournamentId:id})}).then(r=>r.json()).then(data=>{if(data.success)location.reload();});}
-        function showEditTournament(id,title,date,city,location,desc,fee,max,categories){document.getElementById('editTId').value=id;document.getElementById('editTTitle').value=title;document.getElementById('editTDate').value=date;document.getElementById('editTCity').value=city;document.getElementById('editTLocation').value=location;document.getElementById('editTDesc').value=desc;document.getElementById('editTFee').value=fee;document.getElementById('editTMax').value=max;document.getElementById('editTCategories').value=categories;document.getElementById('editTournamentModal').classList.add('show');}
-        function saveEditTournament(){fetch('/Admin/UpdateTournament',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:parseInt(document.getElementById('editTId').value),title:document.getElementById('editTTitle').value,date:document.getElementById('editTDate').value,city:document.getElementById('editTCity').value,location:document.getElementById('editTLocation').value,description:document.getElementById('editTDesc').value,registrationFee:parseFloat(document.getElementById('editTFee').value)||0,maxPlayersPerClub:parseInt(document.getElementById('editTMax').value)||0,categories:document.getElementById('editTCategories').value})}).then(r=>r.json()).then(data=>{if(data.success){document.getElementById('editTournamentModal').classList.remove('show');location.reload();toast('✅ تم تعديل البطولة','success');}});}
-        function openClubFeeModal(membershipId,currentFee){document.getElementById('clubFeeInput').value=currentFee;document.getElementById('clubFeeId').value=membershipId;document.getElementById('clubFeeModal').classList.add('show');}
-        function saveClubFee(){const id=parseInt(document.getElementById('clubFeeId').value);const fee=parseFloat(document.getElementById('clubFeeInput').value);if(!fee||fee<=0){toast('أدخل قيمة صحيحة','error');return;}fetch('/Admin/UpdateClubMembershipFee',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({membershipId:id,fee:fee})}).then(r=>r.json()).then(data=>{if(data.success){document.getElementById('clubFeeModal').classList.remove('show');toast('✅ تم تحديث الرسوم','success');location.reload();}});}
-        function openFeeModal(){fetch('/Admin/GetMembershipFee').then(r=>r.json()).then(data=>{document.getElementById('feeInput').value=data.fee;document.getElementById('feeModal').classList.add('show');});}
-        function saveFee(){const fee=parseFloat(document.getElementById('feeInput').value);if(!fee||fee<=0){toast('أدخل قيمة صحيحة','error');return;}fetch('/Admin/UpdateMembershipFee',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fee:fee})}).then(r=>r.json()).then(data=>{if(data.success){document.getElementById('feeModal').classList.remove('show');toast('✅ تم تحديث الرسوم إلى '+fee+'₪','success');}});}
-        function resetAllMemberships(){if(!confirm('هل أنت متأكد؟'))return;fetch('/Admin/ResetAllMemberships',{method:'POST',headers:{'Content-Type':'application/json'}}).then(r=>r.json()).then(data=>{if(data.success){toast('✅ تم تصفير جميع العضويات','success');setTimeout(()=>location.reload(),1500);}});}
-        function checkEmail(email){if(!email)return;fetch('/Admin/CheckClubEmail',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})}).then(r=>r.json()).then(data=>{document.getElementById('emailError').style.display=data.exists?'block':'none';});}
-        function checkPhone(phone){if(!phone)return;fetch('/Admin/CheckClubPhone',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:phone})}).then(r=>r.json()).then(data=>{document.getElementById('phoneError').style.display=data.exists?'block':'none';});}
-        function validateName(name){const parts=name.trim().split(/\s+/);if(parts.length<3)return"يجب إدخال الاسم الأول واسم الأب واسم العائلة";const valid=/^[\u0600-\u06FF a-zA-Z\s]+$/;if(!valid.test(name))return"الاسم يجب أن يحتوي على أحرف فقط";return null;}
-        function checkName(input){const error=validateName(input.value);const span=input.nextElementSibling;if(span&&span.classList.contains('name-error')){span.textContent=error||'';span.style.display=error?'block':'none';input.style.borderColor=error?'#e74c3c'';'';}}
-        function loadNotifications(){fetch('/Admin/GetNotifications').then(r=>r.json()).then(data=>{const badge=document.getElementById('bellBadge');const list=document.getElementById('notifList');badge.textContent=data.unread;badge.style.display=data.unread>0?'flex':'none';if(data.notifications.length===0){list.innerHTML='<div style="padding:20px;text-align:center;color:#8b949e;font-size:13px;">لا توجد إشعارات</div>';return;}list.innerHTML=data.notifications.map(n=>`<div onclick="markRead(${n.id})" style="padding:12px 16px;border-bottom:1px solid #2d3f55;cursor:pointer;background:${n.isRead?'transparent':'rgba(74,144,226,0.08)'};"><div style="font-size:13px;font-weight:${n.isRead?'400':'700'};color:#f1f5f9;">${n.title}</div><div style="font-size:11px;color:#94a3b8;margin-top:3px;">${n.message}</div></div>`).join('');});}
-        function toggleNotifications(){const panel=document.getElementById('notifPanel');panel.style.display=panel.style.display==='none'?'block':'none';if(panel.style.display==='block')loadNotifications();}
-        function markRead(id){fetch('/Admin/MarkNotificationRead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}).then(()=>loadNotifications());}
-        function markAllRead(){fetch('/Admin/MarkAllRead',{method:'POST'}).then(()=>loadNotifications());}
-        document.addEventListener('click',e=>{if(!document.getElementById('bellBtn')?.contains(e.target)&&!document.getElementById('notifPanel')?.contains(e.target)){const panel=document.getElementById('notifPanel');if(panel)panel.style.display='none';}});
-        const translations={ar:{sidebar_sub:"لوحة الإدارة",logout:"🚪 خروج",last_login:"🕐 آخر تسجيل دخول",stat1:"إجمالي الأندية",stat1s:"نادي مسجّل",stat2:"البطولات",stat3s:"بطولة مسجّلة",stat4:"عضويات غير مدفوعة",stat4s:"بانتظار الدفع",mem_total:"إجمالي الأندية",mem_paid:"مدفوعة",mem_unpaid:"غير مدفوعة"},en:{sidebar_sub:"Admin Panel",logout:"🚪 Logout",last_login:"🕐 Last Login",stat1:"Total Clubs",stat1s:"registered clubs",stat2:"Tournaments",stat3s:"tournaments",stat4:"Unpaid Memberships",stat4s:"pending",mem_total:"Total Clubs",mem_paid:"Paid",mem_unpaid:"Unpaid"}};
-        let currentLang=localStorage.getItem("lang")||"ar";
-        function applyLang(lang){const t=translations[lang];const isAr=lang==="ar";document.documentElement.lang=lang;document.documentElement.dir=isAr?"rtl":"ltr";document.getElementById("langBtn").textContent=isAr?"EN":"عر";document.querySelector(".sidebar-logo h2").textContent=isAr?"منصة الكاراتيه الفلسطينية":"Palestinian Karate Platform";document.querySelector(".sidebar-logo span").textContent=t.sidebar_sub;document.querySelector(".logout-btn").textContent=t.logout;document.querySelector(".ll-title").textContent=t.last_login;localStorage.setItem("lang",lang);}
-        function toggleLang(){currentLang=currentLang==="ar"?"en":"ar";applyLang(currentLang);}
-        document.addEventListener("DOMContentLoaded",()=>{loadNotifications();setInterval(loadNotifications,60000);});
-        (function(){const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js';s.onload=function(){const topClubs=[@if (ViewBag.TopClubs != null){bool first=true;foreach(var c in ViewBag.TopClubs){if(!first){<text>,</text>}<text>{name:"@c.ClubName",points:@c.TotalPoints}</text>first=false;}}];if(document.getElementById('clubsChart')&&topClubs.length>0){new Chart(document.getElementById('clubsChart'),{type:'bar',data:{labels:topClubs.map(c=>c.name),datasets:[{label:'النقاط',data:topClubs.map(c=>c.points),backgroundColor:'rgba(59,130,246,0.7)',borderColor:'#3b82f6',borderWidth:1,borderRadius:6}]},options:{plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#94a3b8'},grid:{color:'#2d3f55'}},y:{ticks:{color:'#94a3b8'},grid:{color:'#2d3f55'}}}}});}if(document.getElementById('membershipChart')){new Chart(document.getElementById('membershipChart'),{type:'pie',data:{labels:['مدفوع','غير مدفوع'],datasets:[{data:[@ViewBag.PaidCount,@ViewBag.UnpaidCount],backgroundColor:['rgba(16,185,129,0.8)','rgba(239,68,68,0.8)'],borderColor:['#10b981','#ef4444'],borderWidth:2}]},options:{plugins:{legend:{labels:{color:'#94a3b8'}}}}});}document.head.appendChild(s);};document.head.appendChild(s);})();
+        function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebarOverlay').classList.add('show'); }
+        function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebarOverlay').classList.remove('show'); }
+        document.getElementById('dateLabel').textContent = new Date().toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+        const pageTitles = { dashboard: 'لوحة التحكم', clubs: 'الأندية', players: 'اللاعبون', tournaments: 'البطولات', participations: 'المشاركات', memberships: 'العضويات' };
+        function showPage(id, navEl) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); document.getElementById('page-' + id).classList.add('active'); if (navEl) navEl.classList.add('active'); document.getElementById('pageTitle').textContent = pageTitles[id] || id; }
+        function filterByYear() { const year = document.getElementById('yearFilter').value; document.querySelectorAll('#participationsBody tr').forEach(row => { row.style.display = year === '0' || row.dataset.year === year ? '' : ' none'; }); }
+        function filterClubs() { const q = document.getElementById('clubSearch').value.toLowerCase(); const rows = document.querySelectorAll('#clubsTableBody tr'); let count = 0; rows.forEach(row => { const text = row.textContent.toLowerCase(); if (text.includes(q)) { row.style.display = ''; count++; } else row.style.display = 'none'; }); document.getElementById('clubsCount').textContent = count + ' نادٍ'; }
+        let currentClubId = null;
+        function showClubDetails(id, name, manager) { currentClubId = id; document.getElementById('detailName').value = name; document.getElementById('detailManager').value = manager; document.getElementById('newPasswordInput').value = ''; document.getElementById('clubDetailsModal').classList.add('show'); }
+        function resetClubPassword() { const newPass = document.getElementById('newPasswordInput').value.trim(); if (!newPass) { toast('أدخل كلمة مرور جديدة', 'error'); return; } fetch('/Admin/ResetClubPassword', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ clubId: currentClubId, newPassword: newPass }) }).then(r => r.json()).then(data => { if (data.success) { toast('✅ تم تغيير كلمة المرور', 'success'); } }); }
+        function toggleMembership(id) { fetch('/Admin/ToggleMembership', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ membershipId: id }) }).then(r => r.json()).then(data => { if (data.success) { const isPaid = data.status === 'مدفوع'; const badge = document.getElementById('mem-badge-' + id); const btn = document.getElementById('mem-btn-' + id); const row = document.getElementById('mem-row-' + id); badge.textContent = data.status; badge.className = 'badge ' + (isPaid ? 'badge-active' : 'badge-inactive'); btn.style.display = isPaid ? 'none' : ''; row.style.background = isPaid ? 'rgba(46,160,67,0.08)' : ''; toast(isPaid ? '✅ تم تحديد العضوية كمدفوعة' : '⚠️ تم تغيير الحالة', isPaid ? 'success' : 'info'); } }); }
+        function showTournamentDetails(id) { document.getElementById('tournamentDetailsContent').innerHTML = '<p style="color:var(--muted);text-align:center;">جاري التحميل...</p>'; document.getElementById('tournamentDetailsModal').classList.add('show'); fetch('/Admin/TournamentDetails?id=' + id).then(r => r.json()).then(data => { if (data.length === 0) { document.getElementById('tournamentDetailsContent').innerHTML = '<p style="color:var(--muted);text-align:center;">لا يوجد أندية مسجّلة</p>'; return; } let html = '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;min-width:400px;"><thead><tr><th style="padding:8px;background:var(--surface2);text-align:right;">النادي</th><th style="padding:8px;background:var(--surface2);text-align:right;">اللاعبين</th><th style="padding:8px;background:var(--surface2);text-align:right;">الحالة</th><th style="padding:8px;background:var(--surface2);text-align:right;">إجراءات</th></tr></thead><tbody>'; data.forEach(r => { const statusColor = r.status === 'موافق' ? '#3fb950' : r.status === 'مرفوض' ? '#f85149' : '#e3b341'; html += `<tr><td style="padding:8px;border-bottom:1px solid var(--border);">${r.clubName}</td><td style="padding:8px;border-bottom:1px solid var(--border);">${r.approvedPlayers && r.approvedPlayers.length > 0 ? r.approvedPlayers.join(' — ') : r.playersCount + ' لاعب'}</td><td style="padding:8px;border-bottom:1px solid var(--border);color:${statusColor};font-weight:bold;">${r.status}</td><td style="padding:8px;border-bottom:1px solid var(--border);">${r.status === 'بانتظار الموافقة' ? `<div style="display:flex;gap:4px;"><button class="btn btn-success btn-sm" onclick="approveReg(${r.id})">✅</button><button class="btn btn-danger btn-sm" onclick="openRejectModal(${r.id})">❌</button></div>` : r.status === 'مرفوض' && r.adminNote ? `<span style="font-size:11px;color:var(--muted);">📋 ${r.adminNote}</span>` : '—'}</td></tr>`; }); html += '</tbody></table></div>'; document.getElementById('tournamentDetailsContent').innerHTML = html; }); }
+        function approveReg(id) { fetch('/Admin/ApproveTournamentRegistration', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ registrationId: id }) }).then(r => r.json()).then(data => { if (data.success) { toast('✅ تم قبول التسجيل', 'success'); location.reload(); } }); }
+        function openRejectModal(id) { const note = prompt('أدخل سبب الرفض:'); if (note === null) return; fetch('/Admin/RejectTournamentRegistration', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ registrationId: id, note: note }) }).then(r => r.json()).then(data => { if (data.success) { toast('تم رفض التسجيل', 'info'); location.reload(); } }); }
+        document.querySelectorAll('.modal-overlay').forEach(overlay => { overlay.addEventListener('click', function (e) { if (e.target === this) this.classList.remove('show'); }); });
+        function toast(msg, type = 'info') { const icons = { success: '✅', error: '❌', info: 'ℹ️', warning: '⚠️' }; const colors = { success: { bg: '#f0fdf4', border: '#2ea043', text: '#166534' }, error: { bg: '#fef2f2', border: '#da3633', text: '#991b1b' }, info: { bg: '#eff6ff', border: '#4a90e2', text: '#1e40af' }, warning: { bg: '#fffbeb', border: '#d29922', text: '#92400e' } }; const c = colors[type] || colors.info; const el = document.createElement('div'); el.style.cssText = `position:fixed;top:24px;left:50%;transform:translateX(-50%);background:${c.bg};border:2px solid ${c.border};color:${c.text};border-radius:12px;padding:14px 20px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;z-index:99999;box-shadow:0 8px 30px rgba(0,0,0,0.15);min-width:260px;max-width:90vw;font-family:'Cairo',sans-serif;direction:rtl;animation:slideDown 0.3s ease;`; el.innerHTML = `<span style="font-size:20px;">${icons[type] || 'ℹ️'}</span><span style="flex:1;">${msg}</span><button onclick="this.parentElement.remove()" style="background:none;border:none;cursor:pointer;font-size:16px;color:${c.text};">×</button>`; document.body.appendChild(el); setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity 0.3s'; setTimeout(() => el.remove(), 300); }, 4000); }
+        function toggleTournamentReg(id) { fetch('/Admin/ToggleTournamentRegistration', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tournamentId: id }) }).then(r => r.json()).then(data => { if (data.success) location.reload(); }); }
+        function showEditTournament(id, title, date, city, location, desc, fee, max, categories) { document.getElementById('editTId').value = id; document.getElementById('editTTitle').value = title; document.getElementById('editTDate').value = date; document.getElementById('editTCity').value = city; document.getElementById('editTLocation').value = location; document.getElementById('editTDesc').value = desc; document.getElementById('editTFee').value = fee; document.getElementById('editTMax').value = max; document.getElementById('editTCategories').value = categories; document.getElementById('editTournamentModal').classList.add('show'); }
+        function saveEditTournament() { fetch('/Admin/UpdateTournament', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: parseInt(document.getElementById('editTId').value), title: document.getElementById('editTTitle').value, date: document.getElementById('editTDate').value, city: document.getElementById('editTCity').value, location: document.getElementById('editTLocation').value, description: document.getElementById('editTDesc').value, registrationFee: parseFloat(document.getElementById('editTFee').value) || 0, maxPlayersPerClub: parseInt(document.getElementById('editTMax').value) || 0, categories: document.getElementById('editTCategories').value }) }).then(r => r.json()).then(data => { if (data.success) { document.getElementById('editTournamentModal').classList.remove('show'); location.reload(); toast('✅ تم تعديل البطولة', 'success'); } }); }
+        function openClubFeeModal(membershipId, currentFee) { document.getElementById('clubFeeInput').value = currentFee; document.getElementById('clubFeeId').value = membershipId; document.getElementById('clubFeeModal').classList.add('show'); }
+        function saveClubFee() { const id = parseInt(document.getElementById('clubFeeId').value); const fee = parseFloat(document.getElementById('clubFeeInput').value); if (!fee || fee <= 0) { toast('أدخل قيمة صحيحة', 'error'); return; } fetch('/Admin/UpdateClubMembershipFee', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ membershipId: id, fee: fee }) }).then(r => r.json()).then(data => { if (data.success) { document.getElementById('clubFeeModal').classList.remove('show'); toast('✅ تم تحديث الرسوم', 'success'); location.reload(); } }); }
+        function openFeeModal() { fetch('/Admin/GetMembershipFee').then(r => r.json()).then(data => { document.getElementById('feeInput').value = data.fee; document.getElementById('feeModal').classList.add('show'); }); }
+        function saveFee() { const fee = parseFloat(document.getElementById('feeInput').value); if (!fee || fee <= 0) { toast('أدخل قيمة صحيحة', 'error'); return; } fetch('/Admin/UpdateMembershipFee', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fee: fee }) }).then(r => r.json()).then(data => { if (data.success) { document.getElementById('feeModal').classList.remove('show'); toast('✅ تم تحديث الرسوم إلى ' + fee + '₪', 'success'); } }); }
+        function resetAllMemberships() { if (!confirm('هل أنت متأكد؟')) return; fetch('/Admin/ResetAllMemberships', { method: 'POST', headers: { 'Content-Type': 'application/json' } }).then(r => r.json()).then(data => { if (data.success) { toast('✅ تم تصفير جميع العضويات', 'success'); setTimeout(() => location.reload(), 1500); } }); }
+        function checkEmail(email) { if (!email) return; fetch('/Admin/CheckClubEmail', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) }).then(r => r.json()).then(data => { document.getElementById('emailError').style.display = data.exists ? 'block' : 'none'; }); }
+        function checkPhone(phone) { if (!phone) return; fetch('/Admin/CheckClubPhone', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: phone }) }).then(r => r.json()).then(data => { document.getElementById('phoneError').style.display = data.exists ? 'block' : 'none'; }); }
+        function validateName(name) { const parts = name.trim().split(/\s+/); if (parts.length < 3) return "يجب إدخال الاسم الأول واسم الأب واسم العائلة"; const valid = /^[\u0600-\u06FF a-zA-Z\s]+$/; if (!valid.test(name)) return "الاسم يجب أن يحتوي على أحرف فقط"; return null; }
+        function checkName(input) {
+            const error = validateName(input.value); const span = input.nextElementSibling; if (span && span.classList.contains('name-error')) {
+                span.textContent = error || ''; span.style.display = error ? 'block' : 'none'; input.style.borderColor = error ? '#e74c3c'';'';}}
+                function loadNotifications() { fetch('/Admin/GetNotifications').then(r => r.json()).then(data => { const badge = document.getElementById('bellBadge'); const list = document.getElementById('notifList'); badge.textContent = data.unread; badge.style.display = data.unread > 0 ? 'flex' : 'none'; if (data.notifications.length === 0) { list.innerHTML = '<div style="padding:20px;text-align:center;color:#8b949e;font-size:13px;">لا توجد إشعارات</div>'; return; } list.innerHTML = data.notifications.map(n => `<div onclick="markRead(${n.id})" style="padding:12px 16px;border-bottom:1px solid #2d3f55;cursor:pointer;background:${n.isRead ? 'transparent' : 'rgba(74,144,226,0.08)'};"><div style="font-size:13px;font-weight:${n.isRead ? '400' : '700'};color:#f1f5f9;">${n.title}</div><div style="font-size:11px;color:#94a3b8;margin-top:3px;">${n.message}</div></div>`).join(''); }); }
+                function toggleNotifications() { const panel = document.getElementById('notifPanel'); panel.style.display = panel.style.display === 'none' ? 'block' : 'none'; if (panel.style.display === 'block') loadNotifications(); }
+                function markRead(id) { fetch('/Admin/MarkNotificationRead', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) }).then(() => loadNotifications()); }
+                function markAllRead() { fetch('/Admin/MarkAllRead', { method: 'POST' }).then(() => loadNotifications()); }
+                document.addEventListener('click', e => { if (!document.getElementById('bellBtn')?.contains(e.target) && !document.getElementById('notifPanel')?.contains(e.target)) { const panel = document.getElementById('notifPanel'); if (panel) panel.style.display = 'none'; } });
+                const translations = { ar: { sidebar_sub: "لوحة الإدارة", logout: "🚪 خروج", last_login: "🕐 آخر تسجيل دخول", stat1: "إجمالي الأندية", stat1s: "نادي مسجّل", stat2: "البطولات", stat3s: "بطولة مسجّلة", stat4: "عضويات غير مدفوعة", stat4s: "بانتظار الدفع", mem_total: "إجمالي الأندية", mem_paid: "مدفوعة", mem_unpaid: "غير مدفوعة" }, en: { sidebar_sub: "Admin Panel", logout: "🚪 Logout", last_login: "🕐 Last Login", stat1: "Total Clubs", stat1s: "registered clubs", stat2: "Tournaments", stat3s: "tournaments", stat4: "Unpaid Memberships", stat4s: "pending", mem_total: "Total Clubs", mem_paid: "Paid", mem_unpaid: "Unpaid" } };
+                let currentLang = localStorage.getItem("lang") || "ar";
+                function applyLang(lang) { const t = translations[lang]; const isAr = lang === "ar"; document.documentElement.lang = lang; document.documentElement.dir = isAr ? "rtl" : "ltr"; document.getElementById("langBtn").textContent = isAr ? "EN" : "عر"; document.querySelector(".sidebar-logo h2").textContent = isAr ? "منصة الكاراتيه الفلسطينية" : "Palestinian Karate Platform"; document.querySelector(".sidebar-logo span").textContent = t.sidebar_sub; document.querySelector(".logout-btn").textContent = t.logout; document.querySelector(".ll-title").textContent = t.last_login; localStorage.setItem("lang", lang); }
+                function toggleLang() { currentLang = currentLang === "ar" ? "en" : "ar"; applyLang(currentLang); }
+                document.addEventListener("DOMContentLoaded", () => { loadNotifications(); setInterval(loadNotifications, 60000); });
+                (function () { const s = document.createElement('script'); s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js'; s.onload = function () { const topClubs = [@if (ViewBag.TopClubs != null)
+        {
+            bool first = true; foreach (var c in ViewBag.TopClubs)
+            {
+                if (!first)
+                {
+                    <text>,</text>
+                }
+                <text>{name:"@c.ClubName",points:@c.TotalPoints}</text>
+                first = false;
+            }
+        }]; if (document.getElementById('clubsChart') && topClubs.length > 0) { new Chart(document.getElementById('clubsChart'), { type: 'bar', data: { labels: topClubs.map(c => c.name), datasets: [{ label: 'النقاط', data: topClubs.map(c => c.points), backgroundColor: 'rgba(59,130,246,0.7)', borderColor: '#3b82f6', borderWidth: 1, borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8' }, grid: { color: '#2d3f55' } }, y: { ticks: { color: '#94a3b8' }, grid: { color: '#2d3f55' } } } } }); } if (document.getElementById('membershipChart')) { new Chart(document.getElementById('membershipChart'), { type: 'pie', data: { labels: ['مدفوع', 'غير مدفوع'], datasets: [{ data: [@ViewBag.PaidCount, @ViewBag.UnpaidCount], backgroundColor: ['rgba(16,185,129,0.8)', 'rgba(239,68,68,0.8)'], borderColor: ['#10b981', '#ef4444'], borderWidth: 2 }] }, options: { plugins: { legend: { labels: { color: '#94a3b8' } } } } }); } document.head.appendChild(s); }; document.head.appendChild(s); })();
     </script>
 </body>
 </html>
