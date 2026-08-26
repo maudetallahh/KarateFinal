@@ -252,8 +252,18 @@
                                 <td>@category</td>
                                 <td>@(p.Weight > 0 ? p.Weight + " كغ" : "—")</td>
                                 <td>@p.Belt</td>
-                                <td>
+                               
+                                <td style="display:flex;gap:4px;flex-wrap:wrap;">
                                     <button class="btn btn-info btn-sm" onclick="showResults(@p.Id, '@p.Name')">📊 النتائج</button>
+                                    @if (p.NationalTeamStatus == "بانتظار الموافقة")
+                                    {
+                                        <button class="btn btn-success btn-sm" onclick="approveNational(@p.Id, true)">✅</button>
+                                        <button class="btn btn-danger btn-sm" onclick="approveNational(@p.Id, false)">❌</button>
+                                    }
+                                    else if (p.IsNationalTeam)
+                                    {
+                                        <span style="color:#10b981;font-size:11px;font-weight:700;">🏅 منتخب</span>
+                                    }
                                 </td>
                             </tr>
                             i++;
@@ -292,6 +302,11 @@
             }
         }
         ];
+        function approveNational(playerId, approved) {
+            if (!confirm(approved ? 'هل تريد قبول اللاعب في المنتخب؟' : 'هل تريد رفض الطلب؟')) return;
+            fetch('/Admin/ApproveNationalTeam', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId, approved }) })
+                .then(r => r.json()).then(data => { if (data.success) location.reload(); });
+        }
         function filter() {
             const q = document.getElementById('search').value.toLowerCase();
             const club = document.getElementById('clubFilter').value;
