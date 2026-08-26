@@ -766,6 +766,23 @@
             <button class="print-btn" onclick="window.print()">🖨️ طباعة البطاقة</button>
             <a href="/Club/Best" class="back-btn">← العودة لأفضل اللاعبين</a>
         </div>
+        @if (player?.NationalTeamStatus == null || player?.NationalTeamStatus == "مرفوض")
+
+        {
+            <button onclick="requestNationalTeam(@player?.Id)" style="padding:10px 20px;background:#4a90e2;color:white;border:none;border-radius:20px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;margin-top:10px;">🏅 طلب انضمام للمنتخب</button>
+        }
+
+        else if (player?.NationalTeamStatus == "بانتظار الموافقة")
+
+        {
+            <div style="padding:10px 20px;background:#fff3cd;color:#856404;border-radius:20px;font-size:13px;font-weight:700;margin-top:10px;">⏳ بانتظار موافقة الأدمن</div>
+        }
+
+        else if (player?.NationalTeamStatus == "موافق")
+
+        {
+            <div style="padding:10px 20px;background:#d4edda;color:#155724;border-radius:20px;font-size:13px;font-weight:700;margin-top:10px;">✅ لاعب منتخب وطني</div>
+        }
     </div>
 
     <footer>
@@ -833,6 +850,11 @@
         function togglePassView(id) {
             const el = document.getElementById(id);
             el.textContent = el.textContent === '••••••••' ? el.dataset.pass : '••••••••';
+        }
+        function requestNationalTeam(playerId) {
+            if (!confirm('هل تريد إرسال طلب انضمام هذا اللاعب للمنتخب الوطني؟')) return;
+            fetch('/Club/RequestNationalTeam', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId }) })
+                .then(r => r.json()).then(data => { if (data.success) { alert('✅ تم إرسال الطلب للإدارة'); location.reload(); } });
         }
         function saveNotes(playerId) {
             const notes = document.getElementById('playerNotes').value;
