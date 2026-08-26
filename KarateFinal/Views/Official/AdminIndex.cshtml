@@ -7,86 +7,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة المسؤولين</title>
+    <title>المسؤولون</title>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
-        body { background:#0f1923; color:#f1f5f9; min-height:100vh; padding:24px; }
-        h1 { font-size:20px; font-weight:800; margin-bottom:20px; }
-        .back-btn { display:inline-block; background:#1a2535; color:#94a3b8; border:1px solid #2d3f55; padding:8px 16px; border-radius:8px; text-decoration:none; font-size:12px; margin-bottom:20px; }
-        table { width:100%; border-collapse:collapse; background:#1a2535; border-radius:12px; overflow:hidden; }
-        thead th { padding:12px 16px; font-size:11px; color:#94a3b8; text-align:right; background:#223044; border-bottom:1px solid #2d3f55; }
-        tbody tr { border-bottom:1px solid #2d3f55; }
-        tbody tr:hover { background:rgba(255,255,255,0.03); }
-        tbody td { padding:12px 16px; font-size:12px; }
-        .badge { display:inline-block; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:700; }
-        .pending { background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); }
-        .approved { background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
-        .rejected { background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); }
-        .btn { padding:5px 12px; border:none; border-radius:6px; cursor:pointer; font-size:11px; font-weight:700; font-family:inherit; }
-        .btn-approve { background:rgba(16,185,129,0.2); color:#10b981; }
-        .btn-reject { background:rgba(239,68,68,0.2); color:#ef4444; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI',Tahoma,sans-serif;
+        }
+
+        body {
+            background: #0f1923;
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        nav {
+            background: #1a2535;
+            border-bottom: 2px solid #3b82f6;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: rgba(59,130,246,0.15);
+            color: #3b82f6;
+            border: 1px solid rgba(59,130,246,0.3);
+            padding: 7px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 24px auto;
+            padding: 0 20px;
+        }
+
+        .section-hd {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: none;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: #fff;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+        }
+
+        .table-wrap {
+            background: #1a2535;
+            border: 1px solid #2d3f55;
+            border-radius: 12px;
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        .tbl-toolbar {
+            padding: 12px 16px;
+            border-bottom: 1px solid #2d3f55;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+            .tbl-toolbar input, .tbl-toolbar select {
+                padding: 6px 10px;
+                border-radius: 6px;
+                border: 1px solid #2d3f55;
+                background: #0f1923;
+                color: #f1f5f9;
+                font-family: inherit;
+                font-size: 12px;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        thead th {
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-align: right;
+            background: #223044;
+            border-bottom: 1px solid #2d3f55;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #2d3f55;
+        }
+
+            tbody tr:hover {
+                background: rgba(255,255,255,0.03);
+            }
+
+        tbody td {
+            padding: 10px 14px;
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .badge-pending {
+            background: rgba(245,158,11,0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245,158,11,0.3);
+        }
+
+        .badge-approved {
+            background: rgba(16,185,129,0.15);
+            color: #10b981;
+            border: 1px solid rgba(16,185,129,0.3);
+        }
+
+        .badge-rejected {
+            background: rgba(239,68,68,0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239,68,68,0.3);
+        }
     </style>
 </head>
 <body>
-    <a href="/Admin/Index" class="back-btn">← العودة للأدمن</a>
-    <h1>👤 إدارة المسؤولين والكوادر الفنية</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>الاسم</th>
-                <th>النادي</th>
-                <th>الدور</th>
-                <th>العمر</th>
-                <th>الجنس</th>
-                <th>التصنيف</th>
-                <th>التخصص</th>
-                <th>الدرجة</th>
-                <th>الحالة</th>
-                <th>إجراءات</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (officials != null)
-            {
-                int i = 1;
-                foreach (var o in officials)
-                {
+    <nav>
+        <div class="nav-title">👤 المسؤولون والكوادر الفنية</div>
+        <a href="/Admin/Index" class="back-btn">← الرئيسية</a>
+    </nav>
+    <div class="container">
+        <div class="section-hd">
+            <h3>جميع المسؤولين</h3>
+        </div>
+        <div class="table-wrap">
+            <div class="tbl-toolbar">
+                <input type="text" id="search" placeholder="ابحث..." oninput="filter()">
+                <select id="roleFilter" onchange="filter()">
+                    <option value="">كل الأدوار</option>
+                    <option value="حكم">حكم</option>
+                    <option value="مدرب">مدرب</option>
+                    <option value="مساعد مدرب">مساعد مدرب</option>
+                    <option value="إداري">إداري</option>
+                </select>
+                <select id="statusFilter" onchange="filter()">
+                    <option value="">كل الحالات</option>
+                    <option value="بانتظار الموافقة">بانتظار الموافقة</option>
+                    <option value="موافق">موافق</option>
+                    <option value="مرفوض">مرفوض</option>
+                </select>
+                <span id="count" style="font-size:11px;color:#94a3b8;"></span>
+            </div>
+            <table>
+                <thead>
                     <tr>
-                        <td>@i</td>
-                        <td>@o.Name</td>
-                        <td>@o.ClubName</td>
-                        <td>@o.Role</td>
-                        <td>@o.Age</td>
-                        <td>@o.Gender</td>
-                        <td>@(o.Classification ?? "—")</td>
-                        <td>@(o.Specialty ?? "—")</td>
-                        <td>@(o.Degree ?? "—")</td>
-                        <td><span class="badge @(o.Status == "موافق" ? "approved" : o.Status == "مرفوض" ? "rejected" : "pending")">@o.Status</span></td>
-                        <td style="display:flex;gap:6px;">
-                            @if (o.Status == "بانتظار الموافقة")
-                            {
-                                <button class="btn btn-approve" onclick="approve(@o.Id)">✅ موافقة</button>
-                                <button class="btn btn-reject" onclick="reject(@o.Id)">❌ رفض</button>
-                            }
-                        </td>
+                        <th>#</th>
+                        <th>الاسم</th>
+                        <th>النادي</th>
+                        <th>الدور</th>
+                        <th>العمر</th>
+                        <th>الجنس</th>
+                        <th>التصنيف</th>
+                        <th>التخصص</th>
+                        <th>الدرجة</th>
+                        <th>اسم المستخدم</th>
+                        <th>الحالة</th>
+                        <th>إجراءات</th>
                     </tr>
-                    i++;
-                }
-            }
-        </tbody>
-    </table>
+                </thead>
+                <tbody id="body">
+                    @if (officials != null)
+                    {
+                        int i = 1;
+                        foreach (var o in officials)
+                        {
+                            <tr data-role="@o.Role" data-status="@o.Status">
+                                <td>@i</td>
+                                <td>@o.Name</td>
+                                <td>@o.ClubName</td>
+                                <td>@o.Role</td>
+                                <td>@o.Age</td>
+                                <td>@o.Gender</td>
+                                <td>@(o.Classification ?? "—")</td>
+                                <td>@(o.Specialty ?? "—")</td>
+                                <td>@(o.Degree ?? "—")</td>
+                                <td style="font-family:monospace;">@(o.Username ?? "—")</td>
+                                <td><span class="badge @(o.Status == "موافق" ? "badge-approved" : o.Status == "مرفوض" ? "badge-rejected" : "badge-pending")">@o.Status</span></td>
+                                <td style="display:flex;gap:4px;">
+                                    @if (o.Status == "بانتظار الموافقة")
+                                    {
+                                        <button class="btn btn-success btn-sm" onclick="approve(@o.Id)">✅</button>
+                                        <button class="btn btn-danger btn-sm" onclick="reject(@o.Id)">❌</button>
+                                    }
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
     <script>
+        function filter() {
+            const q = document.getElementById('search').value.toLowerCase();
+            const role = document.getElementById('roleFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const rows = document.querySelectorAll('#body tr');
+            let count = 0;
+            rows.forEach(row => {
+                const matchText = row.textContent.toLowerCase().includes(q);
+                const matchRole = !role || row.dataset.role === role;
+                const matchStatus = !status || row.dataset.status === status;
+                const show = matchText && matchRole && matchStatus;
+                row.style.display = show ? '' : 'none';
+                if (show) count++;
+            });
+            document.getElementById('count').textContent = count + ' مسؤول';
+        }
         function approve(id) {
-            fetch('/Official/Approve', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id, status:'موافق', note:''}) })
-                .then(r => r.json()).then(d => { if(d.success) location.reload(); });
+            fetch('/Official/Approve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status: 'موافق', note: '' }) })
+                .then(r => r.json()).then(d => { if (d.success) location.reload(); });
         }
         function reject(id) {
             const note = prompt('سبب الرفض:');
             if (note === null) return;
-            fetch('/Official/Approve', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id, status:'مرفوض', note}) })
-                .then(r => r.json()).then(d => { if(d.success) location.reload(); });
+            fetch('/Official/Approve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status: 'مرفوض', note }) })
+                .then(r => r.json()).then(d => { if (d.success) location.reload(); });
         }
+        filter();
     </script>
 </body>
 </html>
