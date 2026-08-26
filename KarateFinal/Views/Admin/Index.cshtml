@@ -777,13 +777,13 @@
             <div class="nav-item" onclick="window.location='/Admin/Profile'"><span class="icon">⚙️</span> معلوماتي</div>
             <div class="nav-item" onclick="window.location='/Admin/SiteSettings'"><span class="icon">🌐</span> معلومات الموقع</div>
             <div class="nav-label">إدارة</div>
-            <div class="nav-item" onclick="showPage('clubs',this);closeSidebar()"><span class="icon">🏟️</span> الأندية</div>
-            <div class="nav-item" onclick="showPage('players',this);closeSidebar()"><span class="icon">👥</span> اللاعبون</div>
-            <div class="nav-item" onclick="showPage('tournaments',this);closeSidebar()"><span class="icon">🏆</span> البطولات</div>
-            <div class="nav-item" onclick="showPage('participations',this);closeSidebar()"><span class="icon">🏅</span> المشاركات</div>
-            <div class="nav-item" onclick="showPage('memberships',this);closeSidebar()"><span class="icon">🪪</span> العضويات</div>
+            <div class="nav-item" onclick="window.location='/Admin/Index?page=clubs'"><span class="icon">🏟️</span> الأندية</div>
+            <div class="nav-item" onclick="window.location='/Admin/Index?page=players'"><span class="icon">👥</span> اللاعبون</div>
+            <div class="nav-item" onclick="window.location='/Admin/Index?page=tournaments'"><span class="icon">🏆</span> البطولات</div>
+            <div class="nav-item" onclick="window.location='/Admin/Index?page=participations'"><span class="icon">🏅</span> المشاركات</div>
+            <div class="nav-item" onclick="window.location='/Admin/Index?page=memberships'"><span class="icon">🪪</span> العضويات</div>
             <div class="nav-item" onclick="window.location='/Official/AdminIndex'"><span class="icon">👤</span> المسؤولون</div>
-            <div class="nav-item" onclick="showPage('archive',this);closeSidebar()"><span class="icon">🗃️</span> الأرشيف</div>
+            <div class="nav-item" onclick="window.location='/Admin/Index?page=archive'"><span class="icon">🗃️</span> الأرشيف</div>
         </nav>
         <div class="sidebar-footer">
             <div class="admin-chip">
@@ -1088,3 +1088,5 @@
     </script>
 </body>
 </html>
+
+
