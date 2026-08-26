@@ -20,6 +20,14 @@ namespace KarateFinal.Controllers
             ViewBag.Clubs = clubs;
             return View();
         }
+        public IActionResult Players()
+        {
+            var players = _context.Players.ToList();
+            var clubs = _context.Clubs.Where(c => !c.IsDeleted).ToList();
+            ViewBag.Players = players;
+            ViewBag.Clubs = clubs;
+            return View();
+        }
         public IActionResult Index()
         {
             ViewBag.ClubsCount = _context.Clubs.Count(c => !c.IsDeleted);
