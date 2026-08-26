@@ -2,44 +2,203 @@
     Layout = null;
     var players = ViewBag.Players as List<KarateFinal.Models.Player>;
     var clubs = ViewBag.Clubs as List<KarateFinal.Models.Club>;
+    var results = ViewBag.Results as List<KarateFinal.Models.PlayerResult>;
 }
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>اللاعبون</title>
+    <title>لاعبو المنتخب</title>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
-        body { background:#0f1923; color:#f1f5f9; min-height:100vh; }
-        nav { background:#1a2535; border-bottom:2px solid #3b82f6; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
-        .nav-title { font-size:16px; font-weight:700; }
-        .back-btn { background:rgba(59,130,246,0.15); color:#3b82f6; border:1px solid rgba(59,130,246,0.3); padding:7px 16px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:700; }
-        .container { max-width:1100px; margin:24px auto; padding:0 20px; }
-        .section-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px; }
-        .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; border:none; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; text-decoration:none; }
-        .btn-success { background:#10b981; color:#fff; }
-        .btn-info { background:rgba(59,130,246,0.15); color:#3b82f6; border:1px solid rgba(59,130,246,0.3); }
-        .btn-sm { padding:5px 10px; font-size:11px; border-radius:6px; }
-        .table-wrap { background:#1a2535; border:1px solid #2d3f55; border-radius:12px; overflow:hidden; overflow-x:auto; }
-        .tbl-toolbar { padding:12px 16px; border-bottom:1px solid #2d3f55; display:flex; gap:8px; align-items:center; }
-        .tbl-toolbar input, .tbl-toolbar select { padding:6px 10px; border-radius:6px; border:1px solid #2d3f55; background:#0f1923; color:#f1f5f9; font-family:inherit; font-size:12px; }
-        table { width:100%; border-collapse:collapse; min-width:500px; }
-        thead th { padding:10px 14px; font-size:11px; font-weight:700; color:#94a3b8; text-align:right; background:#223044; border-bottom:1px solid #2d3f55; }
-        tbody tr { border-bottom:1px solid #2d3f55; }
-        tbody tr:hover { background:rgba(255,255,255,0.03); }
-        tbody td { padding:10px 14px; font-size:12px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI',Tahoma,sans-serif;
+        }
+
+        body {
+            background: #0f1923;
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        nav {
+            background: #1a2535;
+            border-bottom: 2px solid #3b82f6;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: rgba(59,130,246,0.15);
+            color: #3b82f6;
+            border: 1px solid rgba(59,130,246,0.3);
+            padding: 7px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 24px auto;
+            padding: 0 20px;
+        }
+
+        .section-hd {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: none;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-info {
+            background: rgba(59,130,246,0.15);
+            color: #3b82f6;
+            border: 1px solid rgba(59,130,246,0.3);
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 6px;
+        }
+
+        .table-wrap {
+            background: #1a2535;
+            border: 1px solid #2d3f55;
+            border-radius: 12px;
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        .tbl-toolbar {
+            padding: 12px 16px;
+            border-bottom: 1px solid #2d3f55;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+            .tbl-toolbar input, .tbl-toolbar select {
+                padding: 6px 10px;
+                border-radius: 6px;
+                border: 1px solid #2d3f55;
+                background: #0f1923;
+                color: #f1f5f9;
+                font-family: inherit;
+                font-size: 12px;
+            }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        thead th {
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-align: right;
+            background: #223044;
+            border-bottom: 1px solid #2d3f55;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #2d3f55;
+        }
+
+            tbody tr:hover {
+                background: rgba(255,255,255,0.03);
+            }
+
+        tbody td {
+            padding: 10px 14px;
+            font-size: 12px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+            .modal-overlay.show {
+                display: flex;
+            }
+
+        .modal {
+            background: #1a2535;
+            border: 1px solid #2d3f55;
+            border-radius: 16px;
+            width: 540px;
+            max-width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #2d3f55;
+            font-size: 12px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #94a3b8;
+            padding: 20px;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
     <nav>
-        <div class="nav-title">👥 اللاعبون</div>
+        <div class="nav-title">🏅 لاعبو المنتخب الفلسطيني</div>
         <a href="/Admin/Index" class="back-btn">← الرئيسية</a>
     </nav>
     <div class="container">
         <div class="section-hd">
             <h3>جميع اللاعبين</h3>
-            <a href="/Admin/ExportPlayersExcel" class="btn btn-success">📊 Excel</a>
         </div>
         <div class="table-wrap">
             <div class="tbl-toolbar">
@@ -54,25 +213,48 @@
                         }
                     }
                 </select>
+                <select id="genderFilter" onchange="filter()">
+                    <option value="">الجنسين</option>
+                    <option value="ذكر">ذكور</option>
+                    <option value="أنثى">إناث</option>
+                </select>
                 <span id="count" style="font-size:11px;color:#94a3b8;"></span>
             </div>
             <table>
-                <thead><tr><th>#</th><th>الاسم</th><th>النادي</th><th>الحزام</th><th>العمر</th><th>الجنس</th><th>إجراءات</th></tr></thead>
-                <tbody id="playersBody">
-                    @if (players != null && clubs != null)
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>اسم اللاعب</th>
+                        <th>النادي</th>
+                        <th>العمر</th>
+                        <th>الجنس</th>
+                        <th>الفئة</th>
+                        <th>الوزن</th>
+                        <th>الحزام</th>
+                        <th>النتائج</th>
+                    </tr>
+                </thead>
+                <tbody id="body">
+                    @if (players != null)
                     {
                         int i = 1;
                         foreach (var p in players)
                         {
-                            var club = clubs.FirstOrDefault(c => c.Id == p.ClubId);
-                            <tr data-club="@p.ClubId">
+                            var club = clubs?.FirstOrDefault(c => c.Id == p.ClubId);
+                            var age = p.Age;
+                            var category = age <= 10 ? "أشبال" : age <= 11 ? "ناشئ أ" : age <= 13 ? "ناشئ ب" : age <= 15 ? "كادت" : age <= 17 ? "جونيور" : "سينيور";
+                            <tr data-club="@p.ClubId" data-gender="@p.Gender">
                                 <td>@i</td>
                                 <td>@p.Name</td>
                                 <td>@(club?.Name ?? "—")</td>
-                                <td>@p.Belt</td>
                                 <td>@p.Age</td>
                                 <td>@p.Gender</td>
-                                <td><a href="/Club/PlayerCard?id=@p.Id" class="btn btn-info btn-sm">🪪 البطاقة</a></td>
+                                <td>@category</td>
+                                <td>@(p.Weight > 0 ? p.Weight + " كغ" : "—")</td>
+                                <td>@p.Belt</td>
+                                <td>
+                                    <button class="btn btn-info btn-sm" onclick="showResults(@p.Id, '@p.Name')">📊 النتائج</button>
+                                </td>
                             </tr>
                             i++;
                         }
@@ -81,21 +263,55 @@
             </table>
         </div>
     </div>
+    <!-- Modal النتائج -->
+    <div class="modal-overlay" id="resultsModal">
+        <div class="modal">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h3 style="font-size:15px;font-weight:700;" id="resultsTitle">نتائج اللاعب</h3>
+                <button onclick="document.getElementById('resultsModal').classList.remove('show')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:20px;">×</button>
+            </div>
+            <div id="resultsContent"><p class="empty">لا توجد نتائج</p></div>
+            <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+                <button onclick="document.getElementById('resultsModal').classList.remove('show')" style="background:#2d3f55;color:#94a3b8;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">إغلاق</button>
+            </div>
+        </div>
+    </div>
     <script>
+        const allResults = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+            results?.Select(r => new { r.PlayerId, r.TournamentName, r.Rank, r.Points }) ?? new List<object>()
+            ));
         function filter() {
             const q = document.getElementById('search').value.toLowerCase();
             const club = document.getElementById('clubFilter').value;
-            const rows = document.querySelectorAll('#playersBody tr');
+            const gender = document.getElementById('genderFilter').value;
+            const rows = document.querySelectorAll('#body tr');
             let count = 0;
             rows.forEach(row => {
                 const matchText = row.textContent.toLowerCase().includes(q);
                 const matchClub = !club || row.dataset.club === club;
-                const show = matchText && matchClub;
+                const matchGender = !gender || row.dataset.gender === gender;
+                const show = matchText && matchClub && matchGender;
                 row.style.display = show ? '' : 'none';
                 if (show) count++;
             });
             document.getElementById('count').textContent = count + ' لاعب';
         }
+        function showResults(playerId, name) {
+            document.getElementById('resultsTitle').textContent = '📊 نتائج ' + name;
+            const playerResults = allResults.filter(r => r.playerId === playerId);
+            if (playerResults.length === 0) {
+                document.getElementById('resultsContent').innerHTML = '<p class="empty">لا توجد نتائج مسجّلة</p>';
+            } else {
+                let html = '';
+                playerResults.forEach(r => {
+                    const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : '🏅';
+                    html += `<div class="result-row"><span>${medal} ${r.tournamentName}</span><span>المركز ${r.rank} · ${r.points} ⭐</span></div>`;
+                });
+                document.getElementById('resultsContent').innerHTML = html;
+            }
+            document.getElementById('resultsModal').classList.add('show');
+        }
+        document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', function (e) { if (e.target === this) this.classList.remove('show'); }));
         filter();
     </script>
 </body>

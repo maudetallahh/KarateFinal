@@ -24,8 +24,10 @@ namespace KarateFinal.Controllers
         {
             var players = _context.Players.ToList();
             var clubs = _context.Clubs.Where(c => !c.IsDeleted).ToList();
+            var results = _context.PlayerResults.ToList();
             ViewBag.Players = players;
             ViewBag.Clubs = clubs;
+            ViewBag.Results = results;
             return View();
         }
         public IActionResult Tournaments()
