@@ -19,5 +19,7 @@
         public string Password { get; set; } = "";
         public string? Email { get; set; }
         public string? Notes { get; set; }
+        public bool IsNationalTeam { get; set; } = false;
+        public string? NationalTeamStatus { get; set; } // بانتظار الموافقة، موافق، مرفوض
     }
 }
