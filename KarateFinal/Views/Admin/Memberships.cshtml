@@ -1,0 +1,167 @@
+﻿@{
+    Layout = null;
+    var memberships = ViewBag.Memberships as List<KarateFinal.Models.Membership>;
+    var clubs = ViewBag.Clubs as List<KarateFinal.Models.Club>;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>العضويات</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#0f1923; color:#f1f5f9; min-height:100vh; }
+        nav { background:#1a2535; border-bottom:2px solid #3b82f6; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+        .nav-title { font-size:16px; font-weight:700; }
+        .back-btn { background:rgba(59,130,246,0.15); color:#3b82f6; border:1px solid rgba(59,130,246,0.3); padding:7px 16px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:700; }
+        .container { max-width:1100px; margin:24px auto; padding:0 20px; }
+        .section-hd { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:8px; }
+        .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:8px; border:none; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; text-decoration:none; }
+        .btn-danger { background:#ef4444; color:#fff; }
+        .btn-success { background:#10b981; color:#fff; }
+        .btn-info { background:rgba(59,130,246,0.15); color:#3b82f6; border:1px solid rgba(59,130,246,0.3); }
+        .btn-sm { padding:5px 10px; font-size:11px; border-radius:6px; }
+        .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px; }
+        .stat { background:#1a2535; border:1px solid #2d3f55; border-radius:12px; padding:16px; text-align:center; }
+        .stat .label { font-size:11px; color:#94a3b8; margin-bottom:6px; }
+        .stat .value { font-size:28px; font-weight:900; }
+        .table-wrap { background:#1a2535; border:1px solid #2d3f55; border-radius:12px; overflow:hidden; overflow-x:auto; }
+        .tbl-toolbar { padding:12px 16px; border-bottom:1px solid #2d3f55; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .tbl-toolbar input { padding:6px 10px; border-radius:6px; border:1px solid #2d3f55; background:#0f1923; color:#f1f5f9; font-family:inherit; font-size:12px; width:220px; }
+        table { width:100%; border-collapse:collapse; min-width:500px; }
+        thead th { padding:10px 14px; font-size:11px; font-weight:700; color:#94a3b8; text-align:right; background:#223044; border-bottom:1px solid #2d3f55; }
+        tbody tr { border-bottom:1px solid #2d3f55; }
+        tbody tr:hover { background:rgba(255,255,255,0.03); }
+        tbody td { padding:10px 14px; font-size:12px; }
+        .badge { display:inline-block; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:700; }
+        .badge-paid { background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); }
+        .badge-unpaid { background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); }
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center; padding:16px; }
+        .modal-overlay.show { display:flex; }
+        .modal { background:#1a2535; border:1px solid #2d3f55; border-radius:16px; width:400px; max-width:100%; padding:24px; }
+        .form-group { display:flex; flex-direction:column; gap:5px; margin-bottom:14px; }
+        .form-group label { font-size:11px; font-weight:700; color:#94a3b8; }
+        .form-group input { padding:8px 10px; border-radius:8px; border:1px solid #2d3f55; background:#0f1923; color:#f1f5f9; font-family:inherit; font-size:12px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-title">🪪 العضويات</div>
+        <a href="/Admin/Index" class="back-btn">← الرئيسية</a>
+    </nav>
+    <div class="container">
+        <div class="section-hd">
+            <h3>إدارة العضويات</h3>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <button class="btn btn-info" onclick="openFeeModal()">⚙️ تعديل الرسوم</button>
+                <button class="btn btn-danger" onclick="resetAll()">🔄 سنة جديدة</button>
+            </div>
+        </div>
+        <div class="stats">
+            <div class="stat"><div class="label">إجمالي الأندية</div><div class="value">@(memberships?.Count ?? 0)</div></div>
+            <div class="stat"><div class="label">مدفوعة</div><div class="value" style="color:#10b981;">@ViewBag.PaidCount</div></div>
+            <div class="stat"><div class="label">غير مدفوعة</div><div class="value" style="color:#f59e0b;">@ViewBag.UnpaidCount</div></div>
+        </div>
+        <div class="table-wrap">
+            <div class="tbl-toolbar">
+                <input type="text" id="search" placeholder="ابحث..." oninput="filter()">
+                <span id="count" style="font-size:11px;color:#94a3b8;"></span>
+            </div>
+            <table>
+                <thead><tr><th>#</th><th>النادي</th><th>السنة</th><th>الرسوم</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                <tbody id="body">
+                    @if (memberships != null)
+                    {
+                        int i = 1;
+                        foreach (var m in memberships)
+                        {
+                            var club = clubs?.FirstOrDefault(c => c.Id == m.ClubId);
+                            var isPaid = m.Status == "مدفوع";
+                            <tr id="row-@m.Id" style="@(isPaid ? "background:rgba(16,185,129,0.05);" : "")">
+                                <td>@i</td>
+                                <td>@(club?.Name ?? "—")</td>
+                                <td>@m.Year</td>
+                                <td>@m.Fee ₪</td>
+                                <td><span class="badge @(isPaid ? "badge-paid" : "badge-unpaid")" id="badge-@m.Id">@m.Status</span></td>
+                                <td style="display:flex;gap:4px;">
+                                    @if (!isPaid)
+                                    {
+                                        <button class="btn btn-success btn-sm" id="btn-@m.Id" onclick="toggleMem(@m.Id)">✅ دفع</button>
+                                    }
+                                    <button class="btn btn-info btn-sm" onclick="openClubFee(@m.Id, @m.Fee)">💰</button>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-overlay" id="feeModal">
+        <div class="modal">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h3 style="font-size:15px;font-weight:700;">⚙️ تعديل رسوم العضوية</h3>
+                <button onclick="document.getElementById('feeModal').classList.remove('show')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:20px;">×</button>
+            </div>
+            <div class="form-group"><label>الرسوم (₪)</label><input type="number" id="feeInput" min="0"></div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button onclick="document.getElementById('feeModal').classList.remove('show')" style="background:#2d3f55;color:#94a3b8;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">إلغاء</button>
+                <button class="btn btn-success" onclick="saveFee()">💾 حفظ</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="clubFeeModal">
+        <div class="modal">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <h3 style="font-size:15px;font-weight:700;">💰 تعديل رسوم النادي</h3>
+                <button onclick="document.getElementById('clubFeeModal').classList.remove('show')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:20px;">×</button>
+            </div>
+            <input type="hidden" id="clubFeeId">
+            <div class="form-group"><label>الرسوم الجديدة (₪)</label><input type="number" id="clubFeeInput" min="0"></div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button onclick="document.getElementById('clubFeeModal').classList.remove('show')" style="background:#2d3f55;color:#94a3b8;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;">إلغاء</button>
+                <button class="btn btn-success" onclick="saveClubFee()">💾 حفظ</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function filter() {
+            const q = document.getElementById('search').value.toLowerCase();
+            const rows = document.querySelectorAll('#body tr');
+            let count = 0;
+            rows.forEach(row => { const show = row.textContent.toLowerCase().includes(q); row.style.display = show ? '' : 'none'; if(show) count++; });
+            document.getElementById('count').textContent = count + ' عضوية';
+        }
+        function toggleMem(id) {
+            fetch('/Admin/ToggleMembership', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ membershipId: id }) })
+                .then(r => r.json()).then(data => { if (data.success) location.reload(); });
+        }
+        function openFeeModal() {
+            fetch('/Admin/GetMembershipFee').then(r => r.json()).then(data => { document.getElementById('feeInput').value = data.fee; document.getElementById('feeModal').classList.add('show'); });
+        }
+        function saveFee() {
+            const fee = parseFloat(document.getElementById('feeInput').value);
+            if (!fee || fee <= 0) { alert('أدخل قيمة صحيحة'); return; }
+            fetch('/Admin/UpdateMembershipFee', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fee }) })
+                .then(r => r.json()).then(data => { if (data.success) { document.getElementById('feeModal').classList.remove('show'); location.reload(); } });
+        }
+        function openClubFee(id, fee) { document.getElementById('clubFeeId').value = id; document.getElementById('clubFeeInput').value = fee; document.getElementById('clubFeeModal').classList.add('show'); }
+        function saveClubFee() {
+            const id = parseInt(document.getElementById('clubFeeId').value);
+            const fee = parseFloat(document.getElementById('clubFeeInput').value);
+            if (!fee || fee <= 0) { alert('أدخل قيمة صحيحة'); return; }
+            fetch('/Admin/UpdateClubMembershipFee', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ membershipId: id, fee }) })
+                .then(r => r.json()).then(data => { if (data.success) { document.getElementById('clubFeeModal').classList.remove('show'); location.reload(); } });
+        }
+        function resetAll() {
+            if (!confirm('هل أنت متأكد من تصفير جميع العضويات؟')) return;
+            fetch('/Admin/ResetAllMemberships', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+                .then(r => r.json()).then(data => { if (data.success) location.reload(); });
+        }
+        document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('show'); }));
+        filter();
+    </script>
+</body>
+</html>

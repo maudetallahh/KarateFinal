@@ -34,6 +34,26 @@ namespace KarateFinal.Controllers
             ViewBag.Tournaments = tournaments;
             return View();
         }
+        public IActionResult Participations()
+        {
+            var participations = _context.Participations.ToList();
+            var clubs = _context.Clubs.Where(c => !c.IsDeleted).ToList();
+            var tournaments = _context.Tournaments.ToList();
+            ViewBag.Participations = participations;
+            ViewBag.Clubs = clubs;
+            ViewBag.Tournaments = tournaments;
+            return View();
+        }
+        public IActionResult Memberships()
+        {
+            var memberships = _context.Memberships.ToList();
+            var clubs = _context.Clubs.Where(c => !c.IsDeleted).ToList();
+            ViewBag.Memberships = memberships;
+            ViewBag.Clubs = clubs;
+            ViewBag.PaidCount = memberships.Count(m => m.Status == "مدفوع");
+            ViewBag.UnpaidCount = memberships.Count(m => m.Status == "غير مدفوع");
+            return View();
+        }
         public IActionResult Index()
         {
             ViewBag.ClubsCount = _context.Clubs.Count(c => !c.IsDeleted);

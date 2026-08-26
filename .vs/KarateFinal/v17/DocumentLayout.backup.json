@@ -3,8 +3,44 @@
   "WorkspaceRootPath": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\admin\\memberships.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\views\\admin\\memberships.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\admin\\participations.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\views\\admin\\participations.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\admin\\tournaments.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\views\\admin\\tournaments.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\admin\\players.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\views\\admin\\players.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\admin\\clubs.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\views\\admin\\clubs.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\club\\clubs.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\views\\club\\clubs.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\club\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\views\\club\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -25,10 +61,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\controllers\\officialcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\controllers\\officialcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\official\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
@@ -55,10 +87,6 @@
       "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\views\\club\\dashboard.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\club\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\views\\club\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|c:\\users\\me\\desktop\\database\\karatefinal\\karatefinal\\views\\official\\adminindex.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{35AA6DF4-D105-470E-85D6-A1ED3A2AFE9B}|KarateFinal\\KarateFinal.csproj|solutionrelative:karatefinal\\views\\official\\adminindex.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
@@ -70,11 +98,102 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "Memberships.cshtml",
+              "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Memberships.cshtml",
+              "RelativeDocumentMoniker": "KarateFinal\\Views\\Admin\\Memberships.cshtml",
+              "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Memberships.cshtml",
+              "RelativeToolTip": "KarateFinal\\Views\\Admin\\Memberships.cshtml",
+              "ViewState": "AgIAAHEAAAAAAAAAAAAgwKYAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-08-26T19:50:08.945Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Participations.cshtml",
+              "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Participations.cshtml",
+              "RelativeDocumentMoniker": "KarateFinal\\Views\\Admin\\Participations.cshtml",
+              "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Participations.cshtml",
+              "RelativeToolTip": "KarateFinal\\Views\\Admin\\Participations.cshtml",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAgwGQAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-08-26T19:48:44.588Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Tournaments.cshtml",
+              "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Tournaments.cshtml",
+              "RelativeDocumentMoniker": "KarateFinal\\Views\\Admin\\Tournaments.cshtml",
+              "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Tournaments.cshtml",
+              "RelativeToolTip": "KarateFinal\\Views\\Admin\\Tournaments.cshtml",
+              "ViewState": "AgIAAI8AAAAAAAAAAAAgwKYAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-08-26T19:46:10.67Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Players.cshtml",
+              "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Players.cshtml",
+              "RelativeDocumentMoniker": "KarateFinal\\Views\\Admin\\Players.cshtml",
+              "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Players.cshtml",
+              "RelativeToolTip": "KarateFinal\\Views\\Admin\\Players.cshtml",
+              "ViewState": "AgIAADAAAAAAAAAAAAAgwGUAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-08-26T19:44:43.264Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Clubs.cshtml",
+              "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Clubs.cshtml",
+              "RelativeDocumentMoniker": "KarateFinal\\Views\\Admin\\Clubs.cshtml",
+              "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Clubs.cshtml",
+              "RelativeToolTip": "KarateFinal\\Views\\Admin\\Clubs.cshtml",
+              "ViewState": "AgIAAGUAAAAAAAAAAAAgwJsAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-08-26T19:41:57.381Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Clubs.cshtml",
+              "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Club\\Clubs.cshtml",
+              "RelativeDocumentMoniker": "KarateFinal\\Views\\Club\\Clubs.cshtml",
+              "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Club\\Clubs.cshtml",
+              "RelativeToolTip": "KarateFinal\\Views\\Club\\Clubs.cshtml",
+              "ViewState": "AgIAACEAAAAAAAAAAAAAAEwAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-08-26T19:34:39.496Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "KarateFinal\\Controllers\\AdminController.cs",
+              "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "KarateFinal\\Controllers\\AdminController.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAAAuwDcAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-26T19:33:25.623Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "Login.cshtml",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Account\\Login.cshtml",
               "RelativeDocumentMoniker": "KarateFinal\\Views\\Account\\Login.cshtml",
@@ -87,7 +206,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 12,
               "Title": "AddPlayer.cshtml",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Club\\AddPlayer.cshtml",
               "RelativeDocumentMoniker": "KarateFinal\\Views\\Club\\AddPlayer.cshtml",
@@ -100,7 +219,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 11,
               "Title": "_NavLogo.cshtml",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Shared\\_NavLogo.cshtml",
               "RelativeDocumentMoniker": "KarateFinal\\Views\\Shared\\_NavLogo.cshtml",
@@ -113,20 +232,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Index.cshtml",
               "RelativeDocumentMoniker": "KarateFinal\\Views\\Admin\\Index.cshtml",
               "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Index.cshtml",
               "RelativeToolTip": "KarateFinal\\Views\\Admin\\Index.cshtml",
-              "ViewState": "AgIAAN4DAAAAAAAAAAAmwP0DAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAAPACAAAAAAAAAAAAABQDAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-08-24T18:30:06.655Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 13,
               "Title": "SiteSettings.cshtml",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\SiteSettings.cshtml",
               "RelativeDocumentMoniker": "KarateFinal\\Views\\Admin\\SiteSettings.cshtml",
@@ -139,19 +258,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "MyProfile.cshtml",
-              "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Official\\MyProfile.cshtml",
-              "RelativeDocumentMoniker": "KarateFinal\\Views\\Official\\MyProfile.cshtml",
-              "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Official\\MyProfile.cshtml",
-              "RelativeToolTip": "KarateFinal\\Views\\Official\\MyProfile.cshtml",
-              "ViewState": "AgIAACEAAAAAAAAAAAAswEwAAAAHAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-08-24T20:36:08.178Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 16,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Program.cs",
               "RelativeDocumentMoniker": "KarateFinal\\Program.cs",
@@ -163,7 +270,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 15,
               "Title": "Dashboard.cshtml",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Official\\Dashboard.cshtml",
               "RelativeDocumentMoniker": "KarateFinal\\Views\\Official\\Dashboard.cshtml",
@@ -175,7 +282,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "AccountController.cs",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "KarateFinal\\Controllers\\AccountController.cs",
@@ -183,11 +290,37 @@
               "RelativeToolTip": "KarateFinal\\Controllers\\AccountController.cs",
               "ViewState": "AgIAAG4AAAAAAAAAAAAIwJYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-24T20:32:29.139Z"
+              "WhenOpened": "2026-08-24T20:32:29.139Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Club\\Index.cshtml",
+              "RelativeDocumentMoniker": "KarateFinal\\Views\\Club\\Index.cshtml",
+              "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Club\\Index.cshtml",
+              "RelativeToolTip": "KarateFinal\\Views\\Club\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-08-24T18:31:21.804Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "MyProfile.cshtml",
+              "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Official\\MyProfile.cshtml",
+              "RelativeDocumentMoniker": "KarateFinal\\Views\\Official\\MyProfile.cshtml",
+              "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Official\\MyProfile.cshtml",
+              "RelativeToolTip": "KarateFinal\\Views\\Official\\MyProfile.cshtml",
+              "ViewState": "AgIAACEAAAAAAAAAAAAswEwAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-08-24T20:36:08.178Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
               "Title": "OfficialController.cs",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Controllers\\OfficialController.cs",
               "RelativeDocumentMoniker": "KarateFinal\\Controllers\\OfficialController.cs",
@@ -200,7 +333,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 19,
               "Title": "Official.cs",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Models\\Official.cs",
               "RelativeDocumentMoniker": "KarateFinal\\Models\\Official.cs",
@@ -212,7 +345,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 17,
               "Title": "License.cshtml",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Official\\License.cshtml",
               "RelativeDocumentMoniker": "KarateFinal\\Views\\Official\\License.cshtml",
@@ -224,19 +357,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Club\\Index.cshtml",
-              "RelativeDocumentMoniker": "KarateFinal\\Views\\Club\\Index.cshtml",
-              "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Club\\Index.cshtml",
-              "RelativeToolTip": "KarateFinal\\Views\\Club\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-08-24T18:31:21.804Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 20,
               "Title": "Dashboard.cshtml",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Club\\Dashboard.cshtml",
               "RelativeDocumentMoniker": "KarateFinal\\Views\\Club\\Dashboard.cshtml",
@@ -249,7 +370,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 21,
               "Title": "AdminIndex.cshtml",
               "DocumentMoniker": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Official\\AdminIndex.cshtml",
               "RelativeDocumentMoniker": "KarateFinal\\Views\\Official\\AdminIndex.cshtml",
