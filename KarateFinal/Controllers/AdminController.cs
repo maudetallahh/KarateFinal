@@ -144,6 +144,34 @@ namespace KarateFinal.Controllers
             }
             return RedirectToAction("Index");
         }
+        [HttpPost]
+        public IActionResult ApproveNationalTeam([FromBody] ApproveNationalTeamRequest request)
+        {
+            var player = _context.Players.Find(request.PlayerId);
+            if (player == null) return Json(new { success = false });
+            player.NationalTeamStatus = request.Approved ? "موافق" : "مرفوض";
+            player.IsNationalTeam = request.Approved;
+            _context.SaveChanges();
+            // إشعار للنادي
+            var club = _context.Clubs.Find(player.ClubId);
+            var notification = new KarateFinal.Models.AppNotification
+            {
+                Title = request.Approved ? "تم قبول اللاعب في المنتخب" : "تم رفض طلب المنتخب",
+                Message = request.Approved ? $"تم قبول اللاعب {player.Name} في قائمة المنتخب الوطني" : $"تم رفض إضافة اللاعب {player.Name} لقائمة المنتخب",
+                TargetRole = "Club",
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false
+            };
+            _context.Notifications.Add(notification);
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        public class ApproveNationalTeamRequest
+        {
+            public int PlayerId { get; set; }
+            public bool Approved { get; set; }
+        }
         public IActionResult DeleteClub(int id)
         {
             var club = _context.Clubs.Find(id);

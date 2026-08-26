@@ -39,7 +39,31 @@ namespace KarateFinal.Controllers
             ViewBag.LastLogin = user?.LastLogin?.ToString("yyyy/MM/dd HH:mm") ?? "---";
             return View();
         }
+        [HttpPost]
+        public IActionResult RequestNationalTeam([FromBody] NationalTeamRequest request)
+        {
+            var player = _context.Players.Find(request.PlayerId);
+            if (player == null) return Json(new { success = false });
+            player.NationalTeamStatus = "بانتظار الموافقة";
+            _context.SaveChanges();
+            // إشعار للأدمن
+            var notification = new KarateFinal.Models.AppNotification
+            {
+                Title = "طلب انضمام للمنتخب",
+                Message = $"طلب النادي إضافة اللاعب {player.Name} لقائمة المنتخب",
+                TargetRole = "Admin",
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false
+            };
+            _context.Notifications.Add(notification);
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
 
+        public class NationalTeamRequest
+        {
+            public int PlayerId { get; set; }
+        }
         public IActionResult AddPlayer()
         {
             var username = HttpContext.Session.GetString("Username");
