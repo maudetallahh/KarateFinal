@@ -137,6 +137,22 @@ namespace KarateFinal.Controllers
 
             return Json(new { success = true });
         }
+        public IActionResult Entitlements()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.PlayerId == null) return RedirectToAction("Login", "Account");
+
+            var player = _context.Players.Find(user.PlayerId.Value);
+            var memberships = _context.PlayerMemberships
+                .Where(m => m.PlayerId == user.PlayerId.Value)
+                .OrderByDescending(m => m.Year)
+                .ToList();
+
+            ViewBag.Player = player;
+            ViewBag.Memberships = memberships;
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> AddInjury([FromForm] PlayerInjuryRequest request)
         {

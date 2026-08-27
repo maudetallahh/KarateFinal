@@ -1,0 +1,90 @@
+﻿@{
+    Layout = null;
+    var player = ViewBag.Player as KarateFinal.Models.Player;
+    var memberships = ViewBag.Memberships as List<KarateFinal.Models.PlayerMembership>;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاستحقاقات</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#eef3f8; min-height:100vh; }
+        nav { background:#1e2a38; color:white; padding:14px 24px; display:flex; justify-content:center; align-items:center; border-bottom:4px solid #4a90e2; position:sticky; top:0; z-index:100; }
+        .nav-header { text-align:center; }
+        .nav-header h1 { font-size:20px; color:#fff; }
+        nav ul { position:absolute; left:24px; display:flex; list-style:none; gap:16px; }
+        nav ul li a { color:white; text-decoration:none; font-size:13px; font-weight:bold; }
+        nav ul li a:hover { color:#81b3f7; }
+        .logout-btn { background:#2c3e50; padding:7px 18px; border-radius:5px; }
+        .container { max-width:800px; margin:30px auto; padding:0 20px; }
+        .page-title { font-size:22px; font-weight:800; color:#1e2a38; margin-bottom:20px; }
+        .summary-card { background:white; border-radius:16px; padding:24px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.06); display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+        .summary-item { text-align:center; }
+        .summary-item .value { font-size:28px; font-weight:900; color:#1e2a38; }
+        .summary-item .label { font-size:11px; color:#888; margin-top:4px; }
+        .year-section { background:white; border-radius:16px; padding:20px; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+        .year-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+        .year-title { font-size:16px; font-weight:700; color:#1e2a38; }
+        .months-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; }
+        .month-btn { padding:8px 4px; border-radius:8px; text-align:center; font-size:11px; font-weight:700; border:2px solid; cursor:default; }
+        .month-paid { background:#d4edda; color:#155724; border-color:#28a745; }
+        .month-unpaid { background:#f8f9fa; color:#888; border-color:#dee2e6; }
+        .debt-badge { background:#fee2e2; color:#da3633; border:1px solid #fca5a5; padding:6px 12px; border-radius:8px; font-size:12px; font-weight:700; }
+        .empty { text-align:center; color:#888; padding:40px; font-size:14px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header"><h1>منصة الكاراتيه الفلسطينية</h1></div>
+        <ul>
+            <li><a href="/Player/Dashboard">← الرئيسية</a></li>
+            <li><a href="/Account/Logout" class="logout-btn">تسجيل خروج</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="page-title">📋 سجل الاستحقاقات</div>
+        @if (memberships != null && memberships.Any())
+        {
+            var totalFee = memberships.Sum(m => m.MonthlyFee * 12);
+            var totalPaid = memberships.Sum(m => (m.PaidMonths ?? "").Split(',').Count(p => !string.IsNullOrEmpty(p)) * m.MonthlyFee);
+            var totalDebt = memberships.Sum(m => m.OldDebt);
+            <div class="summary-card">
+                <div class="summary-item"><div class="value">@totalFee ₪</div><div class="label">إجمالي الاشتراكات</div></div>
+                <div class="summary-item"><div class="value" style="color:#27ae60;">@totalPaid ₪</div><div class="label">المدفوع</div></div>
+                <div class="summary-item"><div class="value" style="color:#da3633;">@(totalFee - totalPaid + totalDebt) ₪</div><div class="label">المتبقي</div></div>
+            </div>
+            var months = new[] { "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر" };
+            foreach (var m in memberships)
+            {
+                var paidList = (m.PaidMonths ?? "").Split(',').Where(p => !string.IsNullOrEmpty(p)).ToList();
+                <div class="year-section">
+                    <div class="year-header">
+                        <div class="year-title">📅 سنة @m.Year</div>
+                        @if (m.OldDebt > 0)
+                        {
+                            <span class="debt-badge">⚠️ دين سابق: @m.OldDebt ₪</span>
+                        }
+                    </div>
+                    <div class="months-grid">
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            var isPaid = paidList.Contains(i.ToString());
+                            <div class="month-btn @(isPaid ? "month-paid" : "month-unpaid")">
+                                @months[i - 1]
+                                <div>@(isPaid ? "✅" : "—")</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty">لا توجد استحقاقات مسجّلة بعد</div>
+        }
+    </div>
+</body>
+</html>
