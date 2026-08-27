@@ -25,6 +25,7 @@ namespace KarateFinal.Data
         public DbSet<SiteSetting> SiteSettings { get; set; }
         public DbSet<AppNotification> Notifications { get; set; }
         public DbSet<Official> Officials { get; set; }
+        public DbSet<PaymentReceipt> PaymentReceipts { get; set; }
     }
 
 }
