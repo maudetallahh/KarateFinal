@@ -107,7 +107,7 @@ namespace KarateFinal.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, error = ex.Message });
+                return Json(new { success = false, error = ex.InnerException?.Message ?? ex.Message });
             }
         }
 
