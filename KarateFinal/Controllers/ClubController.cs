@@ -62,51 +62,53 @@ namespace KarateFinal.Controllers
         [HttpPost]
         public IActionResult AddPaymentReceipt([FromBody] AddReceiptRequest request)
         {
-            var username = HttpContext.Session.GetString("Username");
-            var user = _context.Users.FirstOrDefault(u => u.Username == username);
-            if (user?.ClubId == null) return Json(new { success = false });
-
-            var player = _context.Players.Find(request.PlayerId);
-            if (player == null) return Json(new { success = false });
-
-            var membership = _context.PlayerMemberships
-                .FirstOrDefault(m => m.PlayerId == request.PlayerId && m.Year == request.Year);
-
-            if (membership == null)
+            try
             {
-                membership = new PlayerMembership
+                var username = HttpContext.Session.GetString("Username");
+                var user = _context.Users.FirstOrDefault(u => u.Username == username);
+                if (user?.ClubId == null) return Json(new { success = false, error = "no club" });
+                var player = _context.Players.Find(request.PlayerId);
+                if (player == null) return Json(new { success = false, error = "no player" });
+                var membership = _context.PlayerMemberships
+                    .FirstOrDefault(m => m.PlayerId == request.PlayerId && m.Year == request.Year);
+                if (membership == null)
+                {
+                    membership = new PlayerMembership
+                    {
+                        PlayerId = request.PlayerId,
+                        ClubId = user.ClubId.Value,
+                        Year = request.Year,
+                        MonthlyFee = request.Amount,
+                        PaidMonths = request.Month.ToString()
+                    };
+                    _context.PlayerMemberships.Add(membership);
+                }
+                else
+                {
+                    var paidList = (membership.PaidMonths ?? "").Split(',').Where(p => !string.IsNullOrEmpty(p)).ToList();
+                    if (!paidList.Contains(request.Month.ToString()))
+                        paidList.Add(request.Month.ToString());
+                    membership.PaidMonths = string.Join(",", paidList);
+                }
+                var receipt = new KarateFinal.Models.PaymentReceipt
                 {
                     PlayerId = request.PlayerId,
                     ClubId = user.ClubId.Value,
                     Year = request.Year,
-                    MonthlyFee = request.Amount,
-                    PaidMonths = request.Month.ToString()
+                    Month = request.Month,
+                    Amount = request.Amount,
+                    PaidDate = DateTime.UtcNow,
+                    Notes = request.Notes,
+                    CreatedBy = username ?? ""
                 };
-                _context.PlayerMemberships.Add(membership);
+                _context.PaymentReceipts.Add(receipt);
+                _context.SaveChanges();
+                return Json(new { success = true, receiptId = receipt.Id });
             }
-            else
+            catch (Exception ex)
             {
-                var paidList = (membership.PaidMonths ?? "").Split(',').Where(p => !string.IsNullOrEmpty(p)).ToList();
-                if (!paidList.Contains(request.Month.ToString()))
-                    paidList.Add(request.Month.ToString());
-                membership.PaidMonths = string.Join(",", paidList);
+                return Json(new { success = false, error = ex.Message });
             }
-
-            var receipt = new KarateFinal.Models.PaymentReceipt
-            {
-                PlayerId = request.PlayerId,
-                ClubId = user.ClubId.Value,
-                Year = request.Year,
-                Month = request.Month,
-                Amount = request.Amount,
-                PaidDate = DateTime.UtcNow,
-                Notes = request.Notes,
-                CreatedBy = username ?? ""
-            };
-            _context.PaymentReceipts.Add(receipt);
-            _context.SaveChanges();
-
-            return Json(new { success = true, receiptId = receipt.Id });
         }
 
         public class AddReceiptRequest
