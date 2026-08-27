@@ -265,15 +265,12 @@ namespace KarateFinal.Controllers
 
         public IActionResult PlayerCard(int id)
         {
-            var receipts = _context.PaymentReceipts
-    .Where(r => r.PlayerId == id)
-    .OrderByDescending(r => r.PaidDate)
-    .ToList();
-            ViewBag.Receipts = receipts;
             var player = _context.Players.Find(id);
             if (player == null) return RedirectToAction("Best");
+
             var participations = _context.Participations.Where(p => p.ClubId == player.ClubId).Include(p => p.Tournament).ToList();
             var playerResults = _context.PlayerResults.Where(r => r.PlayerId == id).ToList();
+
             ViewBag.Player = player;
             ViewBag.Participations = participations;
             ViewBag.PlayerResults = playerResults;
@@ -287,6 +284,16 @@ namespace KarateFinal.Controllers
                 .Include(r => r.Tournament)
                 .Select(r => new { r.TournamentId, r.Tournament.Title })
                 .ToList();
+
+            try
+            {
+                ViewBag.Receipts = _context.PaymentReceipts
+                    .Where(r => r.PlayerId == id)
+                    .OrderByDescending(r => r.PaidDate)
+                    .ToList();
+            }
+            catch { ViewBag.Receipts = null; }
+
             return View();
         }
 
