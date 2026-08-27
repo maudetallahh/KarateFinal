@@ -751,7 +751,77 @@
                 }
             </div>
         </div>
+        <!-- وصل الدفع -->
+        <div class="category-label">💰 تسجيل دفعة شهرية</div>
+        <div style="width:100%;max-width:600px;background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+                <div>
+                    <div style="font-size:11px;color:#888;margin-bottom:4px;">السنة</div>
+                    <select id="receiptYear" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                        @for (int y = DateTime.Now.Year; y >= DateTime.Now.Year - 3; y--)
 
+                        {
+                            <option value="@y">@y</option>
+                        }
+                    </select>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#888;margin-bottom:4px;">الشهر</div>
+                    <select id="receiptMonth" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                        <option value="1">يناير</option>
+                        <option value="2">فبراير</option>
+                        <option value="3">مارس</option>
+                        <option value="4">أبريل</option>
+                        <option value="5">مايو</option>
+                        <option value="6">يونيو</option>
+                        <option value="7">يوليو</option>
+                        <option value="8">أغسطس</option>
+                        <option value="9">سبتمبر</option>
+                        <option value="10">أكتوبر</option>
+                        <option value="11">نوفمبر</option>
+                        <option value="12">ديسمبر</option>
+                    </select>
+                </div>
+                <div>
+                    <div style="font-size:11px;color:#888;margin-bottom:4px;">المبلغ (₪)</div>
+                    <input type="number" id="receiptAmount" value="150" min="0" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+                </div>
+            </div>
+            <div style="margin-bottom:14px;">
+                <div style="font-size:11px;color:#888;margin-bottom:4px;">ملاحظات</div>
+                <input type="text" id="receiptNotes" placeholder="ملاحظات اختيارية..." style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
+            </div>
+            <button onclick="addPayment(@player?.Id)" style="width:100%;padding:12px;background:#27ae60;color:white;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">💰 تسجيل الدفعة وطباعة الوصل</button>
+        </div>
+
+        <!-- سجل الوصولات -->
+        <div class="category-label">🧾 سجل الوصولات</div>
+        <div style="width:100%;max-width:600px;background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);" id="receiptsSection">
+            @if (ViewBag.Receipts != null)
+            {
+
+                foreach (var r in ViewBag.Receipts)
+
+                {
+
+                    var monthNames = new[] { "", "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر" };
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f5f5f5;">
+                        <div>
+                            <div style="font-size:13px;font-weight:700;">@monthNames[r.Month] @r.Year</div>
+                            <div style="font-size:11px;color:#888;">@r.PaidDate.ToString("yyyy/MM/dd")</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <span style="font-size:14px;font-weight:700;color:#27ae60;">@r.Amount ₪</span>
+                            <button onclick="printReceipt(@r.Id,'@player?.Name','@monthNames[r.Month] @r.Year',@r.Amount)" style="padding:4px 10px;background:#4a90e2;color:white;border:none;border-radius:6px;cursor:pointer;font-size:11px;">🖨️</button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div style="text-align:center;color:#888;font-size:13px;">لا توجد وصولات بعد</div>
+            }
+        </div>
         <!-- ملاحظات اللاعب -->
         <div class="category-label">📝 ملاحظات</div>
         <div style="width:100%;max-width:600px;background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
@@ -809,6 +879,38 @@
     </footer>
 
     <script>
+        function addPayment(playerId) {
+            const year = parseInt(document.getElementById('receiptYear').value);
+            const month = parseInt(document.getElementById('receiptMonth').value);
+            const amount = parseFloat(document.getElementById('receiptAmount').value);
+            const notes = document.getElementById('receiptNotes').value;
+            if (!amount || amount <= 0) { alert('أدخل مبلغاً صحيحاً'); return; }
+            fetch('/Club/AddPaymentReceipt', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ playerId, year, month, amount, notes }) })
+                .then(r => r.json()).then(data => {
+                    if (data.success) { location.reload(); }
+                });
+        }
+
+        function printReceipt(id, playerName, period, amount) {
+            const w = window.open('', '_blank');
+            w.document.write(`
+                <html dir="rtl"><head><meta charset="UTF-8"><title>وصل دفع</title>
+                <style>body{font-family:'Segoe UI',sans-serif;padding:40px;max-width:400px;margin:0 auto;border:2px solid #1e2a38;border-radius:12px;}
+                h2{color:#1e2a38;text-align:center;margin-bottom:20px;}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:14px;}
+                .total{font-size:18px;font-weight:700;color:#27ae60;}.footer{text-align:center;margin-top:20px;font-size:11px;color:#888;}</style></head>
+                <body>
+                <h2>🥋 وصل دفع اشتراك</h2>
+                <h3 style="text-align:center;color:#4a90e2;margin-bottom:20px;">منصة الكاراتيه الفلسطينية</h3>
+                <div class="row"><span>اسم اللاعب</span><span>${playerName}</span></div>
+                <div class="row"><span>الفترة</span><span>${period}</span></div>
+                <div class="row"><span>رقم الوصل</span><span>${id}</span></div>
+                <div class="row"><span>التاريخ</span><span>${new Date().toLocaleDateString('ar-SA')}</span></div>
+                <div class="row total"><span>المبلغ المدفوع</span><span>${amount} ₪</span></div>
+                <div class="footer">شكراً لدفعكم في الوقت المحدد 🏅</div>
+                <script>window.print();window.close();<\/script>
+                </body></html>
+            `);
+        }
         document.getElementById('hamburger').addEventListener('click', function () { this.classList.toggle('open'); document.getElementById('mobileMenu').classList.toggle('show'); });
         function resetPassword(playerId) {
             if (!confirm('هل أنت متأكد من إعادة تعيين كلمة المرور؟')) return;
