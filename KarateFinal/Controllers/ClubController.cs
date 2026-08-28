@@ -214,6 +214,13 @@ namespace KarateFinal.Controllers
             ViewBag.Club = club;
             return View();
         }
+        public IActionResult GetReceiptTemplate()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            var club = _context.Clubs.Find(user?.ClubId);
+            return Json(new { template = club?.ReceiptTemplate ?? "" });
+        }
 
         [HttpPost]
         public IActionResult SaveReceiptTemplate([FromBody] ReceiptTemplateRequest request)
