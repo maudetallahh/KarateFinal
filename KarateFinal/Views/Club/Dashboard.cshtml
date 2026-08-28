@@ -652,9 +652,9 @@
 
         .dropdown-menu {
             display: none;
-            position: fixed;
-            top: 70px;
-            left: 24px;
+            position: absolute;
+            top: 40px;
+            left: 0;
             background: #1e2a38;
             border: 1px solid #4a90e2;
             border-radius: 8px;
@@ -698,11 +698,11 @@
         <a href="/Home/Index">
             @await Html.PartialAsync("_NavLogo")
         </a>
-        <ul>
-            <li><a href="/Club/Dashboard">الرئيسية</a></li>
-            <li><a href="/Club/Tournaments">البطولات</a></li>
-            <li class="dropdown">
-                <a href="#" onclick="return false;">☰ القائمة</a>
+        <div style="position:absolute;left:24px;display:flex;align-items:center;gap:16px;">
+            <a href="/Club/Dashboard" style="color:white;text-decoration:none;font-size:14px;font-weight:bold;">الرئيسية</a>
+            <a href="/Club/Tournaments" style="color:white;text-decoration:none;font-size:14px;font-weight:bold;">البطولات</a>
+            <div class="dropdown">
+                <a href="#" onclick="return false;" style="color:white;text-decoration:none;font-size:14px;font-weight:bold;">☰ القائمة</a>
                 <div class="dropdown-menu">
                     <a href="/Club/Profile">⚙️ معلوماتي</a>
                     <a href="/Club/Messages">💬 المراسلات</a>
@@ -710,8 +710,8 @@
                     <a href="/Club/PrintPlayers">🖨️ طباعة اللاعبين</a>
                     <a href="/Account/Logout">🚪 تسجيل خروج</a>
                 </div>
-            </li>
-        </ul>
+            </div>
+        </div>
         <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
         <button onclick="toggleLang()" id="langBtn" class="lang-btn">EN</button>
     </nav>
