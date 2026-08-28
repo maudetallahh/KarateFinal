@@ -182,7 +182,7 @@
         <div class="container" style="margin:0;padding:0;">
             <div class="card">
                 <div class="card-title">✏️ تعديل القالب</div>
-                <textarea class="editor" id="templateEditor" oninput="updatePreview()">@(club?.ReceiptTemplate ?? defaultTemplate())</textarea>
+                <textarea class="editor" id="templateEditor" oninput="updatePreview()">@(club?.ReceiptTemplate ?? "")</textarea>
                 <button class="save-btn" onclick="saveTemplate()">💾 حفظ القالب</button>
             </div>
             <div class="card">
