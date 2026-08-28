@@ -182,8 +182,10 @@
             const age = document.getElementById('ageFilter').value;
 
             let filtered = players.filter(p => {
-                if (gender !== 'all' && p.gender !== gender) return false;
-                if (type !== 'all' && p.type !== type) return false;
+                const decodedGender = document.createElement('textarea');
+                decodedGender.innerHTML = p.gender;
+                const genderDecoded = decodedGender.value;
+                if (gender !== 'all' && genderDecoded !== gender) return false; if (type !== 'all' && p.type !== type) return false;
                 if (age !== 'all' && p.category !== age) return false;
                 return true;
             });
