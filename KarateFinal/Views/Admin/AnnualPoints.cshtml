@@ -47,8 +47,14 @@
             <select id="yearSelect">
                 @for (int y = DateTime.Now.Year; y >= 2020; y--)
                 {
-                    <option value="@y" @(y == year ? "selected" : "")>@y</option>
-                }
+                    @if (y == year)
+                    {
+                        <option value="@y" selected>@y</option>
+                    }
+                    else
+                    {
+                        <option value="@y">@y</option>
+                    }                }
             </select>
             <button onclick="window.location='/Admin/AnnualPoints?year='+document.getElementById('yearSelect').value">عرض</button>
             <button onclick="window.print()" style="background:#10b981;">🖨️ طباعة</button>
