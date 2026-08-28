@@ -945,7 +945,7 @@
             if (!tag) return;
             if (count === 12) { tag.className = 'paid-tag allpaid'; tag.textContent = 'مدفوع كامل ✓'; }
             else if (count === 0) { tag.className = 'paid-tag unpaid'; tag.textContent = 'غير مدفوع'; }
-            else { tag.className = 'paid-tag partial'; tag.textContent = `مدفوع ${count}/12 شهر`; }
+            else { tag.className = 'paid-tag partial'; tag.textContent = 'مدفوع ' + count + '/12 شهر'; }
         }
         function openEdit(membershipId, monthly, old) {
             document.getElementById('editMembershipId').value = membershipId;
