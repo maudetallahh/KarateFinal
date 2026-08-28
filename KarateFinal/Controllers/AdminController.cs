@@ -295,6 +295,39 @@ namespace KarateFinal.Controllers
             });
             return Json(result);
         }
+        public IActionResult AnnualPoints(int? year)
+        {
+            int selectedYear = year ?? DateTime.Now.Year;
+            var tournaments = _context.Tournaments
+                .Where(t => t.Date.Year == selectedYear)
+                .Select(t => t.Id)
+                .ToList();
+            var points = _context.Participations
+                .Where(p => tournaments.Contains(p.TournamentId))
+                .GroupBy(p => p.ClubId)
+                .Select(g => new {
+                    ClubId = g.Key,
+                    TotalPoints = g.Sum(p => p.Points),
+                    Gold = g.Count(p => p.Rank == 1),
+                    Silver = g.Count(p => p.Rank == 2),
+                    Bronze = g.Count(p => p.Rank == 3),
+                    Tournaments = g.Count()
+                })
+                .OrderByDescending(x => x.TotalPoints)
+                .ToList()
+                .Select(x => new {
+                    x.ClubId,
+                    ClubName = _context.Clubs.FirstOrDefault(c => c.Id == x.ClubId)?.Name ?? "—",
+                    x.TotalPoints,
+                    x.Gold,
+                    x.Silver,
+                    x.Bronze,
+                    x.Tournaments
+                }).ToList();
+            ViewBag.Points = points;
+            ViewBag.Year = selectedYear;
+            return View();
+        }
         public IActionResult GetApprovedClubs(int tournamentId)
         {
             var clubIds = _context.TournamentRegistrations.Where(r => r.TournamentId == tournamentId).Select(r => r.ClubId).ToList();
