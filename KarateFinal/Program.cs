@@ -29,19 +29,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<KarateContext>();
     db.Database.Migrate();
-    db.Database.ExecuteSqlRaw(@"
-    CREATE TABLE IF NOT EXISTS ""PaymentReceipts"" (
-        ""Id"" SERIAL PRIMARY KEY,
-        ""PlayerId"" INT NOT NULL,
-        ""ClubId"" INT NOT NULL,
-        ""Year"" INT NOT NULL,
-        ""Month"" INT NOT NULL,
-        ""Amount"" DECIMAL NOT NULL,
-        ""PaidDate"" TIMESTAMP NOT NULL,
-        ""Notes"" TEXT,
-        ""CreatedBy"" TEXT NOT NULL DEFAULT ''
-    )
-");
+    
     SeedData.Initialize(scope.ServiceProvider);
 }
 app.UseStaticFiles();
