@@ -1,0 +1,249 @@
+﻿@{
+    Layout = null;
+    var tournament = ViewBag.Tournament as KarateFinal.Models.Tournament;
+    var registrations = ViewBag.Registrations as List<KarateFinal.Models.TournamentPlayerRequest>;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>القرعة — @tournament?.Title</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#0f1923; color:#f1f5f9; min-height:100vh; }
+        nav { background:#1a2535; border-bottom:2px solid #3b82f6; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+        .nav-title { font-size:16px; font-weight:700; }
+        .back-btn { background:rgba(59,130,246,0.15); color:#3b82f6; border:1px solid rgba(59,130,246,0.3); padding:7px 16px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:700; }
+        .container { max-width:1100px; margin:24px auto; padding:0 20px; }
+        .tournament-title { font-size:20px; font-weight:800; margin-bottom:20px; text-align:center; color:#4a90e2; }
+        .controls { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; justify-content:center; }
+        .btn { display:inline-flex; align-items:center; gap:6px; padding:10px 20px; border-radius:8px; border:none; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; text-decoration:none; }
+        .btn-primary { background:#3b82f6; color:#fff; }
+        .btn-success { background:#10b981; color:#fff; }
+        .btn-warning { background:#f59e0b; color:#fff; }
+        .filter-section { background:#1a2535; border:1px solid #2d3f55; border-radius:12px; padding:16px; margin-bottom:20px; }
+        .filter-row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+        .filter-row label { font-size:12px; color:#94a3b8; font-weight:700; }
+        .filter-row select { padding:6px 10px; border-radius:6px; border:1px solid #2d3f55; background:#0f1923; color:#f1f5f9; font-family:inherit; font-size:12px; }
+        .draw-section { margin-bottom:30px; }
+        .draw-section-title { font-size:15px; font-weight:700; color:#f59e0b; margin-bottom:14px; padding:10px 16px; background:#223044; border-radius:8px; border-right:4px solid #f59e0b; }
+        .matches-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px; }
+        .match-card { background:#1a2535; border:1px solid #2d3f55; border-radius:12px; overflow:hidden; }
+        .match-header { padding:8px 14px; background:#223044; font-size:11px; color:#94a3b8; display:flex; justify-content:space-between; }
+        .player-row { padding:12px 14px; display:flex; align-items:center; gap:10px; }
+        .player-row.red { background:rgba(239,68,68,0.15); border-right:4px solid #ef4444; }
+        .player-row.blue { background:rgba(59,130,246,0.15); border-right:4px solid #3b82f6; }
+        .player-name { font-size:14px; font-weight:700; }
+        .player-club { font-size:11px; color:#94a3b8; margin-top:2px; }
+        .color-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+        .red-dot { background:#ef4444; }
+        .blue-dot { background:#3b82f6; }
+        .vs-divider { text-align:center; padding:4px; font-size:11px; color:#94a3b8; font-weight:700; background:#1a2535; }
+        .empty-msg { text-align:center; color:#94a3b8; padding:40px; font-size:14px; }
+        .stats-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+        .stat-box { background:#1a2535; border:1px solid #2d3f55; border-radius:10px; padding:14px; text-align:center; }
+        .stat-box .num { font-size:24px; font-weight:900; color:#4a90e2; }
+        .stat-box .lbl { font-size:11px; color:#94a3b8; margin-top:4px; }
+        @@media print {
+            nav, .controls, .filter-section, .stats-bar { display:none !important; }
+            body { background:white; color:black; }
+            .match-card { border:1px solid #ccc; break-inside:avoid; }
+            .player-row.red { background:#ffeeee; }
+            .player-row.blue { background:#eeeeff; }
+            .draw-section-title { background:#f0f0f0; color:#333; border-right:4px solid #999; }
+            .match-header { background:#f5f5f5; color:#666; }
+            .player-name { color:black; }
+            .player-club { color:#666; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-title">🎲 القرعة التلقائية</div>
+        <a href="/Admin/Tournaments" class="back-btn">← البطولات</a>
+    </nav>
+    <div class="container">
+        <div class="tournament-title">🏆 @tournament?.Title</div>
+        <div class="stats-bar">
+            <div class="stat-box"><div class="num" id="totalPlayers">0</div><div class="lbl">إجمالي اللاعبين</div></div>
+            <div class="stat-box"><div class="num" id="totalMales">0</div><div class="lbl">ذكور</div></div>
+            <div class="stat-box"><div class="num" id="totalFemales">0</div><div class="lbl">إناث</div></div>
+            <div class="stat-box"><div class="num" id="totalMatches">0</div><div class="lbl">مباريات</div></div>
+        </div>
+        <div class="filter-section">
+            <div class="filter-row">
+                <label>الجنس:</label>
+                <select id="genderFilter" onchange="generateDraw()">
+                    <option value="all">الكل</option>
+                    <option value="ذكر">ذكور</option>
+                    <option value="أنثى">إناث</option>
+                </select>
+                <label>النوع:</label>
+                <select id="typeFilter" onchange="generateDraw()">
+                    <option value="all">الكل</option>
+                    <option value="كاتا">كاتا</option>
+                    <option value="كوميتيه">كوميتيه</option>
+                </select>
+                <label>الفئة العمرية:</label>
+                <select id="ageFilter" onchange="generateDraw()">
+                    <option value="all">الكل</option>
+                    <option value="أشبال">أشبال (-10)</option>
+                    <option value="ناشئ أ">ناشئ أ (10-11)</option>
+                    <option value="ناشئ ب">ناشئ ب (12-13)</option>
+                    <option value="كادت">كادت (14-15)</option>
+                    <option value="جونيور">جونيور (16-17)</option>
+                    <option value="سينيور">سينيور (+18)</option>
+                </select>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn btn-primary" onclick="generateDraw()">🎲 توليد القرعة</button>
+            <button class="btn btn-warning" onclick="shuffleDraw()">🔀 إعادة الخلط</button>
+            <button class="btn btn-success" onclick="window.print()">🖨️ طباعة القرعة</button>
+        </div>
+        <div id="drawContainer"></div>
+    </div>
+    <script>
+        const players = [
+        @if (registrations != null)
+        {
+            bool first = true;
+            foreach (var r in registrations)
+            {
+                if (!first)
+                {
+                    <text>,</text>
+                }
+                var age = r.Player?.Age ?? 0;
+                var category = age <= 10 ? "أشبال" : age <= 11 ? "ناشئ أ" : age <= 13 ? "ناشئ ب" : age <= 15 ? "كادت" : age <= 17 ? "جونيور" : "سينيور";
+                var clubName = "";
+                <text>{
+                                id: @r.PlayerId,
+                                name: "@(r.Player?.Name ?? "")",
+                                gender: "@(r.Player?.Gender ?? "")",
+                                age: @(r.Player?.Age ?? 0),
+                                weight: @(r.Player?.Weight ?? 0),
+                                category: "@category",
+                                club: "@clubName",
+                                type: "كاتا"
+                            }</text>
+                first = false;
+            }
+        }
+        ];
+
+        function getAgeCategory(age) {
+            if (age <= 10) return "أشبال";
+            if (age <= 11) return "ناشئ أ";
+            if (age <= 13) return "ناشئ ب";
+            if (age <= 15) return "كادت";
+            if (age <= 17) return "جونيور";
+            return "سينيور";
+        }
+
+        function getWeightCategory(gender, age, weight) {
+            if (weight <= 0) return "غير محدد";
+            const sAge = age <= 10 ? "أشبال" : age <= 11 ? "ناشئ أ" : age <= 13 ? "ناشئ ب" : age <= 15 ? "كادت" : age <= 17 ? "جونيور" : "سينيور";
+            const cats = {
+                "ذكر": {
+                    "أشبال": [25,30,35,9999],
+                    "ناشئ أ": [30,35,40,9999],
+                    "ناشئ ب": [40,45,50,9999],
+                    "كادت": [52,57,63,70,9999],
+                    "جونيور": [55,61,68,76,9999],
+                    "سينيور": [60,67,75,84,9999]
+                },
+                "أنثى": {
+                    "كادت": [47,54,61,9999],
+                    "جونيور": [48,53,59,66,9999],
+                    "سينيور": [50,55,61,68,9999]
+                }
+            };
+            const limits = cats[gender]?.[sAge];
+            if (!limits) return "مفتوح";
+            for (let limit of limits) {
+                if (weight <= limit) return limit === 9999 ? "+" + limits[limits.length-2] : "-" + limit;
+            }
+            return "مفتوح";
+        }
+
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function generateDraw() {
+            const gender = document.getElementById('genderFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const age = document.getElementById('ageFilter').value;
+
+            let filtered = players.filter(p => {
+                if (gender !== 'all' && p.gender !== gender) return false;
+                if (type !== 'all' && p.type !== type) return false;
+                if (age !== 'all' && p.category !== age) return false;
+                return true;
+            });
+
+            document.getElementById('totalPlayers').textContent = players.length;
+            document.getElementById('totalMales').textContent = players.filter(p => p.gender === 'ذكر').length;
+            document.getElementById('totalFemales').textContent = players.filter(p => p.gender === 'أنثى').length;
+
+            // تجميع حسب الجنس والفئة والنوع والوزن
+            const groups = {};
+            filtered.forEach(p => {
+                const weightCat = p.type === 'كوميتيه' ? getWeightCategory(p.gender, p.age, p.weight) : 'كاتا';
+                const key = p.gender + '|' + p.category + '|' + p.type + '|' + weightCat;
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(p);
+            });
+
+            let totalMatches = 0;
+            let html = '';
+
+            Object.keys(groups).sort().forEach(key => {
+                const parts = key.split('|');
+                const groupPlayers = shuffle([...groups[key]]);
+                const matches = [];
+                for (let i = 0; i < groupPlayers.length - 1; i += 2) {
+                    matches.push([groupPlayers[i], groupPlayers[i+1]]);
+                }
+                if (groupPlayers.length % 2 !== 0) {
+                    matches.push([groupPlayers[groupPlayers.length-1], null]);
+                }
+                totalMatches += matches.length;
+
+                html += '<div class="draw-section">';
+                html += '<div class="draw-section-title">🥋 ' + parts[0] + ' — ' + parts[2] + ' — ' + parts[1] + (parts[2] === 'كوميتيه' ? ' — ' + parts[3] + ' كغ' : '') + ' (' + groupPlayers.length + ' لاعب)</div>';
+                html += '<div class="matches-grid">';
+
+                matches.forEach((match, idx) => {
+                    html += '<div class="match-card">';
+                    html += '<div class="match-header"><span>مباراة #' + (idx+1) + '</span><span>' + parts[1] + '</span></div>';
+                    html += '<div class="player-row red"><div class="color-dot red-dot"></div><div><div class="player-name">' + match[0].name + '</div><div class="player-club">' + match[0].club + '</div></div></div>';
+                    html += '<div class="vs-divider">VS</div>';
+                    if (match[1]) {
+                        html += '<div class="player-row blue"><div class="color-dot blue-dot"></div><div><div class="player-name">' + match[1].name + '</div><div class="player-club">' + match[1].club + '</div></div></div>';
+                    } else {
+                        html += '<div class="player-row blue"><div class="color-dot blue-dot"></div><div><div class="player-name" style="color:#94a3b8;">BYE — عبور تلقائي</div></div></div>';
+                    }
+                    html += '</div>';
+                });
+
+                html += '</div></div>';
+            });
+
+            if (!html) html = '<div class="empty-msg">لا يوجد لاعبون مطابقون للفلتر</div>';
+            document.getElementById('drawContainer').innerHTML = html;
+            document.getElementById('totalMatches').textContent = totalMatches;
+        }
+
+        function shuffleDraw() { generateDraw(); }
+
+        document.addEventListener('DOMContentLoaded', generateDraw);
+    </script>
+</body>
+</html>
