@@ -9,5 +9,7 @@
         public decimal Fee { get; set; }
         public string Status { get; set; } = "غير مدفوع";
         public DateTime? PaidDate { get; set; }
+        public string? PaymentMethod { get; set; } // Online, Manual
+        public string? TransactionId { get; set; }
     }
 }
