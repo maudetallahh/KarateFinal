@@ -1,0 +1,83 @@
+﻿@{
+    Layout = null;
+    var messages = ViewBag.Messages as List<KarateFinal.Models.Message>;
+    int clubId = ViewBag.ClubId;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المراسلات</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#eef3f8; min-height:100vh; display:flex; flex-direction:column; }
+        nav { background:#1e2a38; color:white; padding:14px 24px; display:flex; justify-content:center; align-items:center; border-bottom:4px solid #4a90e2; position:sticky; top:0; z-index:100; }
+        .nav-header { text-align:center; }
+        .nav-header h1 { font-size:20px; color:#fff; }
+        nav ul { position:absolute; left:24px; display:flex; list-style:none; gap:16px; }
+        nav ul li a { color:white; text-decoration:none; font-size:13px; font-weight:bold; }
+        .logout-btn { background:#2c3e50; padding:7px 18px; border-radius:5px; }
+        .chat-container { max-width:700px; margin:24px auto; padding:0 20px; flex:1; display:flex; flex-direction:column; }
+        .chat-title { font-size:20px; font-weight:800; color:#1e2a38; margin-bottom:16px; }
+        .messages-box { background:white; border-radius:16px; padding:20px; flex:1; min-height:400px; max-height:500px; overflow-y:auto; margin-bottom:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); display:flex; flex-direction:column; gap:12px; }
+        .msg { max-width:75%; padding:12px 16px; border-radius:12px; font-size:13px; line-height:1.5; }
+        .msg.club { background:#4a90e2; color:white; align-self:flex-end; border-radius:12px 12px 4px 12px; }
+        .msg.admin { background:#f0f4f8; color:#1e2a38; align-self:flex-start; border-radius:12px 12px 12px 4px; }
+        .msg-time { font-size:10px; opacity:0.7; margin-top:4px; }
+        .msg-sender { font-size:10px; font-weight:700; margin-bottom:4px; opacity:0.8; }
+        .input-area { background:white; border-radius:16px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06); display:flex; gap:10px; }
+        .input-area textarea { flex:1; padding:10px; border:1px solid #ddd; border-radius:8px; font-family:inherit; font-size:13px; resize:none; height:60px; }
+        .send-btn { padding:10px 20px; background:#4a90e2; color:white; border:none; border-radius:8px; cursor:pointer; font-family:inherit; font-size:13px; font-weight:700; }
+        .empty { text-align:center; color:#888; padding:40px; font-size:14px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header"><h1>منصة الكاراتيه الفلسطينية</h1></div>
+        <ul>
+            <li><a href="/Club/Dashboard">← الرئيسية</a></li>
+            <li><a href="/Account/Logout" class="logout-btn">تسجيل خروج</a></li>
+        </ul>
+    </nav>
+    <div class="chat-container">
+        <div class="chat-title">💬 المراسلات مع الإدارة</div>
+        <div class="messages-box" id="messagesBox">
+            @if (messages != null && messages.Any())
+            {
+                foreach (var m in messages)
+                {
+                    var isClub = m.SenderRole == "Club";
+                    <div class="msg @(isClub ? "club" : "admin")">
+                        <div class="msg-sender">@(isClub ? "أنت" : "الإدارة")</div>
+                        @m.Content
+                        <div class="msg-time">@m.SentAt.ToString("yyyy/MM/dd HH:mm")</div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty">لا توجد رسائل بعد — ابدأ المحادثة مع الإدارة</div>
+            }
+        </div>
+        <div class="input-area">
+            <textarea id="msgInput" placeholder="اكتب رسالتك هنا..."></textarea>
+            <button class="send-btn" onclick="sendMessage()">إرسال ✉️</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById('messagesBox').scrollTop = document.getElementById('messagesBox').scrollHeight;
+        function sendMessage() {
+            const content = document.getElementById('msgInput').value.trim();
+            if (!content) return;
+            fetch('/Club/SendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content }) })
+                .then(r => r.json()).then(data => {
+                    if (data.success) { document.getElementById('msgInput').value = ''; location.reload(); }
+                });
+        }
+        document.getElementById('msgInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+    </script>
+</body>
+</html>

@@ -295,6 +295,40 @@ namespace KarateFinal.Controllers
             });
             return Json(result);
         }
+        public IActionResult ClubMessages(int clubId)
+        {
+            var messages = _context.Messages
+                .Where(m => m.SenderClubId == clubId || m.ReceiverClubId == clubId)
+                .OrderBy(m => m.SentAt)
+                .ToList();
+            var club = _context.Clubs.Find(clubId);
+            ViewBag.Messages = messages;
+            ViewBag.Club = club;
+            ViewBag.ClubId = clubId;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ReplyMessage([FromBody] ReplyMessageRequest request)
+        {
+            _context.Messages.Add(new KarateFinal.Models.Message
+            {
+                SenderRole = "Admin",
+                ReceiverRole = "Club",
+                ReceiverClubId = request.ClubId,
+                Content = request.Content,
+                SentAt = DateTime.UtcNow,
+                IsRead = false
+            });
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        public class ReplyMessageRequest
+        {
+            public int ClubId { get; set; }
+            public string Content { get; set; } = "";
+        }
         public IActionResult AnnualPoints(int? year)
         {
             int selectedYear = year ?? DateTime.Now.Year;

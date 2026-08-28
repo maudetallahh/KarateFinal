@@ -393,7 +393,43 @@ namespace KarateFinal.Controllers
             }
             return Json(new { success = true, paidMonths = membership.PaidMonths });
         }
+        public IActionResult Messages()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return RedirectToAction("Login", "Account");
+            var messages = _context.Messages
+                .Where(m => m.SenderClubId == user.ClubId.Value || m.ReceiverClubId == user.ClubId.Value)
+                .OrderBy(m => m.SentAt)
+                .ToList();
+            ViewBag.Messages = messages;
+            ViewBag.ClubId = user.ClubId.Value;
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult SendMessage([FromBody] SendMessageRequest request)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return Json(new { success = false });
+            _context.Messages.Add(new KarateFinal.Models.Message
+            {
+                SenderRole = "Club",
+                SenderClubId = user.ClubId.Value,
+                ReceiverRole = "Admin",
+                Content = request.Content,
+                SentAt = DateTime.UtcNow,
+                IsRead = false
+            });
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        public class SendMessageRequest
+        {
+            public string Content { get; set; } = "";
+        }
         [HttpPost]
         public IActionResult UpdateFee([FromBody] UpdateFeeRequest request)
         {
