@@ -651,9 +651,9 @@
 
         .dropdown-menu {
             display: none;
-            position: fixed;
-            top: 70px;
-            left: 24px;
+            position: absolute;
+            top: 100%;
+            right: 0;
             background: #1e2a38;
             border: 1px solid #4a90e2;
             border-radius: 8px;
@@ -674,6 +674,7 @@
             font-size: 13px;
             border-bottom: 1px solid #2d3f55;
             display: block;
+            white-space: nowrap;
         }
 
             .dropdown-menu a:hover {
@@ -697,16 +698,16 @@
             @await Html.PartialAsync("_NavLogo")
         </a>
         <ul>
+            <li><a href="/Club/Dashboard">الرئيسية</a></li>
+            <li><a href="/Club/Tournaments">البطولات</a></li>
             <li class="dropdown">
-                <a href="#" onclick="return false;">القائمة ▾</a>
+                <a href="#" onclick="return false;">☰ القائمة</a>
                 <div class="dropdown-menu">
-                    <a href="/Club/Dashboard">قائمة المهام </a>
-                    <a href="/Club/Tournaments">البطولات</a>
                     <a href="/Club/Profile">⚙️ معلوماتي</a>
                     <a href="/Club/Messages">💬 المراسلات</a>
                     <a href="/Club/Payment">💳 دفع العضوية</a>
                     <a href="/Club/PrintPlayers">🖨️ طباعة اللاعبين</a>
-                    <a href="/Account/Logout" class="login-btn">تسجيل خروج</a>
+                    <a href="/Account/Logout">🚪 تسجيل خروج</a>
                 </div>
             </li>
         </ul>
