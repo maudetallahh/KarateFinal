@@ -512,7 +512,7 @@
     <nav>
         <div class="nav-header">
             <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
-                <img src="@logoPath" alt="لوغو" style="position:absolute;right:260px;width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid #4a90e2;">                <div>
+                @await Html.PartialAsync("_NavLogo")         <div>
                     <h1>@siteName</h1>
                     <h2>@slogan</h2>
                 </div>

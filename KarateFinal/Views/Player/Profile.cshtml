@@ -55,8 +55,7 @@
             <h1>منصة الكاراتيه الفلسطينية</h1>
             <h2>اصنع تاريخك ...وكن بطلاً</h2>
         </div>
-        <@await Html.PartialAsync("_NavLogo")="لوغو"
-             style="position:absolute;right:260px;height:55px;">
+        @await Html.PartialAsync("_NavLogo")
         <ul>
             <li><a href="/Player/Dashboard">بطاقتي</a></li>
             <li><a href="/Account/Logout" class="logout-btn">تسجيل خروج</a></li>
