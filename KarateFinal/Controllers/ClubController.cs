@@ -262,7 +262,81 @@ namespace KarateFinal.Controllers
             ViewBag.Year = selectedYear;
             return View();
         }
+        public IActionResult GetPlayersForTournament(int tournamentId)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return Json(new { success = false });
 
+            var players = _context.Players
+                .Where(p => p.ClubId == user.ClubId.Value && p.PlayerStatus != "موقوف")
+                .Select(p => new { id = p.Id, name = p.Name, belt = p.Belt })
+                .ToList();
+
+            var officials = _context.Officials
+                .Where(o => o.ClubId == user.ClubId.Value && o.Status == "موافق")
+                .Select(o => new { id = o.Id, name = o.Name, role = o.Role })
+                .ToList();
+
+            return Json(new { players, officials });
+        }
+
+        [HttpPost]
+        public IActionResult RegisterTournamentFull([FromBody] RegisterTournamentFullRequest request)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return Json(new { success = false });
+
+            // تحقق من التسجيل المسبق
+            var exists = _context.TournamentRegistrations
+                .Any(r => r.TournamentId == request.TournamentId && r.ClubId == user.ClubId.Value);
+            if (exists) return Json(new { success = false, message = "ناديك مسجّل مسبقاً في هذه البطولة" });
+
+            // تسجيل النادي
+            var registration = new TournamentRegistration
+            {
+                TournamentId = request.TournamentId,
+                ClubId = user.ClubId.Value,
+                Status = "بانتظار الموافقة",
+                RegisteredAt = DateTime.UtcNow,
+                PlayersCount = request.PlayerIds.Count
+            };
+            _context.TournamentRegistrations.Add(registration);
+
+            // تسجيل اللاعبين
+            foreach (var playerId in request.PlayerIds)
+            {
+                _context.TournamentPlayerRequests.Add(new TournamentPlayerRequest
+                {
+                    TournamentId = request.TournamentId,
+                    PlayerId = playerId,
+                    ClubId = user.ClubId.Value,
+                    Status = "بانتظار الموافقة",
+                    RequestedAt = DateTime.UtcNow
+                });
+            }
+
+            // إشعار للأدمن
+            _context.Notifications.Add(new KarateFinal.Models.AppNotification
+            {
+                Title = "طلب تسجيل في بطولة",
+                Message = "تم تسجيل نادي جديد في البطولة — بانتظار الموافقة",
+                TargetRole = "Admin",
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false
+            });
+
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        public class RegisterTournamentFullRequest
+        {
+            public int TournamentId { get; set; }
+            public List<int> PlayerIds { get; set; } = new();
+            public List<int> OfficialIds { get; set; } = new();
+        }
         [HttpPost]
         public IActionResult ToggleMonth([FromBody] ToggleMonthRequest request)
         {
