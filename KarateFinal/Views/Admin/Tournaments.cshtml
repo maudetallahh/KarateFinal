@@ -79,7 +79,7 @@
                                     <button class="btn btn-warning btn-sm" onclick="toggleReg(@t.Id)">@(t.RegistrationClosed ? "🔓" : "🔒")</button>
                                     <button class="btn btn-info btn-sm" onclick="showEdit(@t.Id,'@t.Title','@t.Date.ToString("yyyy-MM-dd")','@t.City','@(t.Location??"")', @t.RegistrationFee,@t.MaxPlayersPerClub,'@(t.Categories??"")')">✏️</button>
                                     <a href="/Admin/DeleteTournament/@t.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد؟')">🗑️</a>
-                                    <a href="/Admin/Draw/@t.Id" class="btn btn-info btn-sm">🎲 قرعة</a>
+                                    <a href="/Admin/Draw?tournamentId=@t.Id" class="btn btn-info btn-sm">🎲 قرعة</a>
                                 </td>
                             </tr>
                             i++;
