@@ -644,6 +644,45 @@
                 padding: 6px 14px;
             }
         }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #1e2a38;
+            border: 1px solid #2d3f55;
+            border-radius: 8px;
+            min-width: 180px;
+            z-index: 200;
+            flex-direction: column;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: flex;
+        }
+
+        .dropdown-menu a {
+            padding: 10px 16px;
+            color: #f1f5f9;
+            text-decoration: none;
+            font-size: 13px;
+            border-bottom: 1px solid #2d3f55;
+        }
+
+            .dropdown-menu a:hover {
+                background: rgba(74,144,226,0.15);
+                color: #81b3f7;
+            }
+
+            .dropdown-menu a:last-child {
+                border-bottom: none;
+            }
     </style>
 </head>
 <body>
@@ -658,9 +697,15 @@
         <ul>
             <li><a href="/Club/Dashboard">الرئيسية</a></li>
             <li><a href="/Club/Tournaments">البطولات</a></li>
-            <li><a href="/Club/Profile">⚙️ معلوماتي</a></li>
-            <li><a href="/Club/Messages">💬</a></li>
-            <li><a href="/Club/Payment">💳</a></li>
+            <li class="dropdown">
+                <a href="#" onclick="return false;">القائمة ▾</a>
+                <div class="dropdown-menu">
+                    <a href="/Club/Profile">⚙️ معلوماتي</a>
+                    <a href="/Club/Messages">💬 المراسلات</a>
+                    <a href="/Club/Payment">💳 دفع العضوية</a>
+                    <a href="/Club/PrintPlayers">🖨️ طباعة اللاعبين</a>
+                </div>
+            </li>
             <li><a href="/Account/Logout" class="login-btn">تسجيل خروج</a></li>
         </ul>
         <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
