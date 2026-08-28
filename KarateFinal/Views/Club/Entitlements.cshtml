@@ -728,7 +728,7 @@
                 </select>
             </div>
             <button class="btn-new-year" onclick="startNewYear()">🗓️ بدء سنة جديدة @(DateTime.Now.Year + 1)</button>
-            <button onclick="document.getElementById('templateModal').classList.add('show')" style="background:#4a90e2;color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;">🧾 تعديل قالب الوصل</button>
+            <button onclick="openTemplateModal()" style="background:#4a90e2;color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:700;">🧾 تعديل قالب الوصل</button>
         </div>
         @if (mList.Any())
         {
@@ -1099,25 +1099,14 @@
             </div>
         </div>
         document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
-        const defaultReceiptTemplate = `<div style="text-align:center;padding:20px;font-family:'Segoe UI',sans-serif;">
-        <h2 style="color:#1e2a38;">🥋 وصل دفع اشتراك</h2>
-        <h3 style="color:#4a90e2;">{{اسم_النادي}}</h3>
-        <hr style="margin:16px 0;">
-        <table style="width:100%;font-size:14px;border-collapse:collapse;">
-        <tr><td style="padding:6px;">اسم اللاعب:</td><td><strong>{{اسم_اللاعب}}</strong></td></tr>
-        <tr><td style="padding:6px;">الشهر:</td><td>{{الشهر}} {{السنة}}</td></tr>
-        <tr><td style="padding:6px;">رقم الوصل:</td><td>{{رقم_الوصل}}</td></tr>
-        <tr><td style="padding:6px;">التاريخ:</td><td>{{التاريخ}}</td></tr>
-        <tr><td style="padding:6px;color:#27ae60;">المبلغ:</td><td><strong style="color:#27ae60;font-size:16px;">{{المبلغ}} ₪</strong></td></tr>
-        </table>
-        <hr style="margin:16px 0;">
-        <p style="font-size:12px;color:#888;">شكراً لدفعكم في الوقت المحدد 🏅</p>
-        </div>`;
-
-        fetch('/Club/GetReceiptTemplate').then(r => r.json()).then(data => {
-            document.getElementById('templateEditor').value = data.template || defaultReceiptTemplate;
-            updatePreview();
-        });
+        function openTemplateModal() {
+            document.getElementById('templateModal').classList.add('show');
+            fetch('/Club/GetReceiptTemplate').then(r => r.json()).then(data => {
+                const defaultT = `<div style="text-align:center;padding:20px;"><h2>🥋 وصل دفع اشتراك</h2><p>{{اسم_اللاعب}} — {{الشهر}} {{السنة}}</p><p style="color:#27ae60;font-size:18px;">{{المبلغ}} ₪</p></div>`;
+                document.getElementById('templateEditor').value = data.template || defaultT;
+                updatePreview();
+            });
+        }
 
         function updatePreview() {
             const template = document.getElementById('templateEditor').value;
