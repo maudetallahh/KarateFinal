@@ -1075,9 +1075,8 @@
         document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
         function openTemplateModal() {
             fetch('/Club/GetReceiptTemplate').then(r => r.json()).then(data => {
-                const defaultT = '<div style="text-align:center;padding:20px;"><h2>وصل دفع اشتراك</h2><p>{{اسم_اللاعب}} - {{الشهر}} {{السنة}}</p><p style="color:#27ae60;font-size:18px;">{{المبلغ}} NIS</p></div>';
-                document.getElementById('templateEditor').value = data.template || defaultT;
-                updatePreview();
+                const defaultT = '<div style="text-align:center;padding:20px;"><h2 style="color:#1e2a38;">🥋 وصل دفع اشتراك</h2><p>{{اسم_اللاعب}} - {{الشهر}} {{السنة}}</p><p style="color:#27ae60;font-size:18px;">{{المبلغ}} NIS</p></div>';
+                document.getElementById('templateEditor').innerHTML = data.template || defaultT;
                 document.getElementById('templateModal').classList.add('show');
             });
         }
@@ -1105,7 +1104,7 @@
         }
 
         function saveTemplate() {
-            const template = document.getElementById('templateEditor').value;
+            const template = document.getElementById('templateEditor').innerHTML;
             fetch('/Club/SaveReceiptTemplate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ template }) })
                 .then(r => r.json()).then(data => { if (data.success) { alert('✅ تم حفظ القالب'); document.getElementById('templateModal').classList.remove('show'); } });
         }
@@ -1129,7 +1128,7 @@
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
                 <div>
                     <div style="font-size:12px;font-weight:700;color:#666;margin-bottom:6px;">تعديل القالب</div>
-                    <textarea id="templateEditor" rows="15" oninput="updatePreview()" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-family:'Segoe UI',sans-serif;font-size:12px;resize:vertical;direction:rtl;"></textarea>
+                    <div id="templateEditor" contenteditable="true" style="width:100%;min-height:300px;border:2px solid #4a90e2;border-radius:8px;padding:16px;font-family:'Segoe UI',sans-serif;font-size:13px;direction:rtl;outline:none;"></div> rows="15" oninput="updatePreview()" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-family:'Segoe UI',sans-serif;font-size:12px;resize:vertical;direction:rtl;"></textarea>
                 </div>
                 <div>
                     <div style="font-size:12px;font-weight:700;color:#666;margin-bottom:6px;">معاينة</div>
