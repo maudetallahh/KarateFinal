@@ -74,6 +74,7 @@
                                 <td>@c.Category</td>
                                 <td style="display:flex;gap:4px;">
                                     <button class="btn btn-info btn-sm" onclick="showClubDetails(@c.Id,'@c.Name','@c.ManagerName')">📋</button>
+                                    <a href="/Admin/ClubMessages?clubId=@c.Id" class="btn btn-info btn-sm">💬</a>
                                     <a href="/Admin/DeleteClub/@c.Id" class="btn btn-danger btn-sm" onclick="return confirm('هل أنت متأكد؟')">🗑️</a>
                                 </td>
                             </tr>
