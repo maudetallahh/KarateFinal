@@ -3,6 +3,7 @@ using KarateFinal.Models;
 using KarateFinal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 
 namespace KarateFinal.Controllers
 {
@@ -267,6 +268,7 @@ namespace KarateFinal.Controllers
         {
             var username = HttpContext.Session.GetString("Username");
             var membership = _context.PlayerMemberships.Find(request.MembershipId);
+            var player = _context.Players.Find(membership.PlayerId);
             if (membership == null) return Json(new { success = false });
 
             var paid = membership.PaidMonths.Split(',').Where(x => x != "").ToList();
@@ -301,6 +303,20 @@ namespace KarateFinal.Controllers
 
             membership.PaidMonths = string.Join(",", paid.OrderBy(x => int.Parse(x)));
             _context.SaveChanges();
+            // إرسال إيميل للاعب
+            if (isNowPaid && !string.IsNullOrEmpty(player?.Email))
+            {
+                var monthNames = new[] { "", "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر" };
+                var club = _context.Clubs.Find(membership.ClubId);
+                var emailSubject = "وصل دفع اشتراك — " + monthNames[request.Month] + " " + membership.Year;
+                var emailBody = "<div dir='rtl' style='font-family:Arial;padding:20px;'><h2 style='color:#1e2a38;'>🥋 وصل دفع اشتراك</h2><h3 style='color:#4a90e2;'>" + (club?.Name ?? "") + "</h3><hr><table style='width:100%;font-size:14px;'><tr><td>اسم اللاعب:</td><td><strong>" + player.Name + "</strong></td></tr><tr><td>الشهر:</td><td>" + monthNames[request.Month] + " " + membership.Year + "</td></tr><tr><td>المبلغ:</td><td><strong style='color:#27ae60;'>" + membership.MonthlyFee + " ₪</strong></td></tr><tr><td>التاريخ:</td><td>" + DateTime.Now.ToString("yyyy/MM/dd") + "</td></tr></table><hr><p style='color:#888;font-size:12px;'>شكراً لدفعكم في الوقت المحدد 🏅</p></div>";
+                var emailService = HttpContext.RequestServices.GetRequiredService<KarateFinal.Services.EmailService>();
+                _ = Task.Run(async () =>
+                {
+                    try { await emailService.SendAsync(player.Email, player.Name, emailSubject, emailBody); }
+                    catch (Exception ex) { Console.WriteLine("Email error: " + ex.Message); }
+                });
+            }
             return Json(new { success = true, paidMonths = membership.PaidMonths });
         }
 
