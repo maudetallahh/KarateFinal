@@ -928,10 +928,14 @@
         });
         function toggleMonth(membershipId, month, btn) {
             fetch('/Club/ToggleMonth', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ membershipId, month })
             }).then(r => r.json()).then(data => {
-                if (data.success) { btn.classList.toggle('paid'); updateTag(membershipId, data.paidMonths); }
+                if (data.success) {
+                    btn.classList.toggle('paid');
+                    updateTag(membershipId, data.paidMonths);
+                }
             });
         }
         function updateTag(membershipId, paidMonths) {
