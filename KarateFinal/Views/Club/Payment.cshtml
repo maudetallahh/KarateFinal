@@ -1,0 +1,142 @@
+﻿@{
+    Layout = null;
+    var membership = ViewBag.Membership as KarateFinal.Models.Membership;
+    var club = ViewBag.Club as KarateFinal.Models.Club;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دفع العضوية</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
+        body { background:#eef3f8; min-height:100vh; }
+        nav { background:#1e2a38; color:white; padding:14px 24px; display:flex; justify-content:center; align-items:center; border-bottom:4px solid #4a90e2; position:sticky; top:0; z-index:100; }
+        .nav-header { text-align:center; }
+        .nav-header h1 { font-size:20px; color:#fff; }
+        nav ul { position:absolute; left:24px; display:flex; list-style:none; gap:16px; }
+        nav ul li a { color:white; text-decoration:none; font-size:13px; font-weight:bold; }
+        .logout-btn { background:#2c3e50; padding:7px 18px; border-radius:5px; }
+        .container { max-width:600px; margin:40px auto; padding:0 20px; }
+        .payment-card { background:white; border-radius:20px; padding:32px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+        .payment-title { font-size:22px; font-weight:800; color:#1e2a38; margin-bottom:24px; text-align:center; }
+        .amount-box { background:linear-gradient(135deg,#1e2a38,#2c3e50); border-radius:16px; padding:24px; text-align:center; margin-bottom:24px; }
+        .amount-label { font-size:13px; color:#94a3b8; margin-bottom:8px; }
+        .amount-value { font-size:48px; font-weight:900; color:#4a90e2; }
+        .amount-currency { font-size:20px; color:#81b3f7; }
+        .info-row { display:flex; justify-content:space-between; padding:12px 0; border-bottom:1px solid #f0f0f0; font-size:13px; }
+        .info-label { color:#888; }
+        .info-value { font-weight:700; color:#1e2a38; }
+        .status-badge { display:inline-block; padding:6px 16px; border-radius:20px; font-size:12px; font-weight:700; margin-top:8px; }
+        .status-paid { background:#d4edda; color:#155724; }
+        .status-pending { background:#fff3cd; color:#856404; }
+        .status-unpaid { background:#f8d7da; color:#721c24; }
+        .payment-methods { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0; }
+        .method-card { border:2px solid #e0e6ed; border-radius:12px; padding:16px; text-align:center; cursor:pointer; transition:0.3s; }
+        .method-card:hover { border-color:#4a90e2; background:#f0f8ff; }
+        .method-card.selected { border-color:#4a90e2; background:#e8f4fd; }
+        .method-icon { font-size:32px; margin-bottom:8px; }
+        .method-name { font-size:13px; font-weight:700; color:#1e2a38; }
+        .pay-btn { width:100%; padding:16px; background:linear-gradient(135deg,#4a90e2,#1e6fc4); color:white; border:none; border-radius:12px; font-family:inherit; font-size:16px; font-weight:700; cursor:pointer; margin-top:16px; transition:0.3s; }
+        .pay-btn:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(74,144,226,0.4); }
+        .pay-btn:disabled { background:#ccc; cursor:not-allowed; transform:none; }
+        .processing-box { display:none; text-align:center; padding:24px; }
+        .processing-icon { font-size:60px; animation:pulse 1.5s infinite; }
+        @@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+        .success-box { display:none; text-align:center; padding:24px; background:#d4edda; border-radius:12px; margin-top:16px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-header"><h1>منصة الكاراتيه الفلسطينية</h1></div>
+        <ul>
+            <li><a href="/Club/Dashboard">← الرئيسية</a></li>
+            <li><a href="/Account/Logout" class="logout-btn">تسجيل خروج</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="payment-card">
+            <div class="payment-title">💳 دفع العضوية السنوية</div>
+            <div class="amount-box">
+                <div class="amount-label">المبلغ المطلوب</div>
+                <div class="amount-value">@(membership?.Fee ?? 600) <span class="amount-currency">₪</span></div>
+                <div style="color:#94a3b8;font-size:12px;margin-top:8px;">عضوية سنة @DateTime.Now.Year</div>
+            </div>
+            <div class="info-row"><span class="info-label">النادي</span><span class="info-value">@club?.Name</span></div>
+            <div class="info-row"><span class="info-label">السنة</span><span class="info-value">@DateTime.Now.Year</span></div>
+            <div class="info-row">
+                <span class="info-label">حالة العضوية</span>
+                <span class="status-badge @(membership?.Status == "مدفوع" ? "status-paid" : membership?.Status == "قيد المعالجة" ? "status-pending" : "status-unpaid")">
+                    @(membership?.Status ?? "غير مدفوع")
+                </span>
+            </div>
+            @if (membership?.TransactionId != null)
+            {
+                <div class="info-row"><span class="info-label">رقم المعاملة</span><span class="info-value" style="font-family:monospace;">@membership.TransactionId</span></div>
+            }
+            @if (membership?.Status != "مدفوع")
+            {
+                <div style="margin-top:20px;">
+                    <div style="font-size:13px;font-weight:700;color:#666;margin-bottom:12px;">اختر طريقة الدفع:</div>
+                    <div class="payment-methods">
+                        <div class="method-card selected" onclick="selectMethod(this,'visa')">
+                            <div class="method-icon">💳</div>
+                            <div class="method-name">فيزا / ماستركارد</div>
+                        </div>
+                        <div class="method-card" onclick="selectMethod(this,'bank')">
+                            <div class="method-icon">🏦</div>
+                            <div class="method-name">تحويل بنكي</div>
+                        </div>
+                    </div>
+                    <button class="pay-btn" id="payBtn" onclick="initiatePayment()">
+                        💳 ادفع الآن — @(membership?.Fee ?? 600) ₪
+                    </button>
+                </div>
+                <div class="processing-box" id="processingBox">
+                    <div class="processing-icon">⏳</div>
+                    <div style="font-size:16px;font-weight:700;margin-top:12px;">جاري معالجة الدفع...</div>
+                    <div style="font-size:13px;color:#888;margin-top:8px;">يرجى الانتظار ولا تغلق الصفحة</div>
+                </div>
+                <div class="success-box" id="successBox">
+                    <div style="font-size:48px;">✅</div>
+                    <div style="font-size:16px;font-weight:700;color:#155724;margin-top:8px;">تم إرسال طلب الدفع بنجاح</div>
+                    <div style="font-size:13px;color:#666;margin-top:4px;">سيتم مراجعته من قبل الإدارة</div>
+                </div>
+            }
+            else
+            {
+                <div style="text-align:center;padding:20px;background:#d4edda;border-radius:12px;margin-top:20px;">
+                    <div style="font-size:48px;">✅</div>
+                    <div style="font-size:16px;font-weight:700;color:#155724;">العضوية مدفوعة</div>
+                </div>
+            }
+        </div>
+    </div>
+    <script>
+        let selectedMethod = 'visa';
+        function selectMethod(el, method) {
+            document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedMethod = method;
+        }
+        function initiatePayment() {
+            document.getElementById('payBtn').disabled = true;
+            document.getElementById('processingBox').style.display = 'block';
+            setTimeout(() => {
+                fetch('/Club/InitiatePayment', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paymentMethod: selectedMethod }) })
+                    .then(r => r.json()).then(data => {
+                        document.getElementById('processingBox').style.display = 'none';
+                        if (data.success) {
+                            document.getElementById('successBox').style.display = 'block';
+                            setTimeout(() => location.reload(), 2000);
+                        } else {
+                            alert('⚠️ ' + (data.message || 'حدث خطأ'));
+                            document.getElementById('payBtn').disabled = false;
+                        }
+                    });
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

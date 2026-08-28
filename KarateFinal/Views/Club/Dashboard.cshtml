@@ -655,25 +655,19 @@
         <a href="/Home/Index">
             @await Html.PartialAsync("_NavLogo")
         </a>
-        <ul>
-            <li><a href="/Club/Dashboard">الرئيسية</a></li>
-            <li><a href="/Club/Tournaments">البطولات</a></li>
-            <li><a href="/Club/Profile">⚙️ معلوماتي</a></li>
-            <li><a href="/Account/Logout" class="login-btn">تسجيل خروج</a></li>
-            <li><a href="/Club/Messages">💬 المراسلات</a></li>
-
-        </ul>
-        <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
         <button onclick="toggleLang()" id="langBtn" class="lang-btn">EN</button>
     </nav>
     <div class="mobile-menu" id="mobileMenu">
-        <a href="/Club/Dashboard">الرئيسية</a>
-        <a href="/Club/Tournaments">البطولات</a>
+        <a href="/Club/Dashboard">🏠 الرئيسية</a>
+        <a href="/Club/Tournaments">🏆 البطولات</a>
         <a href="/Club/Profile">⚙️ معلوماتي</a>
+        <a href="/Club/Messages">💬 المراسلات</a>
+        <a href="/Club/Payment">💳 دفع العضوية</a>
         <a href="/Club/PrintPlayers">🖨️ طباعة اللاعبين</a>
-        <a href="/Account/Logout">تسجيل خروج</a>
-        <li><a href="/Club/Messages">💬 المراسلات</a></li>
-
+        <a href="/Account/Logout" style="color:#f85149;">🚪 تسجيل خروج</a>
     </div>
     <header class="main-header">
         <div class="titles">
@@ -791,10 +785,10 @@
         <div class="footer-bottom"><p>© 2025 منصة الكاراتيه الفلسطينية — جميع الحقوق محفوظة</p></div>
     </footer>
     <script>
-        document.getElementById('hamburger').addEventListener('click', function () {
-            this.classList.toggle('open');
+        function toggleMenu() {
+            document.getElementById('hamburger').classList.toggle('open');
             document.getElementById('mobileMenu').classList.toggle('show');
-        });
+        }
         function changeImage(imgId, iconId, input, type) {
             const file = input.files[0];
             if (!file) return;

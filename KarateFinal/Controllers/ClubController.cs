@@ -462,7 +462,41 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+        public IActionResult Payment()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return RedirectToAction("Login", "Account");
+            var membership = _context.Memberships
+                .FirstOrDefault(m => m.ClubId == user.ClubId.Value && m.Year == DateTime.Now.Year);
+            var club = _context.Clubs.Find(user.ClubId.Value);
+            ViewBag.Membership = membership;
+            ViewBag.Club = club;
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult InitiatePayment([FromBody] InitiatePaymentRequest request)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return Json(new { success = false });
+            var membership = _context.Memberships
+                .FirstOrDefault(m => m.ClubId == user.ClubId.Value && m.Year == DateTime.Now.Year);
+            if (membership == null) return Json(new { success = false, message = "لا توجد عضوية مسجّلة" });
+            if (membership.Status == "مدفوع") return Json(new { success = false, message = "العضوية مدفوعة مسبقاً" });
+            var transactionId = "TXN-" + DateTime.Now.Ticks.ToString().Substring(10);
+            membership.PaymentMethod = "Online";
+            membership.TransactionId = transactionId;
+            membership.Status = "قيد المعالجة";
+            _context.SaveChanges();
+            return Json(new { success = true, transactionId });
+        }
+
+        public class InitiatePaymentRequest
+        {
+            public string PaymentMethod { get; set; } = "Online";
+        }
         public class SendPlayerMessageRequest
         {
             public int PlayerId { get; set; }
