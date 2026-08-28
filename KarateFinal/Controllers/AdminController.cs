@@ -307,7 +307,50 @@ namespace KarateFinal.Controllers
             ViewBag.ClubId = clubId;
             return View();
         }
+        public IActionResult Admins()
+        {
+            var admins = _context.Users.Where(u => u.Role == "Admin").ToList();
+            ViewBag.Admins = admins;
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult AddAdmin([FromBody] AddAdminRequest request)
+        {
+            var exists = _context.Users.Any(u => u.Username == request.Username);
+            if (exists) return Json(new { success = false, message = "اسم المستخدم موجود مسبقاً" });
+            _context.Users.Add(new KarateFinal.Models.User
+            {
+                Username = request.Username,
+                Password = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                Role = "Admin",
+                MustChangePassword = true
+            });
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public IActionResult DeleteAdmin([FromBody] DeleteAdminRequest request)
+        {
+            var admin = _context.Users.Find(request.Id);
+            if (admin == null || admin.Username == "AdminKarate2")
+                return Json(new { success = false, message = "لا يمكن حذف الأدمن الرئيسي" });
+            _context.Users.Remove(admin);
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        public class AddAdminRequest
+        {
+            public string Username { get; set; } = "";
+            public string Password { get; set; } = "";
+        }
+
+        public class DeleteAdminRequest
+        {
+            public int Id { get; set; }
+        }
         [HttpPost]
         public IActionResult ReplyMessage([FromBody] ReplyMessageRequest request)
         {
