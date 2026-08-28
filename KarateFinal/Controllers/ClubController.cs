@@ -232,11 +232,40 @@ namespace KarateFinal.Controllers
         [HttpPost]
         public IActionResult ToggleMonth([FromBody] ToggleMonthRequest request)
         {
+            var username = HttpContext.Session.GetString("Username");
             var membership = _context.PlayerMemberships.Find(request.MembershipId);
             if (membership == null) return Json(new { success = false });
+
             var paid = membership.PaidMonths.Split(',').Where(x => x != "").ToList();
-            if (paid.Contains(request.Month.ToString())) paid.Remove(request.Month.ToString());
-            else paid.Add(request.Month.ToString());
+            bool isNowPaid = !paid.Contains(request.Month.ToString());
+
+            if (paid.Contains(request.Month.ToString()))
+            {
+                paid.Remove(request.Month.ToString());
+                // حذف الوصل
+                var receipt = _context.PaymentReceipts.FirstOrDefault(r => r.PlayerId == membership.PlayerId && r.Year == membership.Year && r.Month == request.Month);
+                if (receipt != null) _context.PaymentReceipts.Remove(receipt);
+            }
+            else
+            {
+                paid.Add(request.Month.ToString());
+                // إضافة وصل تلقائي
+                var exists = _context.PaymentReceipts.Any(r => r.PlayerId == membership.PlayerId && r.Year == membership.Year && r.Month == request.Month);
+                if (!exists)
+                {
+                    _context.PaymentReceipts.Add(new KarateFinal.Models.PaymentReceipt
+                    {
+                        PlayerId = membership.PlayerId,
+                        ClubId = membership.ClubId,
+                        Year = membership.Year,
+                        Month = request.Month,
+                        Amount = membership.MonthlyFee,
+                        PaidDate = DateTime.UtcNow,
+                        CreatedBy = username ?? ""
+                    });
+                }
+            }
+
             membership.PaidMonths = string.Join(",", paid.OrderBy(x => int.Parse(x)));
             _context.SaveChanges();
             return Json(new { success = true, paidMonths = membership.PaidMonths });
@@ -252,7 +281,49 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+        [HttpPost]
+        public IActionResult PayMonth([FromBody] PayMonthRequest request)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return Json(new { success = false });
 
+            var membership = _context.PlayerMemberships.Find(request.MembershipId);
+            if (membership == null) return Json(new { success = false });
+
+            // تحديث الأشهر المدفوعة
+            var paidList = (membership.PaidMonths ?? "").Split(',').Where(p => !string.IsNullOrEmpty(p)).ToList();
+            if (!paidList.Contains(request.Month.ToString()))
+                paidList.Add(request.Month.ToString());
+            membership.PaidMonths = string.Join(",", paidList);
+
+            // إضافة وصل دفع تلقائي
+            var existingReceipt = _context.PaymentReceipts
+                .FirstOrDefault(r => r.PlayerId == membership.PlayerId && r.Year == membership.Year && r.Month == request.Month);
+
+            if (existingReceipt == null)
+            {
+                _context.PaymentReceipts.Add(new KarateFinal.Models.PaymentReceipt
+                {
+                    PlayerId = membership.PlayerId,
+                    ClubId = user.ClubId.Value,
+                    Year = membership.Year,
+                    Month = request.Month,
+                    Amount = membership.MonthlyFee,
+                    PaidDate = DateTime.UtcNow,
+                    CreatedBy = username ?? ""
+                });
+            }
+
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        public class PayMonthRequest
+        {
+            public int MembershipId { get; set; }
+            public int Month { get; set; }
+        }
         [HttpPost]
         public IActionResult PayOldDebt([FromBody] PayOldDebtRequest request)
         {
