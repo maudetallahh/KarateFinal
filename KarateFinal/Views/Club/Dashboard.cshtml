@@ -654,11 +654,12 @@
             position: absolute;
             top: 100%;
             right: 0;
+            left: auto;
             background: #1e2a38;
             border: 1px solid #2d3f55;
             border-radius: 8px;
             min-width: 180px;
-            z-index: 200;
+            z-index: 9999;
             flex-direction: column;
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
@@ -695,11 +696,11 @@
             @await Html.PartialAsync("_NavLogo")
         </a>
         <ul>
-            <li><a href="/Club/Dashboard">الرئيسية</a></li>
-            <li><a href="/Club/Tournaments">البطولات</a></li>
             <li class="dropdown">
                 <a href="#" onclick="return false;">القائمة ▾</a>
                 <div class="dropdown-menu">
+            <a href="/Club/Dashboard">الرئيسية</a>
+            <a href="/Club/Tournaments">البطولات</a>
                     <a href="/Club/Profile">⚙️ معلوماتي</a>
                     <a href="/Club/Messages">💬 المراسلات</a>
                     <a href="/Club/Payment">💳 دفع العضوية</a>
