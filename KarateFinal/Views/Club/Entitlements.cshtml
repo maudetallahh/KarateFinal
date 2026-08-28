@@ -1102,7 +1102,7 @@
         function openTemplateModal() {
             document.getElementById('templateModal').classList.add('show');
             fetch('/Club/GetReceiptTemplate').then(r => r.json()).then(data => {
-                const defaultT = `<div style="text-align:center;padding:20px;"><h2>🥋 وصل دفع اشتراك</h2><p>{{اسم_اللاعب}} — {{الشهر}} {{السنة}}</p><p style="color:#27ae60;font-size:18px;">{{المبلغ}} ₪</p></div>`;
+                const defaultT = '<div style="text-align:center;padding:20px;"><h2>وصل دفع اشتراك</h2><p>{{اسم_اللاعب}} - {{الشهر}} {{السنة}}</p><p style="color:#27ae60;font-size:18px;">{{المبلغ}} NIS</p></div>';
                 document.getElementById('templateEditor').value = data.template || defaultT;
                 updatePreview();
             });
