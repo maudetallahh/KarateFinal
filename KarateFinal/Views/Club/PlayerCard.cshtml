@@ -751,49 +751,7 @@
                 }
             </div>
         </div>
-        <!-- وصل الدفع -->
-        <div class="category-label">💰 تسجيل دفعة شهرية</div>
-        <div style="width:100%;max-width:600px;background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
-                <div>
-                    <div style="font-size:11px;color:#888;margin-bottom:4px;">السنة</div>
-                    <select id="receiptYear" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
-                        @for (int y = DateTime.Now.Year; y >= DateTime.Now.Year - 3; y--)
-
-                        {
-                            <option value="@y">@y</option>
-                        }
-                    </select>
-                </div>
-                <div>
-                    <div style="font-size:11px;color:#888;margin-bottom:4px;">الشهر</div>
-                    <select id="receiptMonth" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
-                        <option value="1">يناير</option>
-                        <option value="2">فبراير</option>
-                        <option value="3">مارس</option>
-                        <option value="4">أبريل</option>
-                        <option value="5">مايو</option>
-                        <option value="6">يونيو</option>
-                        <option value="7">يوليو</option>
-                        <option value="8">أغسطس</option>
-                        <option value="9">سبتمبر</option>
-                        <option value="10">أكتوبر</option>
-                        <option value="11">نوفمبر</option>
-                        <option value="12">ديسمبر</option>
-                    </select>
-                </div>
-                <div>
-                    <div style="font-size:11px;color:#888;margin-bottom:4px;">المبلغ (₪)</div>
-                    <input type="number" id="receiptAmount" value="150" min="0" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
-                </div>
-            </div>
-            <div style="margin-bottom:14px;">
-                <div style="font-size:11px;color:#888;margin-bottom:4px;">ملاحظات</div>
-                <input type="text" id="receiptNotes" placeholder="ملاحظات اختيارية..." style="width:100%;padding:8px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:13px;">
-            </div>
-            <button onclick="addPayment(@player?.Id)" style="width:100%;padding:12px;background:#27ae60;color:white;border:none;border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">💰 تسجيل الدفعة وطباعة الوصل</button>
-        </div>
-
+       
         <!-- سجل الوصولات -->
         <div class="category-label">🧾 سجل الوصولات</div>
         <div style="width:100%;max-width:600px;background:white;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.06);" id="receiptsSection">
