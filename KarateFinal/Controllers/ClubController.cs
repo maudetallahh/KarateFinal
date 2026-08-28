@@ -205,7 +205,33 @@ namespace KarateFinal.Controllers
             ViewBag.TotalPoints = participations.Sum(p => p.Points);
             return View();
         }
+        public IActionResult ReceiptTemplate()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return RedirectToAction("Login", "Account");
+            var club = _context.Clubs.Find(user.ClubId.Value);
+            ViewBag.Club = club;
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult SaveReceiptTemplate([FromBody] ReceiptTemplateRequest request)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return Json(new { success = false });
+            var club = _context.Clubs.Find(user.ClubId.Value);
+            if (club == null) return Json(new { success = false });
+            club.ReceiptTemplate = request.Template;
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        public class ReceiptTemplateRequest
+        {
+            public string Template { get; set; } = "";
+        }
         public IActionResult Entitlements(int? year)
         {
             var username = HttpContext.Session.GetString("Username");

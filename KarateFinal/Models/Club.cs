@@ -19,5 +19,6 @@
         public bool IsDeleted { get; set; } = false;
         public DateTime? DeletedAt { get; set; }
         public string? DeletedByAdmin { get; set; }
+        public string? ReceiptTemplate { get; set; }
     }
 }
