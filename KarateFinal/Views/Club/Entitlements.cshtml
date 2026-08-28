@@ -1053,11 +1053,13 @@
             if (navLinks[1]) navLinks[1].textContent = t.nav_clubs;
             if (navLinks[2]) navLinks[2].textContent = t.nav_tournaments;
             if (navLinks[3]) navLinks[3].textContent = t.nav_logout;
-            document.querySelector(".header h2").textContent = t.page_title;
-            document.querySelector(".back-btn").textContent = t.back_btn;
+            const headerH2 = document.querySelector(".header h2");
+            if (headerH2) headerH2.textContent = t.page_title;
+            const backBtn = document.querySelector(".back-btn");
+            if (backBtn) backBtn.textContent = t.back_btn;
             document.querySelector("#searchInput").placeholder = t.search_placeholder;
-            document.querySelector(".btn-new-year").textContent = t.new_year_btn;
-            const statLabels = document.querySelectorAll(".stat-l");
+            const newYearBtn = document.querySelector(".btn-new-year");
+            if (newYearBtn) newYearBtn.textContent = t.new_year_btn; const statLabels = document.querySelectorAll(".stat-l");
             if (statLabels[0]) statLabels[0].textContent = t.stat_player;
             if (statLabels[1]) statLabels[1].textContent = t.stat_paid;
             if (statLabels[2]) statLabels[2].textContent = t.stat_unpaid;
