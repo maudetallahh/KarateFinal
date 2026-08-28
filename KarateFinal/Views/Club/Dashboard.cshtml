@@ -656,6 +656,7 @@
             @await Html.PartialAsync("_NavLogo")
         </a>
         <ul>
+            <li><a href="/Club/Messages">💬 المراسلات</a></li>
             <li><a href="/Club/Dashboard">الرئيسية</a></li>
             <li><a href="/Club/Tournaments">البطولات</a></li>
             <li><a href="/Club/Profile">⚙️ معلوماتي</a></li>
@@ -665,6 +666,7 @@
         <button onclick="toggleLang()" id="langBtn" class="lang-btn">EN</button>
     </nav>
     <div class="mobile-menu" id="mobileMenu">
+        <li><a href="/Club/Messages">💬 المراسلات</a></li>
         <a href="/Club/Dashboard">الرئيسية</a>
         <a href="/Club/Tournaments">البطولات</a>
         <a href="/Club/Profile">⚙️ معلوماتي</a>
@@ -749,12 +751,7 @@
                     <p>سجّل ناديك في البطولات المتاحة واختر لاعبيك للمشاركة.</p>
                     <a href="/Club/Tournaments" class="card-btn">عرض البطولات</a>
                 </div>
-                <div class="info-card">
-                    <div class="icon">💬</div>
-                    <h3>المراسلات</h3>
-                    <p>تواصل مع إدارة الاتحاد مباشرة.</p>
-                    <a href="/Club/Messages" class="card-btn">فتح المحادثة</a>
-                </div>
+           
             </div>
         </div>
     </section>
