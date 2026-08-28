@@ -664,9 +664,9 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
-        .dropdown:hover .dropdown-menu {
-            display: flex;
-        }
+            .dropdown-menu.open {
+                display: flex;
+            }
 
         .dropdown-menu a {
             padding: 12px 16px;
@@ -917,6 +917,16 @@
         }
         function toggleLang() { currentLang = currentLang === "ar" ? "en" : "ar"; applyLang(currentLang); }
         document.addEventListener("DOMContentLoaded", () => applyLang(currentLang));
+        document.querySelector('.dropdown a').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector('.dropdown-menu').classList.toggle('open');
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.dropdown')) {
+                document.querySelector('.dropdown-menu')?.classList.remove('open');
+            }
+        });
     </script>
 </body>
 </html>
