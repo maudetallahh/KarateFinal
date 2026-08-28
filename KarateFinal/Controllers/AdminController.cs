@@ -148,12 +148,10 @@ namespace KarateFinal.Controllers
         {
             var tournament = _context.Tournaments.Find(tournamentId);
             if (tournament == null) return RedirectToAction("Tournaments");
-
             var registrations = _context.TournamentPlayerRequests
                 .Where(r => r.TournamentId == tournamentId && r.Status == "موافق")
                 .Include(r => r.Player)
                 .ToList();
-
             ViewBag.Tournament = tournament;
             ViewBag.Registrations = registrations;
             return View();
