@@ -137,6 +137,48 @@ namespace KarateFinal.Controllers
 
             return Json(new { success = true });
         }
+        public IActionResult Messages()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.PlayerId == null) return RedirectToAction("Login", "Account");
+            var player = _context.Players.Find(user.PlayerId.Value);
+            var messages = _context.Messages
+                .Where(m => m.SenderPlayerId == user.PlayerId.Value || m.ReceiverPlayerId == user.PlayerId.Value
+                         || (m.ReceiverClubId == player.ClubId && m.SenderRole == "Club")
+                         || (m.SenderClubId == player.ClubId && m.ReceiverRole == "All"))
+                .OrderBy(m => m.SentAt)
+                .ToList();
+            ViewBag.Messages = messages;
+            ViewBag.Player = player;
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult SendMessage([FromBody] PlayerSendMessageRequest request)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.PlayerId == null) return Json(new { success = false });
+            var player = _context.Players.Find(user.PlayerId.Value);
+            _context.Messages.Add(new KarateFinal.Models.Message
+            {
+                SenderRole = "Player",
+                SenderPlayerId = user.PlayerId.Value,
+                ReceiverRole = "Club",
+                ReceiverClubId = player?.ClubId,
+                Content = request.Content,
+                SentAt = DateTime.UtcNow,
+                IsRead = false
+            });
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        public class PlayerSendMessageRequest
+        {
+            public string Content { get; set; } = "";
+        }
         public IActionResult Entitlements()
         {
             var username = HttpContext.Session.GetString("Username");
@@ -156,6 +198,7 @@ namespace KarateFinal.Controllers
             ViewBag.Receipts = receipts;
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> AddInjury([FromForm] PlayerInjuryRequest request)
         {
