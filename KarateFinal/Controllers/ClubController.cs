@@ -425,7 +425,49 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
+        public IActionResult PlayerMessages(int playerId)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return RedirectToAction("Login", "Account");
+            var player = _context.Players.Find(playerId);
+            var messages = _context.Messages
+                .Where(m => (m.SenderPlayerId == playerId || m.ReceiverPlayerId == playerId)
+                         || (m.SenderClubId == user.ClubId.Value && m.ReceiverPlayerId == playerId)
+                         || (m.ReceiverClubId == user.ClubId.Value && m.SenderPlayerId == playerId))
+                .OrderBy(m => m.SentAt)
+                .ToList();
+            ViewBag.Messages = messages;
+            ViewBag.Player = player;
+            ViewBag.ClubId = user.ClubId.Value;
+            return View();
+        }
 
+        [HttpPost]
+        public IActionResult SendPlayerMessage([FromBody] SendPlayerMessageRequest request)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return Json(new { success = false });
+            _context.Messages.Add(new KarateFinal.Models.Message
+            {
+                SenderRole = "Club",
+                SenderClubId = user.ClubId.Value,
+                ReceiverRole = "Player",
+                ReceiverPlayerId = request.PlayerId,
+                Content = request.Content,
+                SentAt = DateTime.UtcNow,
+                IsRead = false
+            });
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
+
+        public class SendPlayerMessageRequest
+        {
+            public int PlayerId { get; set; }
+            public string Content { get; set; } = "";
+        }
         public class SendMessageRequest
         {
             public string Content { get; set; } = "";
