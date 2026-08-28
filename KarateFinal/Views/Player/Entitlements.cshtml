@@ -85,6 +85,55 @@
         {
             <div class="empty">لا توجد استحقاقات مسجّلة بعد</div>
         }
+        <!-- سجل الوصولات -->
+        @if (ViewBag.Receipts != null)
+        {
+            var receipts = ViewBag.Receipts as List<KarateFinal.Models.PaymentReceipt>;
+            if (receipts != null && receipts.Any())
+            {
+                <div class="year-section">
+                    <div class="year-header">
+                        <div class="year-title">🧾 سجل الوصولات</div>
+                    </div>
+                    @{
+                        var monthNamesR = new[] { "", "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر" };
+                    }
+                    @foreach (var r in receipts)
+                    {
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f5f5f5;">
+                            <div>
+                                <div style="font-size:13px;font-weight:700;">@monthNamesR[r.Month] @r.Year</div>
+                                <div style="font-size:11px;color:#888;">@r.PaidDate.ToString("yyyy/MM/dd")</div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <span style="font-size:14px;font-weight:700;color:#27ae60;">@r.Amount ₪</span>
+                                <button onclick="printReceipt(@r.Id,'@ViewBag.Player?.Name','@monthNamesR[r.Month] @r.Year',@r.Amount)" style="padding:4px 10px;background:#4a90e2;color:white;border:none;border-radius:6px;cursor:pointer;font-size:11px;">🖨️</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
     </div>
+    <script>
+        function printReceipt(id, playerName, period, amount) {
+            const w = window.open('', '_blank');
+            w.document.write(`
+                <html dir="rtl"><head><meta charset="UTF-8"><title>وصل دفع</title>
+                <style>body{font-family:'Segoe UI',sans-serif;padding:40px;max-width:400px;margin:0 auto;border:2px solid #1e2a38;border-radius:12px;}
+                h2{color:#1e2a38;text-align:center;margin-bottom:20px;}.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font-size:14px;}</style></head>
+                <body>
+                <h2>🥋 وصل دفع اشتراك</h2>
+                <div class="row"><span>اسم اللاعب</span><span>${playerName}</span></div>
+                <div class="row"><span>الفترة</span><span>${period}</span></div>
+                <div class="row"><span>رقم الوصل</span><span>${id}</span></div>
+                <div class="row"><span>التاريخ</span><span>${new Date().toLocaleDateString('ar-SA')}</span></div>
+                <div class="row" style="color:#27ae60;font-size:16px;"><span>المبلغ</span><span>${amount} ₪</span></div>
+                <p style="text-align:center;color:#888;font-size:12px;margin-top:16px;">شكراً لدفعكم 🏅</p>
+                <script>window.print();window.close();<\/script>
+                </body></html>
+            `);
+        }
+    </script>
 </body>
 </html>

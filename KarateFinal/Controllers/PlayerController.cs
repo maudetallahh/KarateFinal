@@ -142,15 +142,18 @@ namespace KarateFinal.Controllers
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
             if (user?.PlayerId == null) return RedirectToAction("Login", "Account");
-
             var player = _context.Players.Find(user.PlayerId.Value);
             var memberships = _context.PlayerMemberships
                 .Where(m => m.PlayerId == user.PlayerId.Value)
                 .OrderByDescending(m => m.Year)
                 .ToList();
-
+            var receipts = _context.PaymentReceipts
+                .Where(r => r.PlayerId == user.PlayerId.Value)
+                .OrderByDescending(r => r.PaidDate)
+                .ToList();
             ViewBag.Player = player;
             ViewBag.Memberships = memberships;
+            ViewBag.Receipts = receipts;
             return View();
         }
         [HttpPost]
