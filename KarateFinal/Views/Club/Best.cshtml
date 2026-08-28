@@ -444,8 +444,7 @@
             <h1>منصة الكاراتيه الفلسطينية</h1>
             <h2>اصنع تاريخك ...وكن بطلاً</h2>
         </div>
-        <@await Html.PartialAsync("_NavLogo")="لوغو"
-             style="position:absolute;right:260px;height:55px;">
+        @await Html.PartialAsync("_NavLogo")>
         <ul>
             <li><a href="/Home/Index">الرئيسية</a></li>
             <li><a href="/Tour/Index">الاندية</a></li>
