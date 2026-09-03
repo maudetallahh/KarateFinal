@@ -4,10 +4,10 @@
     transition: background 0.3s, color 0.3s;
 }
 
-    body.light-mode {
-        background: #f0f4f8 !important;
-        color: #1e2a38 !important;
-    }
+html body.light-mode {
+    background: #f0f4f8 !important;
+    color: #1e2a38 !important;
+}
 
         body.light-mode nav {
             background: #1e2a38 !important;
