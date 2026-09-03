@@ -3,7 +3,7 @@
     var username = Context.Session.GetString("Username");
 }
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="/images/test.jpg">
@@ -109,6 +109,28 @@
             z-index: 10;
         }
 
+        [data-theme="light"] {
+            --bg: #f0f4f8;
+            --nav-bg: #1e2a38;
+            --card-bg: #ffffff;
+            --text: #1e2a38;
+            --muted: #666;
+            --border: #e0e6ed;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f1923;
+            --nav-bg: #1a2535;
+            --card-bg: #1a2535;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --border: #2d3f55;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+        }
             .hamburger span {
                 width: 25px;
                 height: 2px;
@@ -713,6 +735,7 @@
             </div>
         </div>
         <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
+        <button onclick="toggleTheme()" id="themeBtn" style="background:rgba(255,255,255,0.1);border:none;color:white;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:16px;">🌙</button>
         <button onclick="toggleLang()" id="langBtn" class="lang-btn">EN</button>
     </nav>
     <div class="mobile-menu" id="mobileMenu">
@@ -927,6 +950,22 @@
                 document.querySelector('.dropdown-menu')?.classList.remove('open');
             }
         });
+        function toggleTheme() {
+            const html = document.getElementById('htmlRoot');
+            const current = html.getAttribute('data-theme') || 'dark';
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            document.getElementById('themeBtn').textContent = next === 'dark' ? '🌙' : '☀️';
+            localStorage.setItem('theme', next);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('theme') || 'dark';
+            document.getElementById('htmlRoot').setAttribute('data-theme', saved);
+            document.getElementById('themeBtn').textContent = saved === 'dark' ? '🌙' : '☀️';
+        });
     </script>
+
 </body>
+
 </html>
