@@ -1,6 +1,5 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
-# cache bust: 2026-08-21
 COPY KarateFinal/*.csproj ./KarateFinal/
 RUN dotnet restore ./KarateFinal/KarateFinal.csproj
 COPY KarateFinal/. ./KarateFinal/
