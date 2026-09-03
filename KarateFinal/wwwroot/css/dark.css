@@ -1,4 +1,5 @@
-﻿:root {
+﻿/* Dark Mode - Default */
+body {
     --bg: #0f1923;
     --surface: #1a2535;
     --surface2: #1e2d3d;
@@ -6,43 +7,49 @@
     --accent: #4a90e2;
     --text: #f1f5f9;
     --muted: #94a3b8;
-    --success: #10b981;
-    --danger: #ef4444;
-    --warning: #f59e0b;
     --card-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-body {
-    background: var(--bg) !important;
-    color: var(--text) !important;
-}
-
-.info-card, .card, .stat-card, .table-wrap, .year-section, .summary-card {
-    background: var(--surface2) !important;
-    border: 1px solid var(--border) !important;
-    box-shadow: var(--card-shadow) !important;
-    color: var(--text) !important;
-}
-
-input, select, textarea {
-    background: var(--bg) !important;
-    color: var(--text) !important;
-    border-color: var(--border) !important;
-}
-
-h1, h2, h3, h4, p, span, div, label {
+    background: var(--bg);
     color: var(--text);
 }
 
-table tbody tr:hover {
-    background: rgba(255,255,255,0.03) !important;
-}
+    /* Light Mode */
+    body.light-mode {
+        --bg: #f0f4f8;
+        --surface: #ffffff;
+        --surface2: #f8fafc;
+        --border: #e0e6ed;
+        --accent: #2563eb;
+        --text: #1e2a38;
+        --muted: #64748b;
+        --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        background: var(--bg);
+        color: var(--text);
+    }
 
-table thead th {
-    background: var(--surface) !important;
-    color: var(--muted) !important;
-}
+        body.light-mode .info-card,
+        body.light-mode .card,
+        body.light-mode .stat-card,
+        body.light-mode .table-wrap,
+        body.light-mode .year-section,
+        body.light-mode .summary-card {
+            background: var(--surface) !important;
+            border: 1px solid var(--border) !important;
+            color: var(--text) !important;
+        }
 
-table tbody td {
-    color: var(--text) !important;
-}
+        body.light-mode input,
+        body.light-mode select,
+        body.light-mode textarea {
+            background: #fff !important;
+            color: var(--text) !important;
+            border-color: var(--border) !important;
+        }
+
+        body.light-mode table thead th {
+            background: #f1f5f9 !important;
+            color: #64748b !important;
+        }
+
+        body.light-mode table tbody td {
+            color: var(--text) !important;
+        }
