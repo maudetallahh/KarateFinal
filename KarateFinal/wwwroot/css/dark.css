@@ -1,48 +1,35 @@
-﻿/* Dark Mode - Default */
-body {
-    --bg: #0f1923;
-    --surface: #1a2535;
-    --surface2: #1e2d3d;
-    --border: #2d4a6b;
-    --accent: #4a90e2;
-    --text: #f1f5f9;
-    --muted: #94a3b8;
-    --card-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    background: var(--bg);
-    color: var(--text);
+﻿body {
+    background: #0f1923 !important;
+    color: #f1f5f9 !important;
+    transition: background 0.3s, color 0.3s;
 }
 
-    /* Light Mode */
     body.light-mode {
-        --bg: #f0f4f8;
-        --surface: #ffffff;
-        --surface2: #f8fafc;
-        --border: #e0e6ed;
-        --accent: #2563eb;
-        --text: #1e2a38;
-        --muted: #64748b;
-        --card-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        background: var(--bg);
-        color: var(--text);
+        background: #f0f4f8 !important;
+        color: #1e2a38 !important;
     }
+
+        body.light-mode nav {
+            background: #1e2a38 !important;
+        }
 
         body.light-mode .info-card,
         body.light-mode .card,
         body.light-mode .stat-card,
-        body.light-mode .table-wrap,
         body.light-mode .year-section,
-        body.light-mode .summary-card {
-            background: var(--surface) !important;
-            border: 1px solid var(--border) !important;
-            color: var(--text) !important;
+        body.light-mode .summary-card,
+        body.light-mode .table-wrap {
+            background: #ffffff !important;
+            border: 1px solid #e0e6ed !important;
+            color: #1e2a38 !important;
         }
 
         body.light-mode input,
         body.light-mode select,
         body.light-mode textarea {
-            background: #fff !important;
-            color: var(--text) !important;
-            border-color: var(--border) !important;
+            background: #ffffff !important;
+            color: #1e2a38 !important;
+            border-color: #e0e6ed !important;
         }
 
         body.light-mode table thead th {
@@ -50,6 +37,14 @@ body {
             color: #64748b !important;
         }
 
-        body.light-mode table tbody td {
-            color: var(--text) !important;
+        body.light-mode table tbody td,
+        body.light-mode table tbody tr {
+            background: #ffffff !important;
+            color: #1e2a38 !important;
+        }
+
+        body.light-mode h1, body.light-mode h2,
+        body.light-mode h3, body.light-mode p,
+        body.light-mode span, body.light-mode label {
+            color: #1e2a38 !important;
         }
