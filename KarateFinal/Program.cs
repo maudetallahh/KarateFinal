@@ -32,6 +32,10 @@ using (var scope = app.Services.CreateScope())
     
     SeedData.Initialize(scope.ServiceProvider);
 }
+app.UseStaticFiles(new StaticFileOptions
+{
+    ServeUnknownFileTypes = true
+});
 app.UseStaticFiles();
 app.UseRouting();
 app.UseSession();
