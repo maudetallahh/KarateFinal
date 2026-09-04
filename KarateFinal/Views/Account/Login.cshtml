@@ -506,6 +506,26 @@
                 display: flex;
             }
         }
+
+        body.light-mode {
+            background: #f0f4f8 !important;
+            color: #1e2a38 !important;
+        }
+
+            body.light-mode .login-box, body.light-mode .card {
+                background: #ffffff !important;
+                color: #1e2a38 !important;
+            }
+
+            body.light-mode input {
+                background: #fff !important;
+                color: #1e2a38 !important;
+                border-color: #e0e6ed !important;
+            }
+
+            body.light-mode h1, body.light-mode h2, body.light-mode p, body.light-mode label {
+                color: #1e2a38 !important;
+            }
     </style>
 <link rel="stylesheet" href="/css/dark.css"><script>function applyTheme(t){const l=t==='light';document.body.style.setProperty('background',l?'#f0f4f8':'#0f1923','important');document.body.style.setProperty('color',l?'#1e2a38':'#f1f5f9','important');document.querySelectorAll('.theme-btn').forEach(b=>b.textContent=l?'☀️':'🌙');localStorage.setItem('theme',t);}function toggleTheme(){applyTheme(localStorage.getItem('theme')==='light'?'dark':'light');}document.addEventListener('DOMContentLoaded',()=>applyTheme(localStorage.getItem('theme')||'dark'));</script></head>
 <body>
@@ -521,6 +541,7 @@
         <ul>
             <li><a href="/Home/Index">الرئيسية</a></li>
             <li><a href="/Club/Index">الأندية</a></li>
+            <li><button onclick="toggleTheme()" class="theme-btn" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:16px;">🌙</button></li>
             <li><a href="/Account/Login" class="login-btn">تسجيل دخول</a></li>
         </ul>
         <div class="hamburger" id="hamburger"><span></span><span></span><span></span></div>
@@ -617,6 +638,12 @@
             if (input.type === 'password') { input.type = 'text'; icon.textContent = '🙈'; icon.style.opacity = '1'; }
             else { input.type = 'password'; icon.textContent = '👁️'; icon.style.opacity = '0.6'; }
         }
+
+    </script>
+    <script>
+        function applyTheme(t) { const l = t === 'light'; if (l) { document.body.classList.add('light-mode'); } else { document.body.classList.remove('light-mode'); } document.querySelectorAll('.theme-btn').forEach(b => b.textContent = l ? '☀️' : '🌙'); localStorage.setItem('theme', t); }
+        function toggleTheme() { applyTheme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light'); }
+        document.addEventListener('DOMContentLoaded', () => applyTheme(localStorage.getItem('theme') || 'dark'));
     </script>
 </body>
 </html>
