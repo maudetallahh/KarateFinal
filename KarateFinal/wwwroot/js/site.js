@@ -40,7 +40,8 @@ function applyTheme(t) {
     const text = l ? '#1e2a38' : '#f1f5f9';
     const cardBg = l ? '#ffffff' : '#1e2d3d';
     const border = l ? '#e0e6ed' : '#2d4a6b';
-
+    document.documentElement.style.setProperty('--page-bg', l ? '#f0f4f8' : '#0d1117');
+    document.documentElement.style.setProperty('--page-text', l ? '#1e2a38' : '#e6edf3');
     document.body.style.setProperty('background', bg, 'important');
     document.body.style.setProperty('color', text, 'important');
 

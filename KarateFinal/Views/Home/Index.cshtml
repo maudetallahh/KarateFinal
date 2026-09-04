@@ -16,8 +16,24 @@
     <link rel="icon" type="image/png" href="@logoPath">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
-        body { background:#0d1117; color:#e6edf3; min-height:100vh; }
-        nav { background:#161b22; border-bottom:3px solid #4a90e2; padding:14px 40px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; }
+
+        body {
+            background: var(--page-bg, #0d1117);
+            color: var(--page-text, #e6edf3);
+            min-height: 100vh;
+        }
+
+        nav {
+            background: #161b22;
+            border-bottom: 3px solid #4a90e2;
+            padding: 14px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
         .nav-logo { display:flex; align-items:center; gap:12px; }
         .nav-logo img { height:44px; object-fit:contain; }
         .nav-logo-text h1 { font-size:18px; font-weight:700; color:white; }
