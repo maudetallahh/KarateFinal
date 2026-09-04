@@ -1,66 +1,41 @@
-﻿body {
-    color: #f1f5f9 !important;
+﻿body.light-mode {
+    background: #f0f4f8 !important;
+    color: #1e2a38 !important;
 }
 
-    body.light-mode {
-        background: #f0f4f8 !important;
+    body.light-mode h1, body.light-mode h2, body.light-mode h3,
+    body.light-mode h4, body.light-mode h5, body.light-mode p,
+    body.light-mode span, body.light-mode td, body.light-mode th,
+    body.light-mode label, body.light-mode li {
         color: #1e2a38 !important;
     }
 
-        body.light-mode h1, body.light-mode h2, body.light-mode h3,
-        body.light-mode h4, body.light-mode h5, body.light-mode p,
-        body.light-mode span, body.light-mode td, body.light-mode th,
-        body.light-mode label, body.light-mode li, body.light-mode div {
-            color: #1e2a38 !important;
-        }
+    body.light-mode .info-card, body.light-mode .card, body.light-mode .stat-card,
+    body.light-mode .year-section, body.light-mode .table-wrap,
+    body.light-mode .payment-card, body.light-mode .mem-card,
+    body.light-mode .login-card, body.light-mode .messages-box {
+        background: #ffffff !important;
+        color: #1e2a38 !important;
+        border-color: #e0e6ed !important;
+    }
 
-        body.light-mode a:not(.btn):not(.card-btn):not(.back-btn):not(.login-btn):not(.logout-btn) {
-            color: #1e2a38 !important;
-        }
+    body.light-mode input, body.light-mode select, body.light-mode textarea {
+        background: #ffffff !important;
+        color: #1e2a38 !important;
+        border-color: #cbd5e1 !important;
+    }
 
-        body.light-mode .info-card, body.light-mode .card, body.light-mode .stat-card,
-        body.light-mode .year-section, body.light-mode .summary-card, body.light-mode .table-wrap,
-        body.light-mode .payment-card, body.light-mode .mem-card, body.light-mode .page,
-        body.light-mode .login-card, body.light-mode .modal, body.light-mode .messages-box,
-        body.light-mode .match-card, body.light-mode .draw-section, body.light-mode .filter-section,
-        body.light-mode .stat-box, body.light-mode .content, body.light-mode .main {
-            background: #ffffff !important;
-            color: #1e2a38 !important;
-            border-color: #e0e6ed !important;
-        }
+    body.light-mode section, body.light-mode main {
+        background: #f0f4f8 !important;
+    }
 
-        body.light-mode input, body.light-mode select, body.light-mode textarea {
-            background: #ffffff !important;
-            color: #1e2a38 !important;
-            border-color: #cbd5e1 !important;
-        }
+footer, .footer, .footer-bottom {
+    background: #1e2a38 !important;
+}
 
-        body.light-mode section, body.light-mode main, body.light-mode .hero,
-        body.light-mode .features, body.light-mode .clubs-section, body.light-mode .bg-pattern {
-            background: #f0f4f8 !important;
-            color: #1e2a38 !important;
-        }
-
-        nav, body.light-mode nav, .sidebar, body.light-mode .sidebar,
-        .topbar, body.light-mode .topbar {
-            background: #1e2a38 !important;
-        }
-
-            nav *, body.light-mode nav *, .sidebar *, body.light-mode .sidebar *,
-            .topbar *, body.light-mode .topbar * {
-                color: #f1f5f9 !important;
-            }
-
-        footer, body.light-mode footer, .footer, body.light-mode .footer,
-        .footer-bottom, body.light-mode .footer-bottom {
-            background: #1e2a38 !important;
-            color: #ffffff !important;
-        }
-
-            footer *, body.light-mode footer *, .footer *, body.light-mode .footer *,
-            .footer-bottom *, body.light-mode .footer-bottom * {
-                color: #ffffff !important;
-            }
+    footer *, .footer *, .footer-bottom * {
+        color: #ffffff !important;
+    }
 
 .badge-active {
     color: #3fb950 !important;
@@ -72,9 +47,4 @@
 
 .badge-pending {
     color: #e3b341 !important;
-}
-footer, footer *, .footer, .footer *,
-.footer-bottom, .footer-bottom * {
-    color: #ffffff !important;
-    background: #1e2a38 !important;
 }
