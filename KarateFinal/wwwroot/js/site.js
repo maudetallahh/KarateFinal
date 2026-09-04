@@ -26,7 +26,7 @@
             el.style.setProperty('color', text, 'important');
         }
     });
-    document.querySelectorAll('.theme-btn').forEach(btn => btn.textContent = isLight ? '☀️' : '🌙');
+    document.querySelectorAll('.').forEach(btn => btn.textContent = isLight ? '☀️' : '🌙');
     localStorage.setItem('theme', theme);
 }
 
@@ -67,7 +67,7 @@ function applyTheme(t) {
         el.style.setProperty('border-color', border, 'important');
     });
 
-    document.querySelectorAll('.theme-btn').forEach(b => b.textContent = l ? '☀️' : '🌙');
+    document.querySelectorAll('.').forEach(b => b.textContent = l ? '☀️' : '🌙');
     localStorage.setItem('theme', t);
 }
 

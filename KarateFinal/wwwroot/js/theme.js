@@ -26,7 +26,7 @@
         }
     });
 
-    document.querySelectorAll('.theme-btn').forEach(btn => btn.textContent = isLight ? '☀️' : '🌙');
+    document.querySelectorAll('.').forEach(btn => btn.textContent = isLight ? '☀️' : '🌙');
     localStorage.setItem('theme', theme);
 }
 

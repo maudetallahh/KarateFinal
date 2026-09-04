@@ -9,7 +9,7 @@
         el.style.setProperty('color','#1e2a38','important');}else if(['input','select','textarea'].includes(tag)){el.style.setProperty('background','#ffffff','important');el.style.setProperty('color','#1e2a38','important');
         el.style.setProperty('border-color','#cbd5e1','important');}else if(['h1','h2','h3','h4','h5','p','span','td','th','label','li','a'].includes(tag)){el.style.setProperty('color','#1e2a38','important');}}else{el.style.removeProperty('background');
         el.style.removeProperty('color');el.style.removeProperty('border-color');}});
-    document .querySelectorAll('.theme-btn').forEach(function(b){b.textContent=l?'\u2600\ufe0f':'\ud83c\udf19';});
+    document .querySelectorAll('.').forEach(function(b){b.textContent=l?'\u2600\ufe0f':'\ud83c\udf19';});
     localStorage .setItem('theme',t);
 }
 
