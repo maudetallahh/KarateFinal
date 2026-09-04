@@ -50,12 +50,15 @@ html body.light-mode {
         }
 body.light-mode footer,
 body.light-mode .footer,
-body.light-mode .footer-bottom {
+body.light-mode .footer-bottom,
+body.light-mode .site-footer {
     background: #1e2a38 !important;
+    color: #ffffff !important;
 }
 
     body.light-mode footer *,
     body.light-mode .footer *,
-    body.light-mode .footer-bottom * {
+    body.light-mode .footer-bottom *,
+    body.light-mode .site-footer * {
         color: #ffffff !important;
     }
