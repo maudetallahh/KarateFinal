@@ -1,7 +1,14 @@
 ﻿function applyTheme(t) {
     const l=t==='light';
     document .body.className=l?'light-mode':'';
-    document .querySelectorAll('*').forEach(function(el){const tag=el.tagName.toLowerCase();const inFooter=el.closest('footer')||el.closest('.footer')||el.closest('.footer-bottom')||tag==='footer';const inNav=el.closest('nav')||el.closest('.sidebar')||el.closest('.topbar')||tag==='nav';const isBtn=el.closest('.btn')||el.closest('.card-btn')||el.closest('.back-btn')||el.closest('.login-btn')||el.closest('.badge');if(inFooter){el.style.setProperty('background','#1e2a38','important');el.style.setProperty('color','#ffffff','important');return;}if(inNav){el.style.setProperty('background','#1e2a38','important');el.style.setProperty('color','#f1f5f9','important');return;}if(isBtn)return;if(l){if(['body','html','section','main','div'].includes(tag)){el.style.setProperty('background','#f0f4f8','important');el.style.setProperty('color','#1e2a38','important');}else if(['input','select','textarea'].includes(tag)){el.style.setProperty('background','#ffffff','important');el.style.setProperty('color','#1e2a38','important');el.style.setProperty('border-color','#cbd5e1','important');}else if(['h1','h2','h3','h4','h5','p','span','td','th','label','li','a'].includes(tag)){el.style.setProperty('color','#1e2a38','important');}}else{el.style.removeProperty('background');el.style.removeProperty('color');el.style.removeProperty('border-color');}});
+    document .querySelectorAll('*').forEach(function(el){const tag=el.tagName.toLowerCase();const inFooter=el.closest('footer')||el.closest('.footer')||el.closest('.footer-bottom')||tag==='footer';const inNav=el.closest('nav')||el.closest('.sidebar')||el.closest('.topbar')||tag==='nav';const isBtn=el.closest('.btn')||el.closest('.card-btn')||el.closest('.back-btn')||el.closest('.login-btn')||el.closest('.badge');
+    if(inFooter){
+    return;
+}
+       if(isBtn)return;if(l){if(['body','html','section','main','div'].includes(tag)){el.style.setProperty('background','#f0f4f8','important');
+        el.style.setProperty('color','#1e2a38','important');}else if(['input','select','textarea'].includes(tag)){el.style.setProperty('background','#ffffff','important');el.style.setProperty('color','#1e2a38','important');
+        el.style.setProperty('border-color','#cbd5e1','important');}else if(['h1','h2','h3','h4','h5','p','span','td','th','label','li','a'].includes(tag)){el.style.setProperty('color','#1e2a38','important');}}else{el.style.removeProperty('background');
+        el.style.removeProperty('color');el.style.removeProperty('border-color');}});
     document .querySelectorAll('.theme-btn').forEach(function(b){b.textContent=l?'\u2600\ufe0f':'\ud83c\udf19';});
     localStorage .setItem('theme',t);
 }
