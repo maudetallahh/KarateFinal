@@ -94,3 +94,6 @@ body {
 .badge-pending {
     color: #e3b341 !important;
 }
+footer *, body.light-mode footer * {
+    color: #ffffff !important;
+}
