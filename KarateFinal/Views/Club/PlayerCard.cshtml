@@ -868,7 +868,7 @@
                 <div class="row total"><span>المبلغ المدفوع</span><span>${amount} ₪</span></div>
                 <div class="footer">شكراً لدفعكم في الوقت المحدد 🏅</div>
                 <script>window.print();window.close();<\/script>
-                </body></html>
+                @await Html.PartialAsync("_Footer")</body></html>
             `);
         }
         document.getElementById('hamburger').addEventListener('click', function () { this.classList.toggle('open'); document.getElementById('mobileMenu').classList.toggle('show'); });
@@ -926,5 +926,5 @@
                 });
         }
     </script>
-</body>
+@await Html.PartialAsync("_Footer")</body>
 </html>
