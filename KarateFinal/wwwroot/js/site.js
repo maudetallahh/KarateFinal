@@ -5,6 +5,11 @@
     const text = isLight ? '#1e2a38' : '#f1f5f9';
     const border = isLight ? '#e0e6ed' : '#2d4a6b';
     document.body.style.setProperty('background', bg, 'important');
+    const pageBody = document.getElementById('pageBody');
+    if (pageBody) {
+        pageBody.style.setProperty('background', l ? '#f0f4f8' : '#0d1117', 'important');
+        pageBody.style.setProperty('color', l ? '#1e2a38' : '#e6edf3', 'important');
+    }
     document.body.style.setProperty('color', text, 'important');
     document.querySelectorAll('.info-card, .card, .stat-card, .year-section, .summary-card, .table-wrap, .payment-card, .modal, .messages-box').forEach(el => {
         el.style.setProperty('background', cardBg, 'important');
