@@ -1,80 +1,96 @@
-﻿/* NAV & HEADER - Always Dark */
-nav, .topbar, .sidebar {
-    background: #1e2a38 !important;
+﻿/* ===== DARK MODE (Default) ===== */
+body {
+    background: #0f1923 !important;
     color: #f1f5f9 !important;
 }
 
-    nav *, .topbar *, .sidebar * {
-        color: #f1f5f9 !important;
-    }
-
-/* FOOTER - Always Dark */
-footer, .footer, .footer-bottom, .site-footer {
-    background: #1e2a38 !important;
-    color: #ffffff !important;
-}
-
-    footer *, .footer *, .footer-bottom *, .site-footer * {
-        color: #ffffff !important;
-    }
-
-/* LIGHT MODE */
-body.light-mode {
-    background: #f0f4f8 !important;
-    color: #1e2a38 !important;
-}
-
-    body.light-mode * {
+    /* ===== LIGHT MODE ===== */
+    body.light-mode {
+        background: #f0f4f8 !important;
         color: #1e2a38 !important;
     }
 
-    /* Keep nav & sidebar dark in light mode */
-    body.light-mode nav, body.light-mode .topbar, body.light-mode .sidebar {
-        background: #1e2a38 !important;
-    }
-
-        body.light-mode nav *, body.light-mode .topbar *, body.light-mode .sidebar * {
-            color: #f1f5f9 !important;
+        /* Light mode - all text dark */
+        body.light-mode h1, body.light-mode h2, body.light-mode h3,
+        body.light-mode h4, body.light-mode h5, body.light-mode p,
+        body.light-mode span, body.light-mode td, body.light-mode th,
+        body.light-mode label, body.light-mode li, body.light-mode div,
+        body.light-mode a:not(.btn):not(.card-btn):not(.back-btn):not(.login-btn):not(.logout-btn) {
+            color: #1e2a38 !important;
         }
 
-    /* Keep footer dark in light mode */
-    body.light-mode footer, body.light-mode .footer,
-    body.light-mode .footer-bottom, body.light-mode .site-footer {
-        background: #1e2a38 !important;
-    }
+        /* Light mode - cards white */
+        body.light-mode .info-card, body.light-mode .card, body.light-mode .stat-card,
+        body.light-mode .year-section, body.light-mode .summary-card, body.light-mode .table-wrap,
+        body.light-mode .payment-card, body.light-mode .mem-card, body.light-mode .page,
+        body.light-mode .login-card, body.light-mode .modal, body.light-mode .messages-box,
+        body.light-mode .match-card, body.light-mode .draw-section, body.light-mode .filter-section,
+        body.light-mode .stat-box, body.light-mode .content, body.light-mode .main {
+            background: #ffffff !important;
+            color: #1e2a38 !important;
+            border-color: #e0e6ed !important;
+        }
 
-        body.light-mode footer *, body.light-mode .footer *,
-        body.light-mode .footer-bottom *, body.light-mode .site-footer * {
+        /* Light mode - inputs */
+        body.light-mode input, body.light-mode select, body.light-mode textarea {
+            background: #ffffff !important;
+            color: #1e2a38 !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Light mode - sections */
+        body.light-mode section, body.light-mode main, body.light-mode .hero,
+        body.light-mode .features, body.light-mode .clubs-section,
+        body.light-mode .bg-pattern {
+            background: #f0f4f8 !important;
+            color: #1e2a38 !important;
+        }
+
+        /* NAV - Always Dark */
+        nav, body.light-mode nav {
+            background: #1e2a38 !important;
+        }
+
+            nav *, body.light-mode nav * {
+                color: #f1f5f9 !important;
+            }
+
+        /* SIDEBAR - Always Dark */
+        .sidebar, body.light-mode .sidebar,
+        .topbar, body.light-mode .topbar {
+            background: #1e2a38 !important;
+        }
+
+            .sidebar *, body.light-mode .sidebar *,
+            .topbar *, body.light-mode .topbar * {
+                color: #f1f5f9 !important;
+            }
+
+        /* FOOTER - Always Dark */
+        footer, body.light-mode footer,
+        .footer, body.light-mode .footer,
+        .footer-bottom, body.light-mode .footer-bottom,
+        .site-footer, body.light-mode .site-footer {
+            background: #1e2a38 !important;
             color: #ffffff !important;
         }
 
-    /* Cards in light mode */
-    body.light-mode .info-card, body.light-mode .card, body.light-mode .stat-card,
-    body.light-mode .year-section, body.light-mode .summary-card, body.light-mode .table-wrap,
-    body.light-mode .payment-card, body.light-mode .mem-card, body.light-mode .page,
-    body.light-mode .login-card, body.light-mode .modal, body.light-mode .messages-box {
-        background: #ffffff !important;
-        border-color: #e0e6ed !important;
-    }
+            footer *, body.light-mode footer *,
+            .footer *, body.light-mode .footer *,
+            .footer-bottom *, body.light-mode .footer-bottom *,
+            .site-footer *, body.light-mode .site-footer * {
+                color: #ffffff !important;
+            }
 
-    /* Inputs in light mode */
-    body.light-mode input, body.light-mode select, body.light-mode textarea {
-        background: #ffffff !important;
-        color: #1e2a38 !important;
-        border-color: #cbd5e1 !important;
-    }
+/* Badges keep colors */
+.badge-active {
+    color: #3fb950 !important;
+}
 
-    /* Sections in light mode */
-    body.light-mode section, body.light-mode .hero, body.light-mode .features,
-    body.light-mode .clubs-section, body.light-mode .bg-pattern, body.light-mode main {
-        background: #f0f4f8 !important;
-    }
+.badge-inactive, .badge-closed {
+    color: #f85149 !important;
+}
 
-    /* Badges keep their colors */
-    body.light-mode .badge-active {
-        color: #3fb950 !important;
-    }
-
-    body.light-mode .badge-inactive {
-        color: #f85149 !important;
-    }
+.badge-pending {
+    color: #e3b341 !important;
+}
