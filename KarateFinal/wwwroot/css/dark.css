@@ -1,64 +1,63 @@
-﻿body {
+﻿/* ===== DARK MODE (Default) ===== */
+body {
     background: #0f1923 !important;
     color: #f1f5f9 !important;
-    transition: background 0.3s, color 0.3s;
 }
 
-html body.light-mode {
-    background: #f0f4f8 !important;
-    color: #1e2a38 !important;
-}
+    /* ===== LIGHT MODE ===== */
+    body.light-mode {
+        background: #f0f4f8 !important;
+        color: #1e2a38 !important;
+    }
 
-        body.light-mode nav {
-            background: #1e2a38 !important;
-        }
-
-        body.light-mode .info-card,
-        body.light-mode .card,
-        body.light-mode .stat-card,
-        body.light-mode .year-section,
-        body.light-mode .summary-card,
-        body.light-mode .table-wrap {
-            background: #ffffff !important;
-            border: 1px solid #e0e6ed !important;
-            color: #1e2a38 !important;
-        }
-
-        body.light-mode input,
-        body.light-mode select,
-        body.light-mode textarea {
+        /* Cards & Containers */
+        body.light-mode .info-card, body.light-mode .card, body.light-mode .stat-card,
+        body.light-mode .year-section, body.light-mode .summary-card, body.light-mode .table-wrap,
+        body.light-mode .payment-card, body.light-mode .mem-card, body.light-mode .stat-box,
+        body.light-mode .page, body.light-mode .content, body.light-mode .main,
+        body.light-mode .chat-container, body.light-mode .messages-box,
+        body.light-mode .login-card, body.light-mode .modal, body.light-mode .year-section {
             background: #ffffff !important;
             color: #1e2a38 !important;
             border-color: #e0e6ed !important;
         }
 
-        body.light-mode table thead th {
-            background: #f1f5f9 !important;
-            color: #64748b !important;
+        /* Text */
+        body.light-mode h1, body.light-mode h2, body.light-mode h3, body.light-mode h4, body.light-mode h5,
+        body.light-mode p, body.light-mode span, body.light-mode label, body.light-mode td, body.light-mode th,
+        body.light-mode li, body.light-mode div:not(.sidebar):not(.topbar):not(nav) {
+            color: #1e2a38 !important;
         }
 
-        body.light-mode table tbody td,
-        body.light-mode table tbody tr {
+        /* Inputs */
+        body.light-mode input, body.light-mode select, body.light-mode textarea {
             background: #ffffff !important;
             color: #1e2a38 !important;
+            border-color: #cbd5e1 !important;
         }
 
-        body.light-mode h1, body.light-mode h2,
-        body.light-mode h3, body.light-mode p,
-        body.light-mode span, body.light-mode label {
-            color: #1e2a38 !important;
+        /* Nav & Sidebar - Always Dark */
+        body.light-mode nav, body.light-mode .sidebar, body.light-mode .topbar {
+            background: #1e2a38 !important;
         }
-body.light-mode footer,
-body.light-mode .footer,
-body.light-mode .footer-bottom,
-body.light-mode .site-footer {
-    background: #1e2a38 !important;
-    color: #ffffff !important;
-}
 
-    body.light-mode footer *,
-    body.light-mode .footer *,
-    body.light-mode .footer-bottom *,
-    body.light-mode .site-footer * {
-        color: #ffffff !important;
-    }
+            body.light-mode nav *, body.light-mode .sidebar *, body.light-mode .topbar * {
+                color: #f1f5f9 !important;
+            }
+
+        /* Footer - Always Dark */
+        body.light-mode footer, body.light-mode .footer, body.light-mode .footer-bottom,
+        body.light-mode .site-footer {
+            background: #1e2a38 !important;
+        }
+
+            body.light-mode footer *, body.light-mode .footer *, body.light-mode .footer-bottom *,
+            body.light-mode .site-footer * {
+                color: #ffffff !important;
+            }
+
+        /* Background sections */
+        body.light-mode section, body.light-mode .hero, body.light-mode .features,
+        body.light-mode .clubs-section, body.light-mode .bg-pattern {
+            background: #f0f4f8 !important;
+        }
