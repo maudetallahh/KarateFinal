@@ -128,7 +128,10 @@
             document.body.style.setProperty('color', l ? '#1e2a38' : '#e6edf3', 'important');
             document.querySelectorAll('.theme-btn').forEach(b => b.textContent = l ? '☀️' : '🌙');
             localStorage.setItem('theme', t);
-        }</script>
+        }
+        function toggleTheme() { applyTheme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light'); }
+        document.addEventListener('DOMContentLoaded', () => applyTheme(localStorage.getItem('theme') || 'dark'));
+    </script>
 </head>
 <body id="pageBody">
     <nav>
