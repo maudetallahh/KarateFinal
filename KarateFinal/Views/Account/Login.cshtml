@@ -675,5 +675,5 @@ body.light-mode input, body.light-mode textarea {
         function toggleTheme() { applyTheme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light'); }
         document.addEventListener('DOMContentLoaded', () => applyTheme(localStorage.getItem('theme') || 'dark'));
     </script>
-@await Html.PartialAsync("_Footer")</body>
+</body>
 </html>
