@@ -28,6 +28,10 @@
             flex-direction: column;
         }
 
+            body.light-mode {
+                background: #f0f4f8 !important;
+            }
+
         .bg-pattern {
             position: fixed;
             inset: 0;
@@ -507,19 +511,17 @@
             }
         }
 
-        body.light-mode * {
-            color: #1e2a38 !important;
-        }
-
-        body.light-mode nav *, body.light-mode .login-btn {
-            color: white !important;
-        }
-
-        body.light-mode input, body.light-mode textarea {
-            background: #fff !important;
-            color: #1e2a38 !important;
-            border-color: #e0e6ed !important;
-        }
+      body.light-mode * {
+    color: #1e2a38 !important;
+}
+body.light-mode nav *, body.light-mode .login-btn {
+    color: white !important;
+}
+body.light-mode input, body.light-mode textarea {
+    background: #fff !important;
+    color: #1e2a38 !important;
+    border-color: #e0e6ed !important;
+}
     </style>
 <link rel="stylesheet" href="/css/dark.css"><script>function applyTheme(t){const l=t==='light';document.body.style.setProperty('background',l?'#f0f4f8':'#0f1923','important');document.body.style.setProperty('color',l?'#1e2a38':'#f1f5f9','important');document.querySelectorAll('.theme-btn').forEach(b=>b.textContent=l?'☀️':'🌙');localStorage.setItem('theme',t);}function toggleTheme(){applyTheme(localStorage.getItem('theme')==='light'?'dark':'light');}document.addEventListener('DOMContentLoaded',()=>applyTheme(localStorage.getItem('theme')||'dark'));</script></head>
 <body>
