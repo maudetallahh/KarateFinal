@@ -133,9 +133,9 @@
                 <div class="row" style="color:#27ae60;font-size:16px;"><span>المبلغ</span><span>${amount} ₪</span></div>
                 <p style="text-align:center;color:#888;font-size:12px;margin-top:16px;">شكراً لدفعكم 🏅</p>
                 <script>window.print();window.close();<\/script>
-                </body></html>
+                @await Html.PartialAsync("_Footer")@await Html.PartialAsync("_Footer")</body></html>
             `);
         }
     </script>
-</body>
+@await Html.PartialAsync("_Footer")</body>
 </html>
