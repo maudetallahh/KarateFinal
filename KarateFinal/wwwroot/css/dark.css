@@ -74,3 +74,8 @@
 .badge-pending {
     color: #e3b341 !important;
 }
+footer, footer *, .footer, .footer *,
+.footer-bottom, .footer-bottom * {
+    color: #ffffff !important;
+    background: #1e2a38 !important;
+}
