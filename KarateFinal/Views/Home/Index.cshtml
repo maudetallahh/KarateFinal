@@ -18,10 +18,20 @@
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Tahoma,sans-serif; }
 
         body {
-            background: var(--page-bg, #0d1117);
-            color: var(--page-text, #e6edf3);
+            background: #0d1117;
+            color: #e6edf3;
             min-height: 100vh;
         }
+
+            body.light-mode {
+                background: #f0f4f8 !important;
+                color: #1e2a38 !important;
+            }
+
+                body.light-mode section, body.light-mode .hero, body.light-mode .features, body.light-mode .clubs-section {
+                    background: #f0f4f8 !important;
+                    color: #1e2a38 !important;
+                }
 
         nav {
             background: #161b22;
@@ -124,8 +134,11 @@
     <script>
         function applyTheme(t) {
             const l = t === 'light';
-            document.body.style.setProperty('background', l ? '#f0f4f8' : '#0d1117', 'important');
-            document.body.style.setProperty('color', l ? '#1e2a38' : '#e6edf3', 'important');
+            if (l) {
+                document.body.classList.add('light-mode');
+            } else {
+                document.body.classList.remove('light-mode');
+            }
             document.querySelectorAll('.theme-btn').forEach(b => b.textContent = l ? '☀️' : '🌙');
             localStorage.setItem('theme', t);
         }
