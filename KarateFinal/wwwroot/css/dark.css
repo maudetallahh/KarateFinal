@@ -48,3 +48,15 @@ html body.light-mode {
         body.light-mode span, body.light-mode label {
             color: #1e2a38 !important;
         }
+body.light-mode footer,
+body.light-mode .footer,
+body.light-mode .footer-bottom {
+    background: #1e2a38 !important;
+    color: #ffffff !important;
+}
+
+    body.light-mode footer *,
+    body.light-mode .footer *,
+    body.light-mode .footer-bottom * {
+        color: #ffffff !important;
+    }
