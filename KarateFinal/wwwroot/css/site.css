@@ -1,27 +1,27 @@
 ﻿function applyTheme(t) {
     const l = t === 'light';
     document .body.className = l ? 'light-mode' : '';
-    const allEls = document.querySelectorAll('*');
-    allEls .forEach(el => {
+    document .querySelectorAll('*').forEach(el => {
         const tag = el.tagName.toLowerCase();
         const inNav = el.closest('nav') || el.closest('.sidebar') || el.closest('.topbar');
         const inFooter = el.closest('footer') || el.closest('.footer') || el.closest('.footer-bottom');
         const isBtn = el.closest('.btn') || el.closest('.card-btn') || el.closest('.back-btn') || el.closest('.login-btn') || el.closest('.badge');
-        if (inNav || tag === 'nav') {
-            el.style.setProperty('background', '#1e2a38', 'important');
-        } else if (inFooter || tag === 'footer') {
+        if (inFooter || tag === 'footer') {
             el.style.setProperty('background', '#1e2a38', 'important');
             el.style.setProperty('color', '#ffffff', 'important');
+        } else if (inNav || tag === 'nav') {
+            el.style.setProperty('background', '#1e2a38', 'important');
+            el.style.setProperty('color', '#f1f5f9', 'important');
         } else if (!isBtn) {
             if (l) {
-                if (tag === 'body' || tag === 'html' || tag === 'section' || tag === 'main') {
+                if (['body','html','section','main','div'].includes(tag)) {
                     el.style.setProperty('background', '#f0f4f8', 'important');
                     el.style.setProperty('color', '#1e2a38', 'important');
-                } else if (tag === 'input' || tag === 'select' || tag === 'textarea') {
+                } else if (['input','select','textarea'].includes(tag)) {
                     el.style.setProperty('background', '#ffffff', 'important');
                     el.style.setProperty('color', '#1e2a38', 'important');
                     el.style.setProperty('border-color', '#cbd5e1', 'important');
-                } else if (['h1','h2','h3','h4','h5','p','span','td','th','label','li','a','div'].includes(tag)) {
+                } else if (['h1','h2','h3','h4','h5','p','span','td','th','label','li','a'].includes(tag)) {
                     el.style.setProperty('color', '#1e2a38', 'important');
                 }
             } else {
