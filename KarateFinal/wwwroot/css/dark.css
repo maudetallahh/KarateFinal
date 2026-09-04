@@ -1,5 +1,4 @@
-﻿body:not(.admin-body) {
-    background: #0f1923 !important;
+﻿body {
     color: #f1f5f9 !important;
 }
 
