@@ -496,7 +496,7 @@
               "RelativeDocumentMoniker": "KarateFinal\\Views\\Admin\\Index.cshtml",
               "ToolTip": "C:\\Users\\ME\\Desktop\\DataBase\\KarateFinal\\KarateFinal\\Views\\Admin\\Index.cshtml",
               "RelativeToolTip": "KarateFinal\\Views\\Admin\\Index.cshtml",
-              "ViewState": "AgIAADQEAAAAAAAAAADwv3sEAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAkDAAAAAAAAAAAAADMDAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-08-24T18:30:06.655Z",
               "EditorCaption": ""
@@ -511,8 +511,7 @@
               "RelativeToolTip": "KarateFinal\\wwwroot\\css\\dark.css",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-09-03T21:48:24.112Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-09-03T21:48:24.112Z"
             },
             {
               "$type": "Document",
