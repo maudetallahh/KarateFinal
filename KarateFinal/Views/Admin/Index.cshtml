@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة تحكم الإدارة - منصة الكاراتيه</title>
-<style>
+    <style>
         :root {
             --bg: #0f1923;
             --surface: #1a2535;
@@ -327,6 +327,18 @@
             }
         }
 
+        @@keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0)
+            }
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3,1fr);
@@ -402,6 +414,10 @@
             background: var(--accent);
             color: #fff;
         }
+
+            .btn-primary:hover {
+                background: var(--accent2);
+            }
 
         .btn-success {
             background: var(--green);
@@ -618,6 +634,21 @@
                     border-color: var(--accent);
                 }
 
+        .creds-box {
+            background: var(--bg);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-top: 10px;
+        }
+
+            .creds-box .creds-title {
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--accent);
+                margin-bottom: 4px;
+            }
+
         .mem-summary {
             display: grid;
             grid-template-columns: repeat(3,1fr);
@@ -644,88 +675,11 @@
                 line-height: 1;
             }
 
-        .bell-btn {
-            background: none;
-            border: none;
-            color: var(--muted);
-            cursor: pointer;
-            font-size: 20px;
-            position: relative;
-        }
-
-        .bell-badge {
-            position: absolute;
-            top: -4px;
-            left: -4px;
-            background: var(--red);
-            color: white;
-            font-size: 9px;
-            font-weight: 700;
-            padding: 1px 5px;
-            border-radius: 10px;
-        }
-
-        .notif-panel {
-            display: none;
-            position: absolute;
-            top: 40px;
-            left: 0;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            width: 300px;
-            z-index: 500;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-        }
-
-            .notif-panel.show {
-                display: block;
-            }
-
-        .notif-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .notif-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .notif-item {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--border);
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-            .notif-item:hover {
-                background: var(--surface2);
-            }
-
-            .notif-item.unread {
-                border-right: 3px solid var(--accent);
-            }
-
-        .notif-title {
-            font-weight: 700;
-            margin-bottom: 3px;
-        }
-
-        .notif-msg {
-            color: var(--muted);
+        .name-error {
+            color: #e74c3c;
             font-size: 11px;
-        }
-
-        .notif-time {
-            color: var(--muted);
-            font-size: 10px;
-            margin-top: 3px;
+            margin-top: 2px;
+            display: none;
         }
 
         @@media(max-width:1024px) {
@@ -810,16 +764,9 @@
                 font-size: 13px;
             }
         }
-</style>
-    
-    <script>
-        function applyTheme(t) { const l = t === 'light'; document.body.style.setProperty('background', l ? '#f0f4f8' : '#0f1923', 'important'); document.body.style.setProperty('color', l ? '#1e2a38' : '#f1f5f9', 'important');
-        document.querySelectorAll('.theme-btn').forEach(function (b) { b.textContent = l ? '\u2600\ufe0f' : '\ud83c\udf19'; }); localStorage.setItem('theme', t); }
-        function toggleTheme() { applyTheme(localStorage.getItem('theme') === 'light' ? 'dark' : 'light'); }
-        document.addEventListener('DOMContentLoaded', function () { applyTheme(localStorage.getItem('theme') || 'dark'); });
-    </script>
+    </style>
 </head>
-<body class="admin-body">
+<body>
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
@@ -872,8 +819,8 @@
                         <div id="notifList" style="max-height:320px;overflow-y:auto;"></div>
                     </div>
                 </div>
-                
                 <a href="/Account/Logout" class="logout-btn">🚪 خروج</a>
+                <button onclick="toggleLang()" id="langBtn" class="lang-btn">EN</button>
             </div>
         </header>
         <div class="content">
@@ -1146,7 +1093,7 @@
             }
         }]; if (document.getElementById('clubsChart') && topClubs.length > 0) { new Chart(document.getElementById('clubsChart'), { type: 'bar', data: { labels: topClubs.map(c => c.name), datasets: [{ label: 'النقاط', data: topClubs.map(c => c.points), backgroundColor: 'rgba(59,130,246,0.7)', borderColor: '#3b82f6', borderWidth: 1, borderRadius: 6 }] }, options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#94a3b8' }, grid: { color: '#2d3f55' } }, y: { ticks: { color: '#94a3b8' }, grid: { color: '#2d3f55' } } } } }); } if (document.getElementById('membershipChart')) { new Chart(document.getElementById('membershipChart'), { type: 'pie', data: { labels: ['مدفوع', 'غير مدفوع'], datasets: [{ data: [@ViewBag.PaidCount, @ViewBag.UnpaidCount], backgroundColor: ['rgba(16,185,129,0.8)', 'rgba(239,68,68,0.8)'], borderColor: ['#10b981', '#ef4444'], borderWidth: 2 }] }, options: { plugins: { legend: { labels: { color: '#94a3b8' } } } } }); } document.head.appendChild(s); }; document.head.appendChild(s); })();
     </script>
-@await Html.PartialAsync("_Footer")</body>
+</body>
 </html>
 
 
