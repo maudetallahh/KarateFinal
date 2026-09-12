@@ -12,6 +12,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="منصة الكاراتيه الفلسطينية — نظام متكامل لإدارة الأندية واللاعبين والبطولات في فلسطين">
+    <meta name="keywords" content="كاراتيه فلسطين، اتحاد الكاراتيه الفلسطيني، أندية كاراتيه، بطولات كاراتيه فلسطين">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="منصة الكاراتيه الفلسطينية">
+    <meta property="og:description" content="إدارة الكاراتيه الفلسطيني بشكل احترافي — أندية ولاعبون وبطولات">
+    <meta property="og:url" content="https://karatefinal-production.up.railway.app">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="https://karatefinal-production.up.railway.app">
     <title>@(ViewBag.TabName ?? "منصة الكاراتيه")</title>
     <link rel="icon" type="image/png" href="@logoPath">
     <style>
@@ -172,6 +180,8 @@
             <a href="#tournaments">البطولات</a>
             <a href="#features">المميزات</a>
             <a href="#clubs">الأندية</a>
+            <a href="/Home/ClubsRanking">🏟️ترتيب الأندية </a>
+            <a href="/Home/NationalTeam">🥋  لاعبين المنتخب</a>    
             <a href="/Home/About">من نحن</a>
             
             <a href="/Account/Login" class="login-btn">🔐 تسجيل الدخول</a>
@@ -182,6 +192,8 @@
         <a href="#tournaments">البطولات</a>
         <a href="#features">المميزات</a>
         <a href="#clubs">الأندية</a>
+        <a href="/Home/ClubsRanking">🏟️ترتيب الأندية </a>
+        <a href="/Home/NationalTeam">🥋  لاعبين المنتخب</a>
         <a href="/Home/About">من نحن</a>
         <a href="/Account/Login">🔐 تسجيل الدخول</a>
     </div>
@@ -212,6 +224,7 @@
         <div class="tab-btns">
             <button class="tab-btn active" id="tab-upcoming" onclick="showTab('upcoming')">🗓️ القادمة</button>
             <button class="tab-btn" id="tab-past" onclick="showTab('past')">📁 السابقة</button>
+
         </div>
         <div id="grid-upcoming" class="tournaments-grid">
             @if (upcoming != null && upcoming.Any())
@@ -253,6 +266,10 @@
                             <div class="t-info">🏟️ @t.Location</div>
                         }
                         <div class="t-badge past">🏁 انتهت البطولة</div>
+                        <a href="/Home/TournamentDetails/@t.Id"
+                           style="display:inline-block;padding:8px 16px;background:#4a90e2;color:white;border-radius:8px;text-decoration:none;font-size:12px;font-weight:700;margin-top:8px;">
+                            📋 تفاصيل البطولة والقرعة
+                        </a>
                     </div>
                 }
             }

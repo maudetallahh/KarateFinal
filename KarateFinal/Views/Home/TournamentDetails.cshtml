@@ -1,0 +1,276 @@
+﻿@{
+    Layout = null;
+    var t = ViewBag.Tournament as KarateFinal.Models.Tournament;
+    var regs = ViewBag.Registrations as List<KarateFinal.Models.TournamentPlayerRequest>;
+    var siteLogo = ViewBag.SiteLogo as string;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@t?.Title — القرعة الرسمية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo',sans-serif;
+        }
+
+        body {
+            background: #0f1923;
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        nav {
+            background: #1e2a38;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #4a90e2;
+        }
+
+            nav a {
+                color: white;
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 700;
+            }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        .t-header {
+            background: #1a2535;
+            border: 1px solid #2d3f55;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .t-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .t-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .t-row {
+            font-size: 13px;
+            color: #94a3b8;
+            padding: 6px 0;
+        }
+
+            .t-row span {
+                color: #f1f5f9;
+                font-weight: 600;
+            }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #4a90e2;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #2d3f55;
+        }
+
+        .match-card {
+            background: #1a2535;
+            border: 1px solid #2d3f55;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .match-num {
+            font-size: 11px;
+            color: #94a3b8;
+            min-width: 60px;
+        }
+
+        .player-red {
+            color: #ef4444;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .player-blue {
+            color: #3b82f6;
+            font-weight: 700;
+            flex: 1;
+            text-align: left;
+        }
+
+        .vs {
+            color: #94a3b8;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .pdf-btn {
+            display: block;
+            width: 220px;
+            margin: 24px auto;
+            padding: 14px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .empty {
+            text-align: center;
+            color: #94a3b8;
+            padding: 60px;
+            font-size: 14px;
+        }
+
+        .watermark-wrap {
+            position: relative;
+        }
+
+        .watermark {
+            position: absolute;
+            inset: 0;
+            opacity: 0.06;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 250px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @@media print {
+            nav, .pdf-btn, .back-link {
+                display: none !important;
+            }
+
+            body {
+                background: white !important;
+                color: black !important;
+            }
+
+            .t-header {
+                background: #f8f8f8 !important;
+                border: 1px solid #ddd !important;
+            }
+
+            .match-card {
+                background: #f8f8f8 !important;
+                border: 1px solid #ddd !important;
+            }
+
+            .player-red {
+                color: #c0392b !important;
+            }
+
+            .player-blue {
+                color: #2980b9 !important;
+            }
+
+            .watermark {
+                opacity: 0.1 !important;
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/Home/Index">🏠 الرئيسية</a>
+        <span style="color:#4a90e2;font-weight:800;">🏆 تفاصيل البطولة</span>
+        <a href="/Account/Login">تسجيل دخول</a>
+    </nav>
+    <div class="container">
+        <div class="t-header">
+            <div class="t-title">🏆 @t?.Title</div>
+            <div class="t-grid">
+                <div class="t-row">📅 التاريخ: <span>@t?.Date.ToString("yyyy/MM/dd")</span></div>
+                <div class="t-row">📍 الموقع: <span>@t?.Location</span></div>
+                <div class="t-row">🏙️ المدينة: <span>@t?.City</span></div>
+                <div class="t-row">🥋 الفئات: <span>@(t?.Categories ?? "جميع الفئات")</span></div>
+            </div>
+        </div>
+        <button class="pdf-btn" onclick="downloadPDF()">⬇️ تحميل القرعة PDF</button>
+        <div class="watermark-wrap" id="drawSection">
+            @if (!string.IsNullOrEmpty(siteLogo))
+            {
+                <div class="watermark" style="background-image:url('@siteLogo');"></div>
+            }
+            <div style="position:relative;z-index:1;">
+                <div class="section-title">🎲 القرعة الرسمية للبطولة</div>
+                @if (regs != null && regs.Any())
+                {
+                    int matchNum = 1;
+                    for (int i = 0; i < regs.Count - 1; i += 2)
+                    {
+                        <div class="match-card">
+                            <div class="match-num">مباراة #@matchNum</div>
+                            <div class="player-red">🔴 @regs[i].Player?.Name</div>
+                            <div class="vs">VS</div>
+                            <div class="player-blue">@regs[i + 1].Player?.Name 🔵</div>
+                        </div>
+                        matchNum++;
+                    }
+                    @if (regs.Count % 2 != 0)
+                    {
+                        <div class="match-card">
+                            <div class="match-num">مباراة #@matchNum</div>
+                            <div class="player-red">🔴 @regs[regs.Count - 1].Player?.Name</div>
+                            <div class="vs">VS</div>
+                            <div class="player-blue" style="color:#94a3b8;">BYE — عبور تلقائي</div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty">⏳ لم يتم إعداد القرعة بعد — تابع للتحديثات</div>
+                }
+            </div>
+        </div>
+    </div>
+    @await Html.PartialAsync("_Footer")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        async function downloadPDF() {
+            const btn = document.querySelector('.pdf-btn');
+            btn.textContent = '⏳ جاري التحضير...';
+            btn.disabled = true;
+            const element = document.getElementById('drawSection');
+            const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#1a2535', useCORS: true });
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            pdf.setFontSize(16);
+            pdf.text('@(t?.Title ?? "القرعة")', 105, 15, { align: 'center' });
+            pdf.setFontSize(10);
+            pdf.text('منصة الكاراتيه الفلسطينية — وثيقة رسمية', 105, 22, { align: 'center' });
+            const imgData = canvas.toDataURL('image/png');
+            pdf.addImage(imgData, 'PNG', 10, 30, 190, 0);
+            pdf.save('@(t?.Title ?? "قرعة")_draw.pdf');
+            btn.textContent = '⬇️ تحميل القرعة PDF';
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>

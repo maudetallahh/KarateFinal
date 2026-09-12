@@ -25,5 +25,7 @@
         // للترخيص
         public DateTime? LicenseExpiry { get; set; }
         public string? LicenseFile { get; set; }
+        public string? ProfileImage { get; set; }
+        public DateTime? ProfileImageUpdatedAt { get; set; }
     }
 }

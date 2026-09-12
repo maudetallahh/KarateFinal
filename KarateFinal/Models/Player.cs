@@ -21,5 +21,7 @@
         public string? Notes { get; set; }
         public bool IsNationalTeam { get; set; } = false;
         public string? NationalTeamStatus { get; set; } // بانتظار الموافقة، موافق، مرفوض
+        public string? ProfileImage { get; set; }
+        public DateTime? ProfileImageUpdatedAt { get; set; }
     }
 }

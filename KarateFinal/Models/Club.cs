@@ -11,6 +11,7 @@
         public string Username { get; set; } = "";
         public string Password { get; set; } = "";
         public string? LogoImage { get; set; }
+        public DateTime? LogoUpdatedAt { get; set; }
         public string? MaleImage { get; set; }
         public string? FemaleImage { get; set; }
         public string Email { get; set; } = "";

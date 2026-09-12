@@ -1,0 +1,78 @@
+﻿@{
+    Layout = null;
+    var clubs = ViewBag.Clubs as IEnumerable<dynamic>;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ترتيب الأندية — منصة الكاراتيه الفلسطينية</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Cairo',sans-serif; }
+        body { background:#0f1923; color:#f1f5f9; min-height:100vh; }
+        nav { background:#1e2a38; padding:14px 24px; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid #4a90e2; }
+        nav a { color:white; text-decoration:none; font-size:14px; font-weight:700; }
+        .page-title { text-align:center; padding:40px 20px 10px; font-size:28px; font-weight:800; }
+        .page-sub { text-align:center; color:#94a3b8; font-size:14px; margin-bottom:32px; }
+        .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; max-width:1100px; margin:0 auto; padding:0 20px 40px; }
+        .club-card { background:#1a2535; border:1px solid #2d3f55; border-radius:14px; padding:20px; text-align:center; position:relative; transition:0.2s; }
+        .club-card:hover { border-color:#4a90e2; transform:translateY(-2px); }
+        .rank-badge { position:absolute; top:12px; right:12px; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:900; }
+        .rank-1 { background:rgba(255,215,0,0.2); color:#FFD700; }
+        .rank-2 { background:rgba(192,192,192,0.2); color:#C0C0C0; }
+        .rank-3 { background:rgba(205,127,50,0.2); color:#CD7F32; }
+        .rank-other { background:rgba(255,255,255,0.08); color:#94a3b8; font-size:11px; }
+        .club-logo { width:64px; height:64px; border-radius:50%; object-fit:cover; border:2px solid #4a90e2; margin:0 auto 10px; display:block; }
+        .club-logo-placeholder { width:64px; height:64px; border-radius:50%; border:2px solid #2d3f55; background:#223044; display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 10px; }
+        .club-name { font-size:15px; font-weight:700; margin-bottom:8px; }
+        .club-info { font-size:11px; color:#94a3b8; margin-bottom:4px; }
+        .club-points { font-size:24px; font-weight:900; color:#f59e0b; margin-top:10px; }
+        .club-points-label { font-size:10px; color:#94a3b8; margin-top:2px; }
+        .empty { grid-column:1/-1; text-align:center; color:#94a3b8; padding:60px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/Home/Index">🏠 الرئيسية</a>
+        <span style="color:#4a90e2;font-weight:800;">🏟️ ترتيب الأندية</span>
+        <a href="/Account/Login">تسجيل دخول</a>
+    </nav>
+    <div class="page-title">🏟️ ترتيب الأندية الفلسطينية</div>
+    <div class="page-sub">مرتبة حسب النقاط المكتسبة من البطولات الرسمية</div>
+    <div class="cards-grid">
+        @if (clubs != null)
+        {
+            int rank = 1;
+            foreach (var c in clubs)
+            {
+                var medal = rank == 1 ? "🥇" : rank == 2 ? "🥈" : rank == 3 ? "🥉" : rank.ToString();
+                var rankClass = rank == 1 ? "rank-1" : rank == 2 ? "rank-2" : rank == 3 ? "rank-3" : "rank-other";
+                <div class="club-card">
+                    <div class="rank-badge @rankClass">@medal</div>
+                    @if (!string.IsNullOrEmpty((string)c.logo))
+                    {
+                        <img src="data:image/jpeg;base64,@c.logo" class="club-logo" onerror="this.style.display='none'">
+                    }
+                    else
+                    {
+                        <div class="club-logo-placeholder">🥋</div>
+                    }
+                    <div class="club-name">@c.Name</div>
+                    <div class="club-info">📍 @c.City</div>
+                    <div class="club-info">👤 @c.managerName</div>
+                    <div class="club-info">🏅 التصنيف: @c.Category</div>
+                    <div class="club-points">@c.totalPoints</div>
+                    <div class="club-points-label">نقطة ⭐</div>
+                </div>
+                rank++;
+            }
+        }
+        else
+        {
+            <div class="empty">لا توجد بيانات بعد</div>
+        }
+    </div>
+    @await Html.PartialAsync("_Footer")
+</body>
+</html>

@@ -1,0 +1,9 @@
+﻿User-agent: *
+Allow: /
+Allow: /Home/
+Disallow: /Admin/
+Disallow: /Account/
+Disallow: /Club/
+Disallow: /Player/
+Disallow: /Official/
+Sitemap: https://karatefinal-production.up.railway.app/sitemap.xml

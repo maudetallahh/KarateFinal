@@ -3,6 +3,7 @@ using KarateFinal.Models;
 using KarateFinal.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using QRCoder;
 using System.Numerics;
 
 namespace KarateFinal.Controllers
@@ -22,6 +23,13 @@ namespace KarateFinal.Controllers
             var clubs = _context.Clubs.Where(c => !c.IsDeleted).ToList();
             ViewBag.Clubs = clubs;
             return View();
+        }
+        private string GenerateQR(string url)
+        {
+            using var qrGenerator = new QRCodeGenerator();
+            var qrData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
+            using var qrCode = new PngByteQRCode(qrData);
+            return Convert.ToBase64String(qrCode.GetGraphic(10));
         }
         public IActionResult Dashboard()
         {
@@ -506,6 +514,36 @@ namespace KarateFinal.Controllers
         {
             public string Content { get; set; } = "";
         }
+     
+        [HttpPost]
+        public IActionResult UploadLogo(IFormFile logo)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.ClubId == null) return Json(new { success = false });
+            var club = _context.Clubs.Find(user.ClubId.Value);
+            if (club == null) return Json(new { success = false });
+            if (club.LogoUpdatedAt.HasValue &&
+                (DateTime.UtcNow - club.LogoUpdatedAt.Value).TotalDays < 15)
+            {
+                var daysLeft = 15 - (int)(DateTime.UtcNow - club.LogoUpdatedAt.Value).TotalDays;
+                return Json(new { success = false, message = $"لا يمكن تغيير الشعار — ضل {daysLeft} يوم" });
+            }
+            using var ms = new MemoryStream();
+            logo.CopyTo(ms);
+            club.LogoImage = Convert.ToBase64String(ms.ToArray());
+            club.LogoUpdatedAt = DateTime.UtcNow;
+            _context.Notifications.Add(new KarateFinal.Models.AppNotification
+            {
+                Title = "شعار نادي جديد",
+                Message = $"نادي {club.Name} رفع شعاراً جديداً — يرجى المراجعة",
+                TargetRole = "Admin",
+                CreatedAt = DateTime.UtcNow,
+                IsRead = false
+            });
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
         [HttpPost]
         public IActionResult UpdateFee([FromBody] UpdateFeeRequest request)
         {
@@ -573,6 +611,7 @@ namespace KarateFinal.Controllers
 
         public IActionResult PlayerCard(int id)
         {
+       
             var player = _context.Players.Find(id);
             if (player == null) return RedirectToAction("Best");
 
@@ -601,10 +640,19 @@ namespace KarateFinal.Controllers
                     .ToList();
             }
             catch { ViewBag.Receipts = null; }
-
+            var qrUrl = $"https://karatefinal-production.up.railway.app/Club/VerifyPlayer/{id}";
+            ViewBag.QRCode = GenerateQR(qrUrl);
             return View();
         }
-
+        public IActionResult VerifyPlayer(int id)
+        {
+            var player = _context.Players
+                .Include(p => p.Club)
+                .FirstOrDefault(p => p.Id == id);
+            if (player == null) return NotFound();
+            ViewBag.Player = player;
+            return View();
+        }
         [HttpPost]
         public IActionResult ResetPlayerPassword([FromBody] ResetPlayerPasswordRequest request)
         {

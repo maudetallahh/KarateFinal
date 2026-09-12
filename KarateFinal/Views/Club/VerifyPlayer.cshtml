@@ -1,0 +1,35 @@
+﻿@{
+    Layout = null;
+    var player = ViewBag.Player as KarateFinal.Models.Player;
+}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التحقق من اللاعب</title>
+    <style>
+        body { font-family:'Cairo',sans-serif; background:#0f1923; color:#f1f5f9; display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; }
+        .card { background:#1a2535; border:2px solid #10b981; border-radius:16px; padding:32px; max-width:400px; width:90%; text-align:center; }
+        .verified { font-size:48px; margin-bottom:16px; }
+        .name { font-size:22px; font-weight:800; margin-bottom:8px; }
+        .club { font-size:14px; color:#94a3b8; margin-bottom:16px; }
+        .info-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #2d3f55; font-size:13px; }
+        .label { color:#94a3b8; }
+        .val { font-weight:700; }
+        .badge { display:inline-block; background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; margin-top:16px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="verified">✅</div>
+        <div class="name">@player?.Name</div>
+        <div class="club">🏟️ @(player?.Club?.Name ?? "—")</div>
+        <div class="info-row"><span class="label">الحزام</span><span class="val">@player?.Belt</span></div>
+        <div class="info-row"><span class="label">العمر</span><span class="val">@player?.Age سنة</span></div>
+        <div class="info-row"><span class="label">الجنس</span><span class="val">@player?.Gender</span></div>
+        <div class="info-row"><span class="label">الحالة</span><span class="val">@player?.PlayerStatus</span></div>
+        <div class="badge">✅ لاعب موثّق رسمياً</div>
+    </div>
+</body>
+</html>

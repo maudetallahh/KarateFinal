@@ -174,7 +174,27 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
-
+        [HttpPost]
+        public IActionResult UploadProfileImage(IFormFile image)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
+            if (user?.PlayerId == null) return Json(new { success = false });
+            var player = _context.Players.Find(user.PlayerId.Value);
+            if (player == null) return Json(new { success = false });
+            if (player.ProfileImageUpdatedAt.HasValue &&
+                (DateTime.UtcNow - player.ProfileImageUpdatedAt.Value).TotalDays < 30)
+            {
+                var daysLeft = 30 - (int)(DateTime.UtcNow - player.ProfileImageUpdatedAt.Value).TotalDays;
+                return Json(new { success = false, message = $"ضل {daysLeft} يوم للتغيير" });
+            }
+            using var ms = new MemoryStream();
+            image.CopyTo(ms);
+            player.ProfileImage = Convert.ToBase64String(ms.ToArray());
+            player.ProfileImageUpdatedAt = DateTime.UtcNow;
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
         public class PlayerSendMessageRequest
         {
             public string Content { get; set; } = "";
@@ -232,7 +252,7 @@ namespace KarateFinal.Controllers
             _context.SaveChanges();
             return Json(new { success = true });
         }
-
+    
         [HttpPost]
         public IActionResult DeleteInjury(int id)
         {

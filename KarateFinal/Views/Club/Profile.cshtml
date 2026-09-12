@@ -102,6 +102,18 @@
                         <input type="password" name="newPassword" placeholder="اتركها فارغة إذا لا تريد التغيير">
                         <span class="hint">يجب أن تحتوي على 8 أحرف على الأقل، حرف كبير، رقم، ورمز خاص</span>
                     </div>
+                    <div style="margin-top:10px;">
+                        <label style="cursor:pointer;color:#4a90e2;font-size:12px;font-weight:700;">
+                            📷 تغيير شعار النادي
+                            <input type="file" accept="image/*" style="display:none;" onchange="uploadLogo(this)">
+                        </label>
+                        @if (club?.LogoUpdatedAt != null)
+                        {
+                            <div style="font-size:10px;color:#94a3b8;margin-top:4px;">
+                                آخر تغيير: @club.LogoUpdatedAt.Value.ToString("yyyy/MM/dd")
+                            </div>
+                        }
+                    </div>
                 </div>
 
                 <div style="margin-top:20px;display:flex;gap:12px;align-items:center;">
@@ -111,7 +123,21 @@
             </form>
         </div>
     </div>
-
+    <script>
+        function uploadLogo(input) {
+            const file = input.files[0];
+            if (!file) return;
+            if (file.size > 2 * 1024 * 1024) { alert('⚠️ حجم الصورة يجب أن يكون أقل من 2MB'); return; }
+            const formData = new FormData();
+            formData.append('logo', file);
+            fetch('/Club/UploadLogo', { method: 'POST', body: formData })
+                .then(r => r.json()).then(data => {
+                    if (data.success) { alert('✅ تم رفع الشعار وإرسال إشعار للاتحاد'); location.reload(); }
+                    else alert('⚠️ ' + data.message);
+                });
+        }
+    </script>
+    
    
 @await Html.PartialAsync("_Footer")</body>
 </html>

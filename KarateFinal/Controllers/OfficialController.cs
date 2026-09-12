@@ -167,6 +167,25 @@ namespace KarateFinal.Controllers
             TempData["Success"] = "تم تجديد الترخيص بنجاح";
             return RedirectToAction("License");
         }
+        [HttpPost]
+        public IActionResult UploadProfileImage(IFormFile image)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            var official = _context.Officials.FirstOrDefault(o => o.Username == username);
+            if (official == null) return Json(new { success = false });
+            if (official.ProfileImageUpdatedAt.HasValue &&
+                (DateTime.UtcNow - official.ProfileImageUpdatedAt.Value).TotalDays < 30)
+            {
+                var daysLeft = 30 - (int)(DateTime.UtcNow - official.ProfileImageUpdatedAt.Value).TotalDays;
+                return Json(new { success = false, message = $"لا يمكن تغيير الصورة — ضل {daysLeft} يوم" });
+            }
+            using var ms = new MemoryStream();
+            image.CopyTo(ms);
+            official.ProfileImage = Convert.ToBase64String(ms.ToArray());
+            official.ProfileImageUpdatedAt = DateTime.UtcNow;
+            _context.SaveChanges();
+            return Json(new { success = true });
+        }
     }
 
     public class ApproveOfficialRequest

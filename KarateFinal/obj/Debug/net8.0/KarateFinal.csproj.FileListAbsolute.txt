@@ -158,3 +158,4 @@ C:\Users\ME\Desktop\DataBase\KarateFinal\KarateFinal\bin\Debug\net8.0\Microsoft.
 C:\Users\ME\Desktop\DataBase\KarateFinal\KarateFinal\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
 C:\Users\ME\Desktop\DataBase\KarateFinal\KarateFinal\bin\Debug\net8.0\Npgsql.dll
 C:\Users\ME\Desktop\DataBase\KarateFinal\KarateFinal\bin\Debug\net8.0\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+C:\Users\ME\Desktop\DataBase\KarateFinal\KarateFinal\bin\Debug\net8.0\QRCoder.dll
