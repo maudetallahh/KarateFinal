@@ -88,7 +88,17 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<KarateContext>();
-    db.Database.Migrate();
+    var services = scope.ServiceProvider;
+    try
+    {
+        var db = services.GetRequiredService<KarateContext>();
+        db.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Database Migration Error: " + ex.Message);
+    }
 }
+
+app.Run();
 app.Run();
