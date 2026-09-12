@@ -19,6 +19,11 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
+    //
+    //if (!app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage(); // استبدل app.UseExceptionHandler("/Home/Error") بهذا السطر مؤقتاً
+    }
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
