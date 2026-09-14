@@ -141,16 +141,26 @@ namespace KarateFinal.Controllers
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
-            if (user?.PlayerId == null) return RedirectToAction("Login", "Account");
+
+            if (user?.PlayerId == null)
+                return RedirectToAction("Login", "Account");
+
             var player = _context.Players.Find(user.PlayerId.Value);
+
+            if (player == null)
+                return RedirectToAction("Login", "Account");
+
             var messages = _context.Messages
-                .Where(m => m.SenderPlayerId == user.PlayerId.Value || m.ReceiverPlayerId == user.PlayerId.Value
-                         || (m.ReceiverClubId == player.ClubId && m.SenderRole == "Club")
-                         || (m.SenderClubId == player.ClubId && m.ReceiverRole == "All"))
+                .Where(m => m.SenderPlayerId == user.PlayerId.Value ||
+                            m.ReceiverPlayerId == user.PlayerId.Value ||
+                            (m.ReceiverClubId == player.ClubId && m.SenderRole == "Club") ||
+                            (m.SenderClubId == player.ClubId && m.ReceiverRole == "All"))
                 .OrderBy(m => m.SentAt)
                 .ToList();
+
             ViewBag.Messages = messages;
             ViewBag.Player = player;
+
             return View();
         }
 

@@ -36,8 +36,15 @@ namespace KarateFinal.Controllers
             var username = HttpContext.Session.GetString("Username");
             if (username == null) return RedirectToAction("Login", "Account");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
-            var players = _context.Players.Where(p => p.ClubId == user.ClubId).ToList();
-            var club = _context.Clubs.Find(user.ClubId);
+
+            if (user == null || user.ClubId == null)
+                return RedirectToAction("Login", "Account");
+
+            var players = _context.Players
+                .Where(p => p.ClubId == user.ClubId.Value)
+                .ToList();
+
+            var club = _context.Clubs.Find(user.ClubId.Value);
             ViewBag.Username = username;
             ViewBag.Players = players;
             ViewBag.PlayersCount = players.Count;
@@ -142,7 +149,7 @@ namespace KarateFinal.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPlayer(Player player)
+        public IActionResult AddPlayer(Player player)
         {
             var username = HttpContext.Session.GetString("Username");
             var user = _context.Users.FirstOrDefault(u => u.Username == username);
@@ -187,8 +194,17 @@ namespace KarateFinal.Controllers
         public IActionResult Players()
         {
             var username = HttpContext.Session.GetString("Username");
-            var user = _context.Users.FirstOrDefault(u => u.Username == username);
-            ViewBag.Players = _context.Players.Where(p => p.ClubId == user.ClubId).ToList();
+
+            var user = _context.Users
+                .FirstOrDefault(u => u.Username == username);
+
+            if (user?.ClubId == null)
+                return RedirectToAction("Login", "Account");
+
+            ViewBag.Players = _context.Players
+                .Where(p => p.ClubId == user.ClubId.Value)
+                .ToList();
+
             return View();
         }
 
@@ -350,9 +366,11 @@ namespace KarateFinal.Controllers
         {
             var username = HttpContext.Session.GetString("Username");
             var membership = _context.PlayerMemberships.Find(request.MembershipId);
-            var player = _context.Players.Find(membership.PlayerId);
-            if (membership == null) return Json(new { success = false });
 
+            if (membership == null)
+                return Json(new { success = false });
+
+            var player = _context.Players.Find(membership.PlayerId);
             var paid = membership.PaidMonths.Split(',').Where(x => x != "").ToList();
             bool isNowPaid = !paid.Contains(request.Month.ToString());
 
@@ -627,11 +645,14 @@ namespace KarateFinal.Controllers
             ViewBag.Silver = playerResults.Count(r => r.Rank == 2);
             ViewBag.Bronze = playerResults.Count(r => r.Rank == 3);
             ViewBag.PlayerTournaments = _context.TournamentPlayerRequests
-                .Where(r => r.PlayerId == id && r.Status == "موافق")
-                .Include(r => r.Tournament)
-                .Select(r => new { r.TournamentId, r.Tournament.Title })
-                .ToList();
-
+      .Where(r => r.PlayerId == id && r.Status == "موافق")
+      .Include(r => r.Tournament)
+      .Select(r => new
+      {
+          r.TournamentId,
+          Title = r.Tournament != null ? r.Tournament.Title : ""
+      })
+      .ToList();
             try
             {
                 ViewBag.Receipts = _context.PaymentReceipts

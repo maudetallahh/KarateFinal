@@ -291,7 +291,8 @@ namespace KarateFinal.Controllers
                 adminNote = r.AdminNote ?? "",
                 approvedPlayers = _context.TournamentPlayerRequests
                     .Where(p => p.TournamentId == id && p.ClubId == r.ClubId && p.Status == "موافق")
-                    .Include(p => p.Player).Select(p => p.Player.Name).ToList()
+.Include(p => p.Player)
+.Select(p => p.Player != null ? (p.Player.Name ?? "") : "").ToList()
             });
             return Json(result);
         }
@@ -444,15 +445,18 @@ namespace KarateFinal.Controllers
         {
             var tournament = _context.Tournaments.Find(request.Id);
             if (tournament == null) return Json(new { success = false });
+
             tournament.Title = request.Title;
             tournament.Date = request.Date;
             tournament.City = request.City;
             tournament.Location = request.Location;
-            tournament.Description = request.Description;
+            tournament.Description = request.Description ?? "";
             tournament.RegistrationFee = request.RegistrationFee;
             tournament.MaxPlayersPerClub = request.MaxPlayersPerClub;
-            tournament.Categories = request.Categories;
+            tournament.Categories = request.Categories ?? "";
+
             _context.SaveChanges();
+
             return Json(new { success = true });
         }
         public IActionResult Profile()
